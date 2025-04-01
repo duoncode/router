@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\MethodNotAllowedException;
-use FiveOrbs\Router\Exception\NotFoundException;
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\Group;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Router;
-use FiveOrbs\Router\Tests\Fixtures\TestController;
-use FiveOrbs\Router\Tests\Fixtures\TestEndpoint;
+use Duon\Router\Exception\MethodNotAllowedException;
+use Duon\Router\Exception\NotFoundException;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\Group;
+use Duon\Router\Route;
+use Duon\Router\Router;
+use Duon\Router\Tests\Fixtures\TestController;
+use Duon\Router\Tests\Fixtures\TestEndpoint;
 use PHPUnit\Framework\Attributes\TestDox;
 
 class RouterTest extends TestCase

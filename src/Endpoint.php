@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
-use FiveOrbs\Router\Exception\RuntimeException;
+use Duon\Router\Exception\RuntimeException;
 
 /** @psalm-api */
 class Endpoint

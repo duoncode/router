@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\ResponseWrapper;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Tests\Fixtures\TestController;
-use FiveOrbs\Router\View;
-use FiveOrbs\Router\ViewHandler;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\ResponseWrapper;
+use Duon\Router\Route;
+use Duon\Router\Tests\Fixtures\TestController;
+use Duon\Router\View;
+use Duon\Router\ViewHandler;
 use Laminas\Diactoros\ResponseFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -20,7 +20,7 @@ class ViewHandlerTest extends TestCase
 		$route = new Route('/', function () {
 			$response = $this->responseFactory()->createResponse()
 				->withHeader('Content-Type', 'text/plain');
-			$response->getBody()->write('FiveOrbs PSR Response');
+			$response->getBody()->write('Duon PSR Response');
 
 			return $response;
 		});
@@ -29,7 +29,7 @@ class ViewHandlerTest extends TestCase
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
-		$this->assertSame('FiveOrbs PSR Response', (string) $response->getBody());
+		$this->assertSame('Duon PSR Response', (string) $response->getBody());
 		$this->assertSame('text/plain', $response->getHeaders()['Content-Type'][0]);
 	}
 
@@ -43,7 +43,7 @@ class ViewHandlerTest extends TestCase
 				{
 					$response = $this->factory->createResponse()
 						->withHeader('Content-Type', 'text/plain');
-					$response->getBody()->write('FiveOrbs PSR Response');
+					$response->getBody()->write('Duon PSR Response');
 
 					return $response;
 				}
@@ -54,7 +54,7 @@ class ViewHandlerTest extends TestCase
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
-		$this->assertSame('FiveOrbs PSR Response', (string) $response->getBody());
+		$this->assertSame('Duon PSR Response', (string) $response->getBody());
 		$this->assertSame('text/plain', $response->getHeaders()['Content-Type'][0]);
 	}
 

@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Exception;
+namespace Duon\Router\Exception;
 
 class RuntimeException extends \RuntimeException implements RouteException {}

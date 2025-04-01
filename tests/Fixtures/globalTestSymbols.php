@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use FiveOrbs\Router\Tests\Fixtures\TestAttribute;
+use Duon\Router\Tests\Fixtures\TestAttribute;
 
 if (!function_exists('testJsonRendererIterator')) {
 	function testJsonRendererIterator()

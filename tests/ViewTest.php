@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Tests\Fixtures\TestAttribute;
-use FiveOrbs\Router\Tests\Fixtures\TestAttributeDiff;
-use FiveOrbs\Router\Tests\Fixtures\TestAttributeExt;
-use FiveOrbs\Router\Tests\Fixtures\TestController;
-use FiveOrbs\Router\Tests\Fixtures\TestControllerWithRequest;
-use FiveOrbs\Router\Tests\Fixtures\TestControllerWithRequestAndRoute;
-use FiveOrbs\Router\Tests\Fixtures\TestControllerWithRoute;
-use FiveOrbs\Router\View;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\Route;
+use Duon\Router\Tests\Fixtures\TestAttribute;
+use Duon\Router\Tests\Fixtures\TestAttributeDiff;
+use Duon\Router\Tests\Fixtures\TestAttributeExt;
+use Duon\Router\Tests\Fixtures\TestController;
+use Duon\Router\Tests\Fixtures\TestControllerWithRequest;
+use Duon\Router\Tests\Fixtures\TestControllerWithRequestAndRoute;
+use Duon\Router\Tests\Fixtures\TestControllerWithRoute;
+use Duon\Router\View;
 use GdImage;
 
 class ViewTest extends TestCase
 {
 	public function testAttribute(): void
 	{
-		$route = Route::any('/', #[TestAttribute] fn() => 'fiveorbs')->after($this->renderer());
+		$route = Route::any('/', #[TestAttribute] fn() => 'duon')->after($this->renderer());
 		$view = new View($route, null);
 
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -28,10 +28,10 @@ class ViewTest extends TestCase
 
 	public function testClosure(): void
 	{
-		$route = Route::any('/', fn() => 'fiveorbs')->after($this->renderer());
+		$route = Route::any('/', fn() => 'duon')->after($this->renderer());
 		$view = new View($route, null);
 
-		$this->assertSame('fiveorbs', (string) $view->execute($this->request())->getBody());
+		$this->assertSame('duon', (string) $view->execute($this->request())->getBody());
 	}
 
 	public function testFunction(): void
@@ -46,7 +46,7 @@ class ViewTest extends TestCase
 
 	public function testControllerString(): void
 	{
-		$route = Route::any('/', '\FiveOrbs\Router\Tests\Fixtures\TestController::textView')->after($this->renderer());
+		$route = Route::any('/', '\Duon\Router\Tests\Fixtures\TestController::textView')->after($this->renderer());
 		$view = new View($route, null);
 
 		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
@@ -74,7 +74,7 @@ class ViewTest extends TestCase
 
 	public function testInvokableClass(): void
 	{
-		$route = Route::any('/', 'FiveOrbs\Router\Tests\Fixtures\TestInvokableClass')->after($this->renderer());
+		$route = Route::any('/', 'Duon\Router\Tests\Fixtures\TestInvokableClass')->after($this->renderer());
 		$view = new View($route, null);
 
 		$this->assertSame('Invokable', (string) $view->execute($this->request())->getBody());
@@ -122,11 +122,11 @@ class ViewTest extends TestCase
 			'/{param}',
 			TestControllerWithRequestAndRoute::class . '::requestAndRoute',
 		)->after($this->renderer());
-		$route->match('/fiveorbs');
+		$route->match('/duon');
 		$view = new View($route, null);
 
 		$this->assertSame(
-			$request::class . $route::class . 'fiveorbs',
+			$request::class . $route::class . 'duon',
 			(string) $view->execute($request)->getBody(),
 		);
 	}
@@ -221,7 +221,7 @@ class ViewTest extends TestCase
 		$route = Route::any(
 			'/',
 			#[TestAttribute, TestAttributeExt, TestAttributeDiff]
-			fn() => 'fiveorbs',
+			fn() => 'duon',
 		)->after($this->renderer());
 		$view = new View($route, null);
 

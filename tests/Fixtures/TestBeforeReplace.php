@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests\Fixtures;
+namespace Duon\Router\Tests\Fixtures;
 
-use FiveOrbs\Router\Before;
+use Duon\Router\Before;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class TestBeforeReplace implements Before

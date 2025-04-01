@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Dispatcher;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Tests\Fixtures\TestAfterAddText;
-use FiveOrbs\Router\Tests\Fixtures\TestAfterRendererText;
-use FiveOrbs\Router\Tests\Fixtures\TestBeforeFirst;
-use FiveOrbs\Router\Tests\Fixtures\TestBeforeSecond;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware1;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware2;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware3;
+use Duon\Router\Dispatcher;
+use Duon\Router\Route;
+use Duon\Router\Tests\Fixtures\TestAfterAddText;
+use Duon\Router\Tests\Fixtures\TestAfterRendererText;
+use Duon\Router\Tests\Fixtures\TestBeforeFirst;
+use Duon\Router\Tests\Fixtures\TestBeforeSecond;
+use Duon\Router\Tests\Fixtures\TestMiddleware1;
+use Duon\Router\Tests\Fixtures\TestMiddleware2;
+use Duon\Router\Tests\Fixtures\TestMiddleware3;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -24,7 +24,7 @@ class DispatcherTest extends TestCase
 			'/',
 			function () {
 				$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/html');
-				$response->getBody()->write('FiveOrbs');
+				$response->getBody()->write('Duon');
 
 				return $response;
 			},
@@ -32,7 +32,7 @@ class DispatcherTest extends TestCase
 		$dispatcher = new Dispatcher();
 		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame('FiveOrbs', (string) $response->getBody());
+		$this->assertSame('Duon', (string) $response->getBody());
 	}
 
 	public function testAddMiddleware(): void

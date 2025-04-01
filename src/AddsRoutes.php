@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
 /**
- * @psalm-import-type View from \FiveOrbs\Router\Route
+ * @psalm-import-type View from \Duon\Router\Route
  */
 trait AddsRoutes
 {

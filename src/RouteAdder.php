@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
-use FiveOrbs\Router\Group;
-use FiveOrbs\Router\Route;
+use Duon\Router\Group;
+use Duon\Router\Route;
 
 /**
  * @psalm-api
  *
- * @psalm-import-type View from \FiveOrbs\Router\Route
+ * @psalm-import-type View from \Duon\Router\Route
  */
 interface RouteAdder
 {

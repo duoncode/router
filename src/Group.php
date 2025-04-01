@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
 use Closure;
-use FiveOrbs\Router\AddsMiddleware;
-use FiveOrbs\Router\AddsRoutes;
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\RouteAdder;
+use Duon\Router\AddsMiddleware;
+use Duon\Router\AddsRoutes;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\RouteAdder;
 
 /** @psalm-api */
 class Group implements RouteAdder

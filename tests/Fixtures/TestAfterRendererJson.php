@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests\Fixtures;
+namespace Duon\Router\Tests\Fixtures;
 
 use Psr\Http\Message\ResponseInterface as Response;
 

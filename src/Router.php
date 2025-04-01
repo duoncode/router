@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
 use Closure;
-use FiveOrbs\Router\Exception\MethodNotAllowedException;
-use FiveOrbs\Router\Exception\NotFoundException;
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\RouteAdder;
-use FiveOrbs\Router\StaticRoute;
+use Duon\Router\Exception\MethodNotAllowedException;
+use Duon\Router\Exception\NotFoundException;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\RouteAdder;
+use Duon\Router\StaticRoute;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 /** @psalm-api */

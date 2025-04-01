@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests\Fixtures;
+namespace Duon\Router\Tests\Fixtures;
 
-use FiveOrbs\Router\Route;
+use Duon\Router\Route;
 
 class TestControllerWithRoute
 {

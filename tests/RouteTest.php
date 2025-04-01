@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\InvalidArgumentException;
-use FiveOrbs\Router\Exception\ValueError;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware1;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware2;
+use Duon\Router\Exception\InvalidArgumentException;
+use Duon\Router\Exception\ValueError;
+use Duon\Router\Route;
+use Duon\Router\Tests\Fixtures\TestMiddleware1;
+use Duon\Router\Tests\Fixtures\TestMiddleware2;
 use stdClass;
 
 class RouteTest extends TestCase
@@ -183,9 +183,9 @@ class RouteTest extends TestCase
 
 	public function testGetViewArray(): void
 	{
-		$route = new Route('/', [\FiveOrbs\Router\Tests\Fixtures\TestController::class, 'textView']);
+		$route = new Route('/', [\Duon\Router\Tests\Fixtures\TestController::class, 'textView']);
 
-		$this->assertSame(['FiveOrbs\Router\Tests\Fixtures\TestController', 'textView'], $route->view());
+		$this->assertSame(['Duon\Router\Tests\Fixtures\TestController', 'textView'], $route->view());
 	}
 
 	public function testRouteNameUnnamed(): void

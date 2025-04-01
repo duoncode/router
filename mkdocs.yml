@@ -1,10 +1,10 @@
-site_name: FiveOrbs Route
+site_name: Duon Route
 copyright: © 2023 ebene fünf GmbH
 nav:
   - index.md
 theme:
-	name: fiveorbs
-repo_url: https://github.com/fiveorbs/router
+	name: duon
+repo_url: https://github.com/duon/router
 extra:
 	project: Route
 plugins:

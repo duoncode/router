@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
 use PHPUnit\Framework\Attributes\TestDox;
 use ReflectionFunction;
 use ReflectionMethod;
 
-use function FiveOrbs\Router\getReflectionFunction;
+use function Duon\Router\getReflectionFunction;
 
 class UtilsTest extends TestCase
 {

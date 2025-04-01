@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\Router;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\Router;
 
 class StaticRouteTest extends TestCase
 {
@@ -18,11 +18,11 @@ class StaticRouteTest extends TestCase
 		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json', true));
 		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json?exists=true', true));
 		$this->assertMatchesRegularExpression(
-			'/https:\/\/fiveorbs.local\/static\/test.json\?v=[a-f0-9]{8}$/',
+			'/https:\/\/duon.local\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->staticUrl(
 				'/static',
 				'test.json',
-				host: 'https://fiveorbs.local/',
+				host: 'https://duon.local/',
 				bust: true,
 			),
 		);
@@ -37,11 +37,11 @@ class StaticRouteTest extends TestCase
 		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json', true));
 		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json?exists=true', true));
 		$this->assertMatchesRegularExpression(
-			'/https:\/\/fiveorbs.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
+			'/https:\/\/duon.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->staticUrl(
 				'/static',
 				'test.json',
-				host: 'https://fiveorbs.local/',
+				host: 'https://duon.local/',
 				bust: true,
 			),
 		);
@@ -76,10 +76,10 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		// Non existing files should not have a cachebuster attached
-		$this->assertMatchesRegularExpression('/https:\/\/fiveorbs.local\/static\/does-not-exist.json$/', $router->staticUrl(
+		$this->assertMatchesRegularExpression('/https:\/\/duon.local\/static\/does-not-exist.json$/', $router->staticUrl(
 			'/static',
 			'does-not-exist.json',
-			host: 'https://fiveorbs.local/',
+			host: 'https://duon.local/',
 			bust: true,
 		));
 	}

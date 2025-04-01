@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
 use Closure;
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Wire\Creator;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Wire\Creator;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface as Container;
 use Psr\Container\NotFoundExceptionInterface as NotFoundException;

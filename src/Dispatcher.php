@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
-use FiveOrbs\Router\View;
-use FiveOrbs\Router\ViewHandler;
+use Duon\Router\View;
+use Duon\Router\ViewHandler;
 use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

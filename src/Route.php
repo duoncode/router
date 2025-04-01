@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router;
+namespace Duon\Router;
 
 use Closure;
-use FiveOrbs\Router\Exception\InvalidArgumentException;
-use FiveOrbs\Router\Exception\ValueError;
+use Duon\Router\Exception\InvalidArgumentException;
+use Duon\Router\Exception\ValueError;
 use Stringable;
 
 /**

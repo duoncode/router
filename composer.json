@@ -1,5 +1,5 @@
 {
-	"name": "fiveorbs/router",
+	"name": "duon/router",
 	"description": "PSR-7/PSR-15 router and dispatcher",
 	"type": "library",
 	"license": "MIT",
@@ -7,7 +7,7 @@
 	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
-			"FiveOrbs\\Router\\": "src/"
+			"Duon\\Router\\": "src/"
 		},
 		"files": [
 			"src/Utils.php"
@@ -15,7 +15,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"FiveOrbs\\Router\\Tests\\": "tests/"
+			"Duon\\Router\\Tests\\": "tests/"
 		},
 		"files": [
 			"tests/Fixtures/globalTestSymbols.php"
@@ -29,7 +29,7 @@
 	],
 	"require": {
 		"php": ">=8.3",
-		"fiveorbs/wire": "dev-main",
+		"duon/wire": "dev-main",
 		"psr/container": "^2.0",
 		"psr/http-message": "^1.1 || ^2.0",
 		"psr/http-message-implementation": "^1.0",
@@ -37,11 +37,11 @@
 		"psr/http-server-middleware": "^1.0"
 	},
 	"require-dev": {
-		"fiveorbs/dev": "^1.0",
+		"duon/dev": "^1.1",
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
 		"laminas/laminas-diactoros": "^3.3",
-		"phpunit/phpunit": "^10.4",
-		"vimeo/psalm": "^5.15"
+		"phpunit/phpunit": "^12.0",
+		"vimeo/psalm": "^6.10"
 	},
 	"config": {
 		"allow-plugins": {

@@ -7,7 +7,7 @@
 	displayDetailsOnTestsThatTriggerWarnings="true"
 	cacheDirectory=".phpunit.cache">
 	<testsuites>
-		<testsuite name="FiveOrbs Route Test Suite">
+		<testsuite name="Duon Route Test Suite">
 			<directory suffix="Test.php">tests</directory>
 		</testsuite>
 	</testsuites>

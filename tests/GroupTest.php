@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Exception\MethodNotAllowedException;
-use FiveOrbs\Router\Exception\RuntimeException;
-use FiveOrbs\Router\Exception\ValueError;
-use FiveOrbs\Router\Group;
-use FiveOrbs\Router\Route;
-use FiveOrbs\Router\Router;
-use FiveOrbs\Router\Tests\Fixtures\TestController;
-use FiveOrbs\Router\Tests\Fixtures\TestEndpoint;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware1;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware2;
-use FiveOrbs\Router\Tests\Fixtures\TestMiddleware3;
+use Duon\Router\Exception\MethodNotAllowedException;
+use Duon\Router\Exception\RuntimeException;
+use Duon\Router\Exception\ValueError;
+use Duon\Router\Group;
+use Duon\Router\Route;
+use Duon\Router\Router;
+use Duon\Router\Tests\Fixtures\TestController;
+use Duon\Router\Tests\Fixtures\TestEndpoint;
+use Duon\Router\Tests\Fixtures\TestMiddleware1;
+use Duon\Router\Tests\Fixtures\TestMiddleware2;
+use Duon\Router\Tests\Fixtures\TestMiddleware3;
 
 class GroupTest extends TestCase
 {

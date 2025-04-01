@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace FiveOrbs\Router\Tests;
+namespace Duon\Router\Tests;
 
-use FiveOrbs\Router\Endpoint;
-use FiveOrbs\Router\Router;
-use FiveOrbs\Router\Tests\Fixtures\TestEndpoint;
+use Duon\Router\Endpoint;
+use Duon\Router\Router;
+use Duon\Router\Tests\Fixtures\TestEndpoint;
 
 class EndpointTest extends TestCase
 {
