@@ -7,6 +7,7 @@ namespace Duon\Router;
 use Closure;
 use Duon\Router\Exception\RuntimeException;
 use Duon\Wire\Creator;
+use Duon\Wire\Exception\WireException;
 use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -16,7 +17,6 @@ use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
-use Throwable;
 
 final class View
 {
@@ -152,7 +152,9 @@ final class View
 	 *   the returned args list.
 	 * - If the parameter is typed, try to resolve it via container or
 	 *   autowiring.
-	 * - If a parameter has a default value, it will be used.
+	 * - If parameter resolution fails and a default value exists, the default
+	 *   will be used.
+	 * - Exceptions thrown while constructing dependencies bubble unchanged.
 	 * - Otherwise fail.
 	 *
 	 * @psalm-suppress MixedAssignment -- $args values are mixed
@@ -193,8 +195,7 @@ final class View
 	{
 		try {
 			return $this->resolveParam($param, $request);
-		} catch (Throwable $e) {
-			// Check if the view parameter has a default value
+		} catch (RuntimeException|WireException $e) {
 			if ($param->isDefaultValueAvailable()) {
 				return $param->getDefaultValue();
 			}
@@ -227,28 +228,20 @@ final class View
 				);
 			}
 
-			try {
-				return $this->creator->create($typeName, predefinedTypes: [Request::class => $request]);
-			} catch (Throwable $e) {
-				if ($param->isDefaultValueAvailable()) {
-					return $param->getDefaultValue();
-				}
-
-				throw $e;
-			}
-		} else {
-			if ($type) {
-				throw new RuntimeException(
-					"Autowiring does not support union or intersection types. Source: \n"
-						. $this->paramInfo($param),
-				);
-			}
-
+			return $this->creator->create($typeName, predefinedTypes: [Request::class => $request]);
+		}
+		if ($type) {
 			throw new RuntimeException(
-				"Autowired entities need to have typed constructor parameters. Source: \n"
+				"Autowiring does not support union or intersection types. Source: \n"
 					. $this->paramInfo($param),
 			);
 		}
+
+		throw new RuntimeException(
+			"Autowired entities need to have typed constructor parameters. Source: \n"
+				. $this->paramInfo($param),
+		);
+
 	}
 
 	public function paramInfo(ReflectionParameter $param): string

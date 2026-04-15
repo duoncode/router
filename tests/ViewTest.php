@@ -14,9 +14,12 @@ use Duon\Router\Tests\Fixtures\TestController;
 use Duon\Router\Tests\Fixtures\TestControllerWithRequest;
 use Duon\Router\Tests\Fixtures\TestControllerWithRequestAndRoute;
 use Duon\Router\Tests\Fixtures\TestControllerWithRoute;
+use Duon\Router\Tests\Fixtures\TestThrowingClass;
 use Duon\Router\Tests\Fixtures\TestUnresolvableClass;
 use Duon\Router\View;
+use Error;
 use GdImage;
+use LogicException;
 
 class ViewTest extends TestCase
 {
@@ -218,12 +221,21 @@ class ViewTest extends TestCase
 		$view->execute($this->request());
 	}
 
-	public function testViewWithUnsupportedParam(): void
+	public function testViewWithUnsupportedParamBubblesUnderlyingError(): void
 	{
-		$this->throws(RuntimeException::class, 'GdImage');
+		$this->throws(Error::class, 'GdImage');
 
 		$route = Route::any('/{name}', fn(GdImage $name) => $name)->after($this->renderer());
 		$route->match('/symbolic');
+		$view = new View($route, null);
+		$view->execute($this->request());
+	}
+
+	public function testViewWithThrowingParamAndDefaultBubblesException(): void
+	{
+		$this->throws(LogicException::class, 'constructor failed');
+
+		$route = Route::any('/', fn(?TestThrowingClass $param = null) => $param)->after($this->renderer());
 		$view = new View($route, null);
 		$view->execute($this->request());
 	}
