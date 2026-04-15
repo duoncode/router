@@ -34,6 +34,7 @@ class ViewHandlerTest extends TestCase
 
 	public function testViewResponseWrapper(): void
 	{
+		/** @mago-expect lint:prefer-static-closure False positive: `$this` is used in anonymous class constructor args. */
 		$route = new Route('/', fn() => new class($this->responseFactory()) implements ResponseWrapper {
 			public function __construct(
 				protected ResponseFactory $factory,
