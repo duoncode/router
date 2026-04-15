@@ -121,7 +121,7 @@ class Router implements RouteAdder
 
 		if ($bust) {
 			// Check if there is already a query parameter present
-			if (strpos($path, '?') !== false) {
+			if (str_contains($path, '?')) {
 				$filePart = strtok($path, '?');
 				$file = $filePart !== false ? $filePart : $path;
 				$sep = '&';
@@ -170,7 +170,7 @@ class Router implements RouteAdder
 		$remainingMethods = array_keys($this->routes);
 
 		foreach ([$requestMethod, self::ANY] as $method) {
-			if (($key = array_search($method, $remainingMethods)) === false) {
+			if (($key = array_search($method, $remainingMethods, true)) === false) {
 				continue;
 			}
 
