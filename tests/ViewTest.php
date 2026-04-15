@@ -61,7 +61,9 @@ class ViewTest extends TestCase
 
 	public function testControllerString(): void
 	{
-		$route = Route::any('/', '\Duon\Router\Tests\Fixtures\TestController::textView')->after($this->renderer());
+		$route = Route::any('/', '\Duon\Router\Tests\Fixtures\TestController::textView')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 
 		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
@@ -89,7 +91,9 @@ class ViewTest extends TestCase
 
 	public function testInvokableClass(): void
 	{
-		$route = Route::any('/', 'Duon\Router\Tests\Fixtures\TestInvokableClass')->after($this->renderer());
+		$route = Route::any('/', 'Duon\Router\Tests\Fixtures\TestInvokableClass')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 
 		$this->assertSame('Invokable', (string) $view->execute($this->request())->getBody());
@@ -108,7 +112,9 @@ class ViewTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'Controller not found');
 
-		$route = Route::any('/', NonexisitentTestController::class . '::nonexistentView')->after($this->renderer());
+		$route = Route::any('/', NonexisitentTestController::class . '::nonexistentView')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 		$view->execute($this->request());
 	}
@@ -116,7 +122,9 @@ class ViewTest extends TestCase
 	public function testControllerWithRequestInConstructor(): void
 	{
 		$request = $this->request();
-		$route = Route::any('/', TestControllerWithRequest::class . '::requestOnly')->after($this->renderer());
+		$route = Route::any('/', TestControllerWithRequest::class . '::requestOnly')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 
 		$this->assertSame($request::class, (string) $view->execute($request)->getBody());
@@ -124,7 +132,9 @@ class ViewTest extends TestCase
 
 	public function testControllerWithRouteInConstructor(): void
 	{
-		$route = Route::any('/', TestControllerWithRoute::class . '::routeOnly')->after($this->renderer());
+		$route = Route::any('/', TestControllerWithRoute::class . '::routeOnly')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 
 		$this->assertSame($route::class, (string) $view->execute($this->request())->getBody());
@@ -172,14 +182,22 @@ class ViewTest extends TestCase
 		$route->match('/symbolic/17');
 		$view = new View($route, null);
 
-		$this->assertSame('{"string":"symbolic","int":17}', (string) $view->execute($this->request())->getBody());
+		$this->assertSame(
+			'{"string":"symbolic","int":17}',
+			(string) $view->execute($this->request())->getBody(),
+		);
 
 		// Should use the default value
-		$route = Route::any('/{string}', TestController::class . '::routeDefaultValueParams')->after($this->renderer());
+		$route = Route::any('/{string}', TestController::class . '::routeDefaultValueParams')->after(
+			$this->renderer(),
+		);
 		$route->match('/symbolic');
 		$view = new View($route, null);
 
-		$this->assertSame('{"string":"symbolic","int":13}', (string) $view->execute($this->request())->getBody());
+		$this->assertSame(
+			'{"string":"symbolic","int":13}',
+			(string) $view->execute($this->request())->getBody(),
+		);
 	}
 
 	public function testViewWithWrongRouteParams(): void
@@ -235,7 +253,9 @@ class ViewTest extends TestCase
 	{
 		$this->throws(LogicException::class, 'constructor failed');
 
-		$route = Route::any('/', fn(?TestThrowingClass $param = null) => $param)->after($this->renderer());
+		$route = Route::any('/', fn(?TestThrowingClass $param = null) => $param)->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 		$view->execute($this->request());
 	}
@@ -244,8 +264,7 @@ class ViewTest extends TestCase
 	{
 		$route = Route::any(
 			'/',
-			#[TestAttribute, TestAttributeExt, TestAttributeDiff]
-			fn() => 'duon',
+			#[TestAttribute, TestAttributeExt, TestAttributeDiff] fn() => 'duon',
 		)->after($this->renderer());
 		$view = new View($route, null);
 
@@ -287,7 +306,9 @@ class ViewTest extends TestCase
 	public function testViewWithUnresolvableParamAndDefault(): void
 	{
 		// When a param cannot be autowired but has a default value, the default should be used
-		$route = Route::any('/', fn(?TestUnresolvableClass $param = null) => $param)->after($this->renderer());
+		$route = Route::any('/', fn(?TestUnresolvableClass $param = null) => $param)->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 		$response = $view->execute($this->request());
 

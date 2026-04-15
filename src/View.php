@@ -55,7 +55,7 @@ final class View
 		}
 
 		/** @var mixed $result */
-		$result = ($closure)(...$this->getArgs(getReflectionFunction($closure), $request));
+		$result = $closure(...$this->getArgs(getReflectionFunction($closure), $request));
 
 		/** @var list<After> $afterAttributes */
 		$afterAttributes = $this->attributes(After::class);
@@ -72,7 +72,9 @@ final class View
 			return $result->unwrap();
 		}
 
-		throw new RuntimeException('Unable to determine a response handler for the returned value of the view');
+		throw new RuntimeException(
+			'Unable to determine a response handler for the returned value of the view',
+		);
 	}
 
 	/** @param ?class-string $filter*/
@@ -80,7 +82,10 @@ final class View
 	{
 		if (!isset($this->attributes)) {
 			if (is_callable($this->view)) {
-				$this->attributes = new AttributesResolver([getReflectionFunction($this->view)], $this->container);
+				$this->attributes = new AttributesResolver(
+					[getReflectionFunction($this->view)],
+					$this->container,
+				);
 			} else {
 				[$controller, $method] = $this->view;
 				$reflectionClass = new ReflectionClass($controller);
@@ -191,8 +196,11 @@ final class View
 		return $args;
 	}
 
-	protected function resolveUnknown(ReflectionParameter $param, Request $request, string $errMsg): mixed
-	{
+	protected function resolveUnknown(
+		ReflectionParameter $param,
+		Request $request,
+		string $errMsg,
+	): mixed {
 		try {
 			return $this->resolveParam($param, $request);
 		} catch (RuntimeException|WireException $e) {
@@ -223,8 +231,7 @@ final class View
 
 			if (!class_exists($typeName) && !interface_exists($typeName)) {
 				throw new RuntimeException(
-					"Type '{$typeName}' is not a class or interface. Source: \n"
-						. $this->paramInfo($param),
+					"Type '{$typeName}' is not a class or interface. Source: \n" . $this->paramInfo($param),
 				);
 			}
 
@@ -241,7 +248,6 @@ final class View
 			"Autowired entities need to have typed constructor parameters. Source: \n"
 				. $this->paramInfo($param),
 		);
-
 	}
 
 	public function paramInfo(ReflectionParameter $param): string
@@ -254,10 +260,13 @@ final class View
 			$rc = $rf->getDeclaringClass();
 		}
 
-		return ($rc ? $rc->getName() . '::' : '')
-			. ($rf->getName() . '(..., ')
+		return (
+			($rc ? $rc->getName() . '::' : '') . $rf->getName() . '(..., '
 			. ($type ? (string) $type . ' ' : '')
-			. '$' . $param->getName() . ', ...)';
+			. '$'
+			. $param->getName()
+			. ', ...)'
+		);
 	}
 
 	public function middleware(): array

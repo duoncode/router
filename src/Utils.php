@@ -17,7 +17,7 @@ function getReflectionFunction(
 	}
 
 	if (is_object($callable)) {
-		return (new ReflectionObject($callable))->getMethod('__invoke');
+		return new ReflectionObject($callable)->getMethod('__invoke');
 	}
 
 	/** @var Closure|non-falsy-string $callable */

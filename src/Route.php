@@ -52,49 +52,55 @@ class Route
 	/** @psalm-param View $view */
 	public static function any(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name));
+		return new self($pattern, $view, $name);
 	}
 
 	/** @psalm-param View $view */
 	public static function get(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name))->method('GET');
+		return new self($pattern, $view, $name)->method('GET');
 	}
 
 	/** @psalm-param View $view */
 	public static function post(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name))->method('POST');
+		return new self($pattern, $view, $name)->method('POST');
 	}
 
 	/** @psalm-param View $view */
 	public static function put(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name))->method('PUT');
+		return new self($pattern, $view, $name)->method('PUT');
 	}
 
 	/** @psalm-param View $view */
 	public static function patch(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name))->method('PATCH');
+		return new self($pattern, $view, $name)->method('PATCH');
 	}
 
 	/** @psalm-param View $view */
-	public static function delete(string $pattern, callable|array|string $view, string $name = ''): self
-	{
-		return (new self($pattern, $view, $name))->method('DELETE');
+	public static function delete(
+		string $pattern,
+		callable|array|string $view,
+		string $name = '',
+	): self {
+		return new self($pattern, $view, $name)->method('DELETE');
 	}
 
 	/** @psalm-param View $view */
 	public static function head(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return (new self($pattern, $view, $name))->method('HEAD');
+		return new self($pattern, $view, $name)->method('HEAD');
 	}
 
 	/** @psalm-param View $view */
-	public static function options(string $pattern, callable|array|string $view, string $name = ''): self
-	{
-		return (new self($pattern, $view, $name))->method('OPTIONS');
+	public static function options(
+		string $pattern,
+		callable|array|string $view,
+		string $name = '',
+	): self {
+		return new self($pattern, $view, $name)->method('OPTIONS');
 	}
 
 	/** @no-named-arguments */
@@ -135,8 +141,10 @@ class Route
 			return $this;
 		}
 
-		throw new ValueError('Cannot add controller to view of type Closure or array. '
-			. 'Also, Endpoints cannot be used in a Group which utilises controllers');
+		throw new ValueError(
+			'Cannot add controller to view of type Closure or array. '
+			. 'Also, Endpoints cannot be used in a Group which utilises controllers',
+		);
 	}
 
 	public function name(): string
@@ -173,7 +181,7 @@ class Route
 			 */
 			foreach ($args as $name => $value) {
 				// TODO: throw error if args do not match url params
-				if (is_scalar($value) or ($value instanceof Stringable)) {
+				if (is_scalar($value) or $value instanceof Stringable) {
 					// basic variables
 					$replaced = preg_replace(
 						'/\{' . (string) $name . '(:.*?)?\}/',

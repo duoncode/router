@@ -18,8 +18,7 @@ class ViewHandlerTest extends TestCase
 	public function testViewResponse(): void
 	{
 		$route = new Route('/', function () {
-			$response = $this->responseFactory()->createResponse()
-				->withHeader('Content-Type', 'text/plain');
+			$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/plain');
 			$response->getBody()->write('Duon PSR Response');
 
 			return $response;
@@ -36,8 +35,10 @@ class ViewHandlerTest extends TestCase
 	public function testViewResponseWrapper(): void
 	{
 		$route = new Route('/', function () {
-			return new class ($this->responseFactory()) implements ResponseWrapper {
-				public function __construct(protected ResponseFactory $factory) {}
+			return new class($this->responseFactory()) implements ResponseWrapper {
+				public function __construct(
+					protected ResponseFactory $factory,
+				) {}
 
 				public function unwrap(): Response
 				{

@@ -78,7 +78,7 @@ class Endpoint
 			$name = $this->name ? $this->name . '-' . $controllerMethod : '';
 
 			$this->adder->addRoute(
-				(new Route($path, [$this->controller, $controllerMethod], $name))
+				new Route($path, [$this->controller, $controllerMethod], $name)
 					->method($httpMethod)
 					->middleware(...$this->middleware),
 			);

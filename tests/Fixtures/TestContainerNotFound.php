@@ -20,7 +20,8 @@ class TestContainerNotFound implements ContainerInterface
 	public function get(string $id): mixed
 	{
 		if (in_array($id, $this->notFoundTypes, true)) {
-			throw new class ('Not found: ' . $id) extends RuntimeException implements NotFoundExceptionInterface {};
+			throw new class('Not found: ' . $id) extends RuntimeException implements
+				NotFoundExceptionInterface {};
 		}
 
 		throw new RuntimeException('Not configured: ' . $id);

@@ -10,7 +10,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 class TestAfterRendererText implements After
 {
-	public function __construct(protected ResponseFactoryInterface $responseFactory) {}
+	public function __construct(
+		protected ResponseFactoryInterface $responseFactory,
+	) {}
 
 	public function handle(mixed $data): Response
 	{

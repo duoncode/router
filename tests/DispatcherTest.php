@@ -59,7 +59,9 @@ class DispatcherTest extends TestCase
 	public function testAddAfterHandlers(): void
 	{
 		$dispatcher = new Dispatcher();
-		$dispatcher->after(new TestAfterRendererText($this->responseFactory()))->after(new TestAfterAddText());
+		$dispatcher
+			->after(new TestAfterRendererText($this->responseFactory()))
+			->after(new TestAfterAddText());
 		$handlers = $dispatcher->afterHandlers();
 
 		$this->assertSame(2, count($handlers));
@@ -69,24 +71,30 @@ class DispatcherTest extends TestCase
 
 	public function testDispatchMiddlewareApplied(): void
 	{
-		$route = (new Route(
+		$route = new Route(
 			'/',
 			function (Request $request) {
 				$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/html');
-				$response->getBody()->write(
-					$request->getAttribute('mw1')
-					. '|' . $request->getAttribute('mw2')
-					. '|' . $request->getAttribute('mw3'),
-				);
+				$response
+					->getBody()
+					->write(
+						$request->getAttribute('mw1') . '|' . $request->getAttribute('mw2') . '|'
+							. $request->getAttribute('mw3'),
+					);
 
 				return $response;
 			},
-		))->middleware(new TestMiddleware2())->middleware(new TestMiddleware3());
+		)
+			->middleware(new TestMiddleware2())
+			->middleware(new TestMiddleware3());
 		$dispatcher = new Dispatcher();
 		$dispatcher->middleware(new TestMiddleware1());
 		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
 
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame('Middleware 1|Middleware 2 - After 1|Middleware 3 - After 2', (string) $response->getBody());
+		$this->assertSame(
+			'Middleware 1|Middleware 2 - After 1|Middleware 3 - After 2',
+			(string) $response->getBody(),
+		);
 	}
 }

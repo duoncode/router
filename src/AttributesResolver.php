@@ -51,7 +51,7 @@ final class AttributesResolver
 	protected function newAttributeInstance(ReflectionAttribute $attribute): object
 	{
 		$instance = $attribute->newInstance();
-		$callAttrs = (new ReflectionObject($instance))->getAttributes(Call::class);
+		$callAttrs = new ReflectionObject($instance)->getAttributes(Call::class);
 
 		if (count($callAttrs) > 0) {
 			$resolver = new CallableResolver(new Creator($this->container));

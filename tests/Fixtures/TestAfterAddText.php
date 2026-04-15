@@ -12,7 +12,7 @@ class TestAfterAddText implements After
 {
 	public function handle(mixed $data): Response
 	{
-		if (!($data instanceof Response)) {
+		if (!$data instanceof Response) {
 			throw new RuntimeException('Must be a response');
 		}
 

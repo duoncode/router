@@ -24,19 +24,32 @@ class GroupTest extends TestCase
 		$index = new Route('/', fn() => null, 'index');
 		$router->addRoute($index);
 
-		$group = new Group('/albums', function (Group $group) {
-			$ctrl = TestController::class;
+		$group = new Group(
+			'/albums',
+			function (Group $group) {
+				$ctrl = TestController::class;
 
-			$group->addRoute(Route::get('/home', "{$ctrl}::albumHome", 'home'));
-			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName", 'name'));
-			$group->addRoute(Route::get('', "{$ctrl}::albumList", 'list'));
-		}, 'albums:');
+				$group->addRoute(Route::get('/home', "{$ctrl}::albumHome", 'home'));
+				$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName", 'name'));
+				$group->addRoute(Route::get('', "{$ctrl}::albumList", 'list'));
+			},
+			'albums:',
+		);
 		$group->create($router);
 
 		$this->assertSame('index', $router->match($this->request(method: 'GET', uri: ''))->name());
-		$this->assertSame('albums:name', $router->match($this->request(method: 'GET', uri: '/albums/symbolic'))->name());
-		$this->assertSame('albums:home', $router->match($this->request(method: 'GET', uri: '/albums/home'))->name());
-		$this->assertSame('albums:list', $router->match($this->request(method: 'GET', uri: '/albums'))->name());
+		$this->assertSame(
+			'albums:name',
+			$router->match($this->request(method: 'GET', uri: '/albums/symbolic'))->name(),
+		);
+		$this->assertSame(
+			'albums:home',
+			$router->match($this->request(method: 'GET', uri: '/albums/home'))->name(),
+		);
+		$this->assertSame(
+			'albums:list',
+			$router->match($this->request(method: 'GET', uri: '/albums'))->name(),
+		);
 		$this->assertSame('/albums/symbolic', $router->routeUrl('albums:name', name: 'symbolic'));
 	}
 
@@ -69,29 +82,60 @@ class GroupTest extends TestCase
 		$index = new Route('/', fn() => null);
 		$router->addRoute($index);
 
-		$group = new Group('/helper', function (Group $group) {
-			$ctrl = TestController::class;
+		$group = new Group(
+			'/helper',
+			function (Group $group) {
+				$ctrl = TestController::class;
 
-			$group->get('/get', "{$ctrl}::albumHome", 'getroute');
-			$group->post('/post', "{$ctrl}::albumHome", 'postroute');
-			$group->put('/put', "{$ctrl}::albumHome", 'putroute');
-			$group->patch('/patch', "{$ctrl}::albumHome", 'patchroute');
-			$group->delete('/delete', "{$ctrl}::albumHome", 'deleteroute');
-			$group->options('/options', "{$ctrl}::albumHome", 'optionsroute');
-			$group->head('/head', "{$ctrl}::albumHome", 'headroute');
-			$group->route('/route', "{$ctrl}::albumHome", 'allroute');
-		}, 'helper:');
+				$group->get('/get', "{$ctrl}::albumHome", 'getroute');
+				$group->post('/post', "{$ctrl}::albumHome", 'postroute');
+				$group->put('/put', "{$ctrl}::albumHome", 'putroute');
+				$group->patch('/patch', "{$ctrl}::albumHome", 'patchroute');
+				$group->delete('/delete', "{$ctrl}::albumHome", 'deleteroute');
+				$group->options('/options', "{$ctrl}::albumHome", 'optionsroute');
+				$group->head('/head', "{$ctrl}::albumHome", 'headroute');
+				$group->route('/route', "{$ctrl}::albumHome", 'allroute');
+			},
+			'helper:',
+		);
 		$group->create($router);
 
-		$this->assertSame('helper:getroute', $router->match($this->request('GET', '/helper/get'))->name());
-		$this->assertSame('helper:postroute', $router->match($this->request('POST', '/helper/post'))->name());
-		$this->assertSame('helper:putroute', $router->match($this->request('PUT', '/helper/put'))->name());
-		$this->assertSame('helper:patchroute', $router->match($this->request('PATCH', '/helper/patch'))->name());
-		$this->assertSame('helper:deleteroute', $router->match($this->request('DELETE', '/helper/delete'))->name());
-		$this->assertSame('helper:optionsroute', $router->match($this->request('OPTIONS', '/helper/options'))->name());
-		$this->assertSame('helper:headroute', $router->match($this->request('HEAD', '/helper/head'))->name());
-		$this->assertSame('helper:allroute', $router->match($this->request('GET', '/helper/route'))->name());
-		$this->assertSame('helper:allroute', $router->match($this->request('HEAD', '/helper/route'))->name());
+		$this->assertSame(
+			'helper:getroute',
+			$router->match($this->request('GET', '/helper/get'))->name(),
+		);
+		$this->assertSame(
+			'helper:postroute',
+			$router->match($this->request('POST', '/helper/post'))->name(),
+		);
+		$this->assertSame(
+			'helper:putroute',
+			$router->match($this->request('PUT', '/helper/put'))->name(),
+		);
+		$this->assertSame(
+			'helper:patchroute',
+			$router->match($this->request('PATCH', '/helper/patch'))->name(),
+		);
+		$this->assertSame(
+			'helper:deleteroute',
+			$router->match($this->request('DELETE', '/helper/delete'))->name(),
+		);
+		$this->assertSame(
+			'helper:optionsroute',
+			$router->match($this->request('OPTIONS', '/helper/options'))->name(),
+		);
+		$this->assertSame(
+			'helper:headroute',
+			$router->match($this->request('HEAD', '/helper/head'))->name(),
+		);
+		$this->assertSame(
+			'helper:allroute',
+			$router->match($this->request('GET', '/helper/route'))->name(),
+		);
+		$this->assertSame(
+			'helper:allroute',
+			$router->match($this->request('HEAD', '/helper/route'))->name(),
+		);
 
 		// raises not allowed
 		$router->match($this->request('GET', '/helper/delete'));
@@ -103,9 +147,13 @@ class GroupTest extends TestCase
 		$index = new Route('/', fn() => null);
 		$router->addRoute($index);
 
-		$group = (new Group('/albums', function (Group $group) {
-			$group->addRoute(Route::get('-list', 'albumList', 'list'));
-		}, 'albums-'))->controller(TestController::class);
+		$group = new Group(
+			'/albums',
+			function (Group $group) {
+				$group->addRoute(Route::get('-list', 'albumList', 'list'));
+			},
+			'albums-',
+		)->controller(TestController::class);
 		$group->create($router);
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums-list'));
@@ -119,9 +167,13 @@ class GroupTest extends TestCase
 		$index = new Route('/', fn() => null);
 		$router->addRoute($index);
 
-		(new Group('/media', function (Group $group) {
-			$group->endpoint('/albums', TestEndpoint::class, 'id')->name('albums')->add();
-		}, 'media-'))->create($router);
+		new Group(
+			'/media',
+			function (Group $group) {
+				$group->endpoint('/albums', TestEndpoint::class, 'id')->name('albums')->add();
+			},
+			'media-',
+		)->create($router);
 
 		$route = $router->match($this->request(method: 'GET', uri: '/media/albums/666'));
 		$this->assertSame('media-albums-get', $route->name());
@@ -136,24 +188,49 @@ class GroupTest extends TestCase
 		$mw2 = new TestMiddleware2();
 		$mw3 = new TestMiddleware3();
 
-		(new Group('/media', function (Group $group) use ($mw1, $mw2, $mw3) {
-			// Create using ::group - will not be created immediately
-			$group->group('/music', function (Group $group) use ($mw1, $mw2, $mw3) {
-				// Create using ::addGroup - will internally be created immediately
-				$group->addGroup((new Group('/albums', function (Group $group) use ($mw1, $mw3) {
-					// Create using ::group shortcut and create immediately
-					$group->group('/songs', function (Group $group) use ($mw1) {
-						// Create  in place - checks if it skips already created groups
-						$group->endpoint('/times', TestEndpoint::class, 'id')
-							->name('times')
-							->middleware($mw1)
-							->add();
-					}, 'songs-')->middleware($mw3)->create($group);
-				}, 'albums-'))->middleware($mw2));
-			}, 'music-');
-		}, 'media-'))->middleware($mw1)->create($router);
+		new Group(
+			'/media',
+			function (Group $group) use ($mw1, $mw2, $mw3) {
+				// Create using ::group - will not be created immediately
+				$group->group(
+					'/music',
+					function (Group $group) use ($mw1, $mw2, $mw3) {
+						// Create using ::addGroup - will internally be created immediately
+						$group->addGroup(new Group(
+							'/albums',
+							function (Group $group) use ($mw1, $mw3) {
+								// Create using ::group shortcut and create immediately
+								$group
+									->group(
+										'/songs',
+										function (Group $group) use ($mw1) {
+											// Create  in place - checks if it skips already created groups
+											$group
+												->endpoint('/times', TestEndpoint::class, 'id')
+												->name('times')
+												->middleware($mw1)
+												->add();
+										},
+										'songs-',
+									)
+									->middleware($mw3)
+									->create($group);
+							},
+							'albums-',
+						)->middleware($mw2));
+					},
+					'music-',
+				);
+			},
+			'media-',
+		)
+			->middleware($mw1)
+			->create($router);
 
-		$route = $router->match($this->request(method: 'GET', uri: '/media/music/albums/songs/times/666'));
+		$route = $router->match($this->request(
+			method: 'GET',
+			uri: '/media/music/albums/songs/times/666',
+		));
 		$this->assertSame('media-music-albums-songs-times-get', $route->name());
 		$this->assertSame([TestEndpoint::class, 'get'], $route->view());
 		$this->assertSame('/media/music/albums/songs/times/{id}', $route->pattern());
@@ -167,11 +244,11 @@ class GroupTest extends TestCase
 
 		$router = new Router();
 
-		$group = (new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', function (Group $group) {
 			$group->addRoute(
 				Route::get('-list', function () {}),
 			);
-		}))->controller(TestController::class);
+		})->controller(TestController::class);
 		$group->create($router);
 	}
 
@@ -181,9 +258,9 @@ class GroupTest extends TestCase
 
 		$router = new Router();
 
-		$group = (new Group('/media', function (Group $group) {
+		$group = new Group('/media', function (Group $group) {
 			$group->endpoint('/albums', TestEndpoint::class, 'id')->name('albums')->add();
-		}))->controller(TestController::class);
+		})->controller(TestController::class);
 		$group->create($router);
 	}
 
@@ -191,13 +268,13 @@ class GroupTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = (new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
 			$group->addRoute(Route::get('/home', "{$ctrl}::albumHome")->middleware(new TestMiddleware3()));
 			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"));
-		}))->middleware(new TestMiddleware2());
+		})->middleware(new TestMiddleware2());
 		$group->create($router);
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'));

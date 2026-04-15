@@ -66,8 +66,10 @@ class Router implements RouteAdder
 		if ($name) {
 			if (array_key_exists($name, $this->names)) {
 				throw new RuntimeException(
-					'Duplicate route: ' . $name . '. If     ||    you want to use the same '
-						. 'url pattern with different methods, you have to create routes with names.',
+					'Duplicate route: '
+					. $name
+					. '. If     ||    you want to use the same '
+					. 'url pattern with different methods, you have to create routes with names.',
 				);
 			}
 
@@ -94,8 +96,10 @@ class Router implements RouteAdder
 
 		if (array_key_exists($name, $this->staticRoutes)) {
 			throw new RuntimeException(
-				'Duplicate static route: ' . $name . '. If you want to use the same '
-					. 'url prefix you have to create static routes with names.',
+				'Duplicate static route: '
+				. $name
+				. '. If you want to use the same '
+				. 'url prefix you have to create static routes with names.',
 			);
 		}
 

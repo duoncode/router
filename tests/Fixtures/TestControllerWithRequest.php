@@ -8,7 +8,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 
 class TestControllerWithRequest
 {
-	public function __construct(protected Request $request) {}
+	public function __construct(
+		protected Request $request,
+	) {}
 
 	public function requestOnly(): string
 	{

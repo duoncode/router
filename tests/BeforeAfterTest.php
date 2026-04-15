@@ -47,7 +47,8 @@ class BeforeAfterTest extends TestCase
 	{
 		$factory = $this->responseFactory();
 		$route = Route::get('/', fn() => 'chuck');
-		$route->after(new TestAfterRendererText($factory))
+		$route
+			->after(new TestAfterRendererText($factory))
 			->after(new TestAfterAddText())
 			->after(new TestAfterRendererJson($factory));
 		$handlers = $route->afterHandlers();
@@ -60,17 +61,21 @@ class BeforeAfterTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = (new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
 
 			// overwrite first after renderer
-			$group->addRoute(Route::get('/home', "{$ctrl}::albumHome")
-				->after(new TestAfterRendererText($this->responseFactory())));
+			$group->addRoute(
+				Route::get('/home', "{$ctrl}::albumHome")
+					->after(new TestAfterRendererText($this->responseFactory())),
+			);
 
 			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"))->after(new TestAfterAddText());
-		}))->after(new TestAfterRendererJson($this->responseFactory()))->after(new TestAfterAddHeader());
+		})
+			->after(new TestAfterRendererJson($this->responseFactory()))
+			->after(new TestAfterAddHeader());
 		$group->create($router);
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'));
@@ -93,17 +98,21 @@ class BeforeAfterTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = (new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
 
 			// overwrite first before
-			$group->addRoute(Route::get('/home', "{$ctrl}::albumHome")
-				->before(new TestBeforeReplace()));
+			$group->addRoute(
+				Route::get('/home', "{$ctrl}::albumHome")
+					->before(new TestBeforeReplace()),
+			);
 
 			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"))->before(new TestBeforeThird());
-		}))->before(new TestBeforeFirst())->before(new TestBeforeSecond());
+		})
+			->before(new TestBeforeFirst())
+			->before(new TestBeforeSecond());
 		$group->create($router);
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'));
@@ -163,11 +172,12 @@ class BeforeAfterTest extends TestCase
 			'/',
 			function (Request $request) {
 				$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/html');
-				$response->getBody()->write(
-					$request->getAttribute('first') . ' '
-					. $request->getAttribute('second') . ' '
-					. $request->getAttribute('third'),
-				);
+				$response
+					->getBody()
+					->write(
+						$request->getAttribute('first') . ' ' . $request->getAttribute('second') . ' '
+							. $request->getAttribute('third'),
+					);
 
 				return $response;
 			},
@@ -179,7 +189,10 @@ class BeforeAfterTest extends TestCase
 		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
 
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame('replaced-added-by-second second-value third-value', (string) $response->getBody());
+		$this->assertSame(
+			'replaced-added-by-second second-value third-value',
+			(string) $response->getBody(),
+		);
 	}
 
 	public function testDispatcherAfterHandler(): void

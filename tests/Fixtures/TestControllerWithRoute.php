@@ -8,7 +8,9 @@ use Duon\Router\Route;
 
 class TestControllerWithRoute
 {
-	public function __construct(protected Route $route) {}
+	public function __construct(
+		protected Route $route,
+	) {}
 
 	public function routeOnly(): string
 	{

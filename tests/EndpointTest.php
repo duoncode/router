@@ -14,7 +14,7 @@ class EndpointTest extends TestCase
 	public function testEndpointWithDefaults(): void
 	{
 		$router = new Router();
-		(new Endpoint($router, '/endpoints', TestEndpoint::class, 'id'))->add();
+		new Endpoint($router, '/endpoints', TestEndpoint::class, 'id')->add();
 
 		$route = $router->match($this->request('DELETE', '/endpoints'));
 		$this->assertSame('/endpoints', $route->pattern());
@@ -75,7 +75,7 @@ class EndpointTest extends TestCase
 	public function testEndpointWithPluralSingular(): void
 	{
 		$router = new Router();
-		(new Endpoint($router, ['/endpoints', '/endpoint'], TestEndpoint::class, 'id'))->add();
+		new Endpoint($router, ['/endpoints', '/endpoint'], TestEndpoint::class, 'id')->add();
 
 		$route = $router->match($this->request('DELETE', '/endpoints'));
 		$this->assertSame('/endpoints', $route->pattern());
@@ -136,7 +136,7 @@ class EndpointTest extends TestCase
 	public function testEndpointWithName(): void
 	{
 		$router = new Router();
-		(new Endpoint($router, '/endpoints', TestEndpoint::class, 'id'))->name('albums')->add();
+		new Endpoint($router, '/endpoints', TestEndpoint::class, 'id')->name('albums')->add();
 
 		$route = $router->match($this->request('DELETE', '/endpoints'));
 		$this->assertSame('albums-deleteList', $route->name());
@@ -175,7 +175,7 @@ class EndpointTest extends TestCase
 	public function testEndpointWithMultipleArgs(): void
 	{
 		$router = new Router();
-		(new Endpoint($router, '/endpoints', TestEndpoint::class, ['id', 'category']))->add();
+		new Endpoint($router, '/endpoints', TestEndpoint::class, ['id', 'category'])->add();
 
 		$route = $router->match($this->request('POST', '/endpoints'));
 		$this->assertSame('/endpoints', $route->pattern());

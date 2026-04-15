@@ -15,8 +15,16 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		$this->assertSame('/static/test.json', $router->staticUrl('/static', 'test.json'));
-		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json', true));
-		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json?exists=true', true));
+		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl(
+			'/static',
+			'test.json',
+			true,
+		));
+		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl(
+			'/static',
+			'test.json?exists=true',
+			true,
+		));
 		$this->assertMatchesRegularExpression(
 			'/https:\/\/duon.local\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->staticUrl(
@@ -34,8 +42,16 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		$this->assertSame('/prefix/static/test.json', $router->staticUrl('/static', 'test.json'));
-		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json', true));
-		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl('/static', 'test.json?exists=true', true));
+		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl(
+			'/static',
+			'test.json',
+			true,
+		));
+		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl(
+			'/static',
+			'test.json?exists=true',
+			true,
+		));
 		$this->assertMatchesRegularExpression(
 			'/https:\/\/duon.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->staticUrl(
@@ -67,7 +83,7 @@ class StaticRouteTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'does not exist');
 
-		(new Router())->addStatic('/static', $this->root . '/fantasy/dir');
+		new Router()->addStatic('/static', $this->root . '/fantasy/dir');
 	}
 
 	public function testNonExistingFilesNoCachebuster(): void

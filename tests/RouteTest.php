@@ -115,8 +115,10 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', fn() => null);
 
-		$obj = new class (1991) extends stdClass {
-			public function __construct(protected int $val) {}
+		$obj = new class(1991) extends stdClass {
+			public function __construct(
+				protected int $val,
+			) {}
 
 			public function __toString(): string
 			{
