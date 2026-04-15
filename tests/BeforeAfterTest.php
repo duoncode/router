@@ -17,7 +17,6 @@ use Duon\Router\Tests\Fixtures\TestBeforeReplace;
 use Duon\Router\Tests\Fixtures\TestBeforeSecond;
 use Duon\Router\Tests\Fixtures\TestBeforeThird;
 use Duon\Router\View;
-use PHPUnit\Framework\Attributes\Group as G;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -25,7 +24,7 @@ class BeforeAfterTest extends TestCase
 {
 	public function testRouteBeforeHandlers(): void
 	{
-		$route = Route::get('/', fn() => 'chuck');
+		$route = Route::get('/', static fn() => 'chuck');
 		$route->before(new TestBeforeFirst())->before(new TestBeforeSecond());
 		$handlers = $route->beforeHandlers();
 
@@ -35,7 +34,7 @@ class BeforeAfterTest extends TestCase
 
 	public function testRouteAfterHandlers(): void
 	{
-		$route = Route::get('/', fn() => 'chuck');
+		$route = Route::get('/', static fn() => 'chuck');
 		$route->after(new TestAfterRendererText($this->responseFactory()))->after(new TestAfterAddText());
 		$handlers = $route->afterHandlers();
 
@@ -46,7 +45,7 @@ class BeforeAfterTest extends TestCase
 	public function testRouteAfterHandlersReplace(): void
 	{
 		$factory = $this->responseFactory();
-		$route = Route::get('/', fn() => 'chuck');
+		$route = Route::get('/', static fn() => 'chuck');
 		$route
 			->after(new TestAfterRendererText($factory))
 			->after(new TestAfterAddText())
@@ -98,7 +97,7 @@ class BeforeAfterTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', static function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
@@ -133,7 +132,7 @@ class BeforeAfterTest extends TestCase
 
 	public function testViewBeforeHandler(): void
 	{
-		$route = Route::any('/', fn() => 'duon')
+		$route = Route::any('/', static fn() => 'duon')
 			->before(new TestBeforeReplace())
 			->before(new TestBeforeThird());
 		$view = new View(
@@ -151,7 +150,7 @@ class BeforeAfterTest extends TestCase
 	public function testViewAfterHandler(): void
 	{
 		$factory = $this->responseFactory();
-		$route = Route::any('/', fn() => 'duon')
+		$route = Route::any('/', static fn() => 'duon')
 			->after(new TestAfterRendererText($factory))
 			->after(new TestAfterAddText());
 		$view = new View(
@@ -200,7 +199,7 @@ class BeforeAfterTest extends TestCase
 		$factory = $this->responseFactory();
 		$route = new Route(
 			'/',
-			function () {
+			static function () {
 				return 'Duon';
 			},
 		);

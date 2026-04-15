@@ -25,7 +25,7 @@ class ViewTest extends TestCase
 {
 	public function testAttribute(): void
 	{
-		$route = Route::any('/', #[TestAttribute] fn() => 'duon')->after($this->renderer());
+		$route = Route::any('/', #[TestAttribute] static fn() => 'duon')->after($this->renderer());
 		$view = new View($route, null);
 
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -33,7 +33,9 @@ class ViewTest extends TestCase
 
 	public function testAttributeWithCallAttribute(): void
 	{
-		$route = Route::any('/', #[TestCallableAttribute] fn() => 'duon')->after($this->renderer());
+		$route = Route::any('/', #[TestCallableAttribute] static fn() => 'duon')->after(
+			$this->renderer(),
+		);
 		$view = new View($route, null);
 
 		/** @var TestCallableAttribute $attr */
@@ -43,7 +45,7 @@ class ViewTest extends TestCase
 
 	public function testClosure(): void
 	{
-		$route = Route::any('/', fn() => 'duon')->after($this->renderer());
+		$route = Route::any('/', static fn() => 'duon')->after($this->renderer());
 		$view = new View($route, null);
 
 		$this->assertSame('duon', (string) $view->execute($this->request())->getBody());
@@ -243,7 +245,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(Error::class, 'GdImage');
 
-		$route = Route::any('/{name}', fn(GdImage $name) => $name)->after($this->renderer());
+		$route = Route::any('/{name}', static fn(GdImage $name) => $name)->after($this->renderer());
 		$route->match('/symbolic');
 		$view = new View($route, null);
 		$view->execute($this->request());
@@ -253,7 +255,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(LogicException::class, 'constructor failed');
 
-		$route = Route::any('/', fn(?TestThrowingClass $param = null) => $param)->after(
+		$route = Route::any('/', static fn(?TestThrowingClass $param = null) => $param)->after(
 			$this->renderer(),
 		);
 		$view = new View($route, null);
@@ -264,7 +266,7 @@ class ViewTest extends TestCase
 	{
 		$route = Route::any(
 			'/',
-			#[TestAttribute, TestAttributeExt, TestAttributeDiff] fn() => 'duon',
+			#[TestAttribute, TestAttributeExt, TestAttributeDiff] static fn() => 'duon',
 		)->after($this->renderer());
 		$view = new View($route, null);
 
@@ -289,7 +291,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'does not support union or intersection types');
 
-		$route = Route::any('/', fn(string|int $param) => $param)->after($this->renderer());
+		$route = Route::any('/', static fn(string|int $param) => $param)->after($this->renderer());
 		$view = new View($route, null);
 		$view->execute($this->request());
 	}
@@ -298,7 +300,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'need to have typed constructor parameters');
 
-		$route = Route::any('/', fn($param) => $param)->after($this->renderer());
+		$route = Route::any('/', static fn($param) => $param)->after($this->renderer());
 		$view = new View($route, null);
 		$view->execute($this->request());
 	}
@@ -306,7 +308,7 @@ class ViewTest extends TestCase
 	public function testViewWithUnresolvableParamAndDefault(): void
 	{
 		// When a param cannot be autowired but has a default value, the default should be used
-		$route = Route::any('/', fn(?TestUnresolvableClass $param = null) => $param)->after(
+		$route = Route::any('/', static fn(?TestUnresolvableClass $param = null) => $param)->after(
 			$this->renderer(),
 		);
 		$view = new View($route, null);

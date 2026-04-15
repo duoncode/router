@@ -15,7 +15,7 @@ use ReflectionObject;
 
 final class AttributesResolver
 {
-	protected readonly array $attributes;
+	private readonly array $attributes;
 
 	/** @param list<ReflectionClass|ReflectionFunctionAbstract> $reflectors */
 	public function __construct(
@@ -23,7 +23,7 @@ final class AttributesResolver
 		protected readonly ?Container $container,
 	) {
 		$reflectionAttributes = array_merge(
-			...array_map(fn($reflector) => $reflector->getAttributes(), $reflectors),
+			...array_map(static fn($reflector) => $reflector->getAttributes(), $reflectors),
 		);
 
 		$this->attributes = array_map(
@@ -39,7 +39,7 @@ final class AttributesResolver
 	{
 		if ($filter) {
 			return array_values(
-				array_filter($this->attributes, function ($attribute) use ($filter) {
+				array_filter($this->attributes, static function ($attribute) use ($filter) {
 					return $attribute instanceof $filter;
 				}),
 			);
@@ -48,7 +48,7 @@ final class AttributesResolver
 		return $this->attributes;
 	}
 
-	protected function newAttributeInstance(ReflectionAttribute $attribute): object
+	private function newAttributeInstance(ReflectionAttribute $attribute): object
 	{
 		$instance = $attribute->newInstance();
 		$callAttrs = new ReflectionObject($instance)->getAttributes(Call::class);

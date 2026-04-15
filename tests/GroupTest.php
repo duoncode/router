@@ -21,12 +21,12 @@ class GroupTest extends TestCase
 	public function testMatchingNamed(): void
 	{
 		$router = new Router();
-		$index = new Route('/', fn() => null, 'index');
+		$index = new Route('/', static fn() => null, 'index');
 		$router->addRoute($index);
 
 		$group = new Group(
 			'/albums',
-			function (Group $group) {
+			static function (Group $group) {
 				$ctrl = TestController::class;
 
 				$group->addRoute(Route::get('/home', "{$ctrl}::albumHome", 'home'));
@@ -56,10 +56,10 @@ class GroupTest extends TestCase
 	public function testMatchingUnnamed(): void
 	{
 		$router = new Router();
-		$index = new Route('/', fn() => null);
+		$index = new Route('/', static fn() => null);
 		$router->addRoute($index);
 
-		$group = new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', static function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('/home', "{$ctrl}::albumHome"));
@@ -79,12 +79,12 @@ class GroupTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$index = new Route('/', fn() => null);
+		$index = new Route('/', static fn() => null);
 		$router->addRoute($index);
 
 		$group = new Group(
 			'/helper',
-			function (Group $group) {
+			static function (Group $group) {
 				$ctrl = TestController::class;
 
 				$group->get('/get', "{$ctrl}::albumHome", 'getroute');
@@ -144,12 +144,12 @@ class GroupTest extends TestCase
 	public function testControllerPrefixing(): void
 	{
 		$router = new Router();
-		$index = new Route('/', fn() => null);
+		$index = new Route('/', static fn() => null);
 		$router->addRoute($index);
 
 		$group = new Group(
 			'/albums',
-			function (Group $group) {
+			static function (Group $group) {
 				$group->addRoute(Route::get('-list', 'albumList', 'list'));
 			},
 			'albums-',
@@ -164,12 +164,12 @@ class GroupTest extends TestCase
 	public function testEndpointInGroup(): void
 	{
 		$router = new Router();
-		$index = new Route('/', fn() => null);
+		$index = new Route('/', static fn() => null);
 		$router->addRoute($index);
 
 		new Group(
 			'/media',
-			function (Group $group) {
+			static function (Group $group) {
 				$group->endpoint('/albums', TestEndpoint::class, 'id')->name('albums')->add();
 			},
 			'media-',
@@ -190,20 +190,20 @@ class GroupTest extends TestCase
 
 		new Group(
 			'/media',
-			function (Group $group) use ($mw1, $mw2, $mw3) {
+			static function (Group $group) use ($mw1, $mw2, $mw3) {
 				// Create using ::group - will not be created immediately
 				$group->group(
 					'/music',
-					function (Group $group) use ($mw1, $mw2, $mw3) {
+					static function (Group $group) use ($mw1, $mw2, $mw3) {
 						// Create using ::addGroup - will internally be created immediately
 						$group->addGroup(new Group(
 							'/albums',
-							function (Group $group) use ($mw1, $mw3) {
+							static function (Group $group) use ($mw1, $mw3) {
 								// Create using ::group shortcut and create immediately
 								$group
 									->group(
 										'/songs',
-										function (Group $group) use ($mw1) {
+										static function (Group $group) use ($mw1) {
 											// Create  in place - checks if it skips already created groups
 											$group
 												->endpoint('/times', TestEndpoint::class, 'id')
@@ -244,9 +244,9 @@ class GroupTest extends TestCase
 
 		$router = new Router();
 
-		$group = new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', static function (Group $group) {
 			$group->addRoute(
-				Route::get('-list', function () {}),
+				Route::get('-list', static function () {}),
 			);
 		})->controller(TestController::class);
 		$group->create($router);
@@ -258,7 +258,7 @@ class GroupTest extends TestCase
 
 		$router = new Router();
 
-		$group = new Group('/media', function (Group $group) {
+		$group = new Group('/media', static function (Group $group) {
 			$group->endpoint('/albums', TestEndpoint::class, 'id')->name('albums')->add();
 		})->controller(TestController::class);
 		$group->create($router);
@@ -268,7 +268,7 @@ class GroupTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = new Group('/albums', function (Group $group) {
+		$group = new Group('/albums', static function (Group $group) {
 			$ctrl = TestController::class;
 
 			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
@@ -293,7 +293,7 @@ class GroupTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
-		$group = new Group('/albums', function (Group $group) {}, 'test:');
-		$group->addRoute(Route::get('/', fn() => ''));
+		$group = new Group('/albums', static function (Group $group) {}, 'test:');
+		$group->addRoute(Route::get('/', static fn() => ''));
 	}
 }

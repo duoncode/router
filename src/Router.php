@@ -8,8 +8,6 @@ use Closure;
 use Duon\Router\Exception\MethodNotAllowedException;
 use Duon\Router\Exception\NotFoundException;
 use Duon\Router\Exception\RuntimeException;
-use Duon\Router\RouteAdder;
-use Duon\Router\StaticRoute;
 use Override;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -172,18 +170,22 @@ class Router implements RouteAdder
 		$remainingMethods = array_keys($this->routes);
 
 		foreach ([$requestMethod, self::ANY] as $method) {
-			if (($key = array_search($method, $remainingMethods)) !== false) {
-				unset($remainingMethods[$key]);
+			if (($key = array_search($method, $remainingMethods)) === false) {
+				continue;
 			}
+
+			unset($remainingMethods[$key]);
 		}
 
 		foreach ($remainingMethods as $method) {
 			foreach ($this->routes[$method] as $route) {
-				if ($route->match($url, $this->globalPrefix)) {
-					$wrongMethod = true;
-
-					break;
+				if (!$route->match($url, $this->globalPrefix)) {
+					continue;
 				}
+
+				$wrongMethod = true;
+
+				break;
 			}
 		}
 

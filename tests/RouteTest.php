@@ -15,7 +15,7 @@ class RouteTest extends TestCase
 {
 	public function testIndexMatching(): void
 	{
-		$route = new Route('/', fn() => null);
+		$route = new Route('/', static fn() => null);
 
 		$this->assertSame($route, $route->match('/'));
 		$this->assertSame(null, $route->match('/rick'));
@@ -23,7 +23,7 @@ class RouteTest extends TestCase
 
 	public function testSimpleMatching(): void
 	{
-		$route = new Route('/chuck', fn() => null);
+		$route = new Route('/chuck', static fn() => null);
 
 		$this->assertSame($route, $route->match('/chuck'));
 		$this->assertSame(null, $route->match('/rick'));
@@ -31,7 +31,7 @@ class RouteTest extends TestCase
 
 	public function testSimpleMatchingWithoutLeadingSlash(): void
 	{
-		$route = new Route('chuck/and/rick', fn() => null);
+		$route = new Route('chuck/and/rick', static fn() => null);
 
 		$this->assertSame($route, $route->match('/chuck/and/rick'));
 		$this->assertSame(null, $route->match('/chuck'));
@@ -39,12 +39,12 @@ class RouteTest extends TestCase
 
 	public function testParameterMatching(): void
 	{
-		$route = new Route('/album/{name}', fn() => null);
+		$route = new Route('/album/{name}', static fn() => null);
 
 		$this->assertSame($route, $route->match('/album/leprosy'));
 		$this->assertSame(['name' => 'leprosy'], $route->args());
 
-		$route = new Route('/contributed/{from}/{to}', fn() => null);
+		$route = new Route('/contributed/{from}/{to}', static fn() => null);
 
 		$this->assertSame($route, $route->match('/contributed/1983/1991'));
 		$this->assertSame(['from' => '1983', 'to' => '1991'], $route->args());
@@ -52,22 +52,22 @@ class RouteTest extends TestCase
 
 	public function testParameterMatchingRegex(): void
 	{
-		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', fn() => null);
+		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
 
 		$this->assertSame(null, $route->match('/contributed/1983/1991'));
 		$this->assertSame($route, $route->match('/contributed/19937/701'));
 		$this->assertSame(['from' => '19937', 'to' => '701'], $route->args());
 
-		$route = new Route('/albums/{from:\d{4}}', fn() => null);
+		$route = new Route('/albums/{from:\d{4}}', static fn() => null);
 		$this->assertSame($route, $route->match('/albums/1995'));
 		$this->assertSame(null, $route->match('/albums/521'));
 
-		$route = new Route('/albums/{from:\d{3,4}}', fn() => null);
+		$route = new Route('/albums/{from:\d{3,4}}', static fn() => null);
 		$this->assertSame($route, $route->match('/albums/2001'));
 		$this->assertSame($route, $route->match('/albums/127'));
 		$this->assertSame(null, $route->match('/albums/13'));
 
-		$route = new Route('/albums/{from:\d{2}}/{to:\d{4,5}}', fn() => null);
+		$route = new Route('/albums/{from:\d{2}}/{to:\d{4,5}}', static fn() => null);
 		$this->assertSame(null, $route->match('/albums/aa/bbbb'));
 		$this->assertSame(null, $route->match('/albums/13/773'));
 		$this->assertSame(null, $route->match('/albums/457/1709'));
@@ -75,7 +75,7 @@ class RouteTest extends TestCase
 		$this->assertSame($route, $route->match('/albums/43/93911'));
 		$this->assertSame(['from' => '43', 'to' => '93911'], $route->args());
 
-		$route = new Route('/albums{format:\.?(json|xml|)}', fn() => null);
+		$route = new Route('/albums{format:\.?(json|xml|)}', static fn() => null);
 		$this->assertSame($route, $route->match('/albums'));
 		$this->assertSame(['format' => ''], $route->args());
 		$this->assertSame($route, $route->match('/albums.json'));
@@ -89,7 +89,7 @@ class RouteTest extends TestCase
 		$this->throws(ValueError::class, 'Escaped braces are not allowed');
 
 		// Invalid escaped left braces
-		$route = new Route('/contributed/{from:\{\d+}', fn() => null);
+		$route = new Route('/contributed/{from:\{\d+}', static fn() => null);
 		$route->match('/');
 	}
 
@@ -98,7 +98,7 @@ class RouteTest extends TestCase
 		$this->throws(ValueError::class, 'Escaped braces are not allowed:');
 
 		// Invalid escaped right braces
-		$route = new Route('/contributed/{from:\d+\}}', fn() => null);
+		$route = new Route('/contributed/{from:\d+\}}', static fn() => null);
 		$route->match('/');
 	}
 
@@ -107,13 +107,13 @@ class RouteTest extends TestCase
 		$this->throws(ValueError::class, 'Unbalanced braces in route pattern:');
 
 		// Invalid unbalanced braces
-		$route = new Route('/contributed/{from:\d+{1,2}{}', fn() => null);
+		$route = new Route('/contributed/{from:\d+{1,2}{}', static fn() => null);
 		$route->match('/');
 	}
 
 	public function testUrlConstructionRegularParameters(): void
 	{
-		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', fn() => null);
+		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
 
 		$obj = new class(1991) extends stdClass {
 			public function __construct(
@@ -132,7 +132,7 @@ class RouteTest extends TestCase
 
 	public function testUrlConstructionNoParameters(): void
 	{
-		$route = new Route('/albums', fn() => null);
+		$route = new Route('/albums', static fn() => null);
 
 		$this->assertSame('/albums', $route->url());
 		$this->assertSame('/albums', $route->url(test: 1));
@@ -142,7 +142,7 @@ class RouteTest extends TestCase
 	{
 		$this->throws(InvalidArgumentException::class);
 
-		$route = new Route('/albums', fn() => null);
+		$route = new Route('/albums', static fn() => null);
 		$route->url(1, 2);
 	}
 
@@ -150,28 +150,28 @@ class RouteTest extends TestCase
 	{
 		$this->throws(InvalidArgumentException::class);
 
-		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', fn() => null);
+		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
 		$route->url(from: 1983, to: []);
 	}
 
 	public function testRoutePrefix(): void
 	{
-		$route = Route::get('/albums', fn() => 'chuck')->prefix(pattern: 'api');
+		$route = Route::get('/albums', static fn() => 'chuck')->prefix(pattern: 'api');
 		$this->assertSame($route, $route->match('/api/albums'));
 
-		$route = Route::get('albums', fn() => 'chuck', 'albums')->prefix('api/', 'api::');
+		$route = Route::get('albums', static fn() => 'chuck', 'albums')->prefix('api/', 'api::');
 		$this->assertSame('api/albums', $route->pattern());
 		$this->assertSame('api::albums', $route->name());
 		$this->assertSame($route, $route->match('/api/albums'));
 
-		$route = Route::get('albums', fn() => 'chuck', 'albums')->prefix(name: 'api::');
+		$route = Route::get('albums', static fn() => 'chuck', 'albums')->prefix(name: 'api::');
 		$this->assertSame($route, $route->match('/albums'));
 		$this->assertSame('api::albums', $route->name());
 	}
 
 	public function testGetViewClosure(): void
 	{
-		$route = new Route('/', fn() => 'chuck');
+		$route = new Route('/', static fn() => 'chuck');
 
 		$this->assertSame('chuck', $route->view()());
 	}
@@ -192,21 +192,21 @@ class RouteTest extends TestCase
 
 	public function testRouteNameUnnamed(): void
 	{
-		$route = Route::get('/albums', fn() => 'chuck');
+		$route = Route::get('/albums', static fn() => 'chuck');
 
 		$this->assertSame('', $route->name());
 	}
 
 	public function testRouteNameNamed(): void
 	{
-		$route = Route::get('/albums', fn() => 'chuck', 'albumroute');
+		$route = Route::get('/albums', static fn() => 'chuck', 'albumroute');
 
 		$this->assertSame('albumroute', $route->name());
 	}
 
 	public function testRouteMiddleware(): void
 	{
-		$route = Route::get('/', fn() => 'chuck');
+		$route = Route::get('/', static fn() => 'chuck');
 		$route->middleware(new TestMiddleware1());
 		$route->middleware(new TestMiddleware2());
 		$middleware = $route->getMiddleware();

@@ -15,7 +15,7 @@ class UtilsTest extends TestCase
 	#[TestDox('getRelfectionFunction with Closure')]
 	public function testReflectionFunctionClosure(): void
 	{
-		$rf = getReflectionFunction(function () {});
+		$rf = getReflectionFunction(static function () {});
 
 		$this->assertInstanceOf(ReflectionFunction::class, $rf);
 	}

@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace Duon\Router;
 
 use Closure;
-use Duon\Router\AddsMiddleware;
-use Duon\Router\AddsRoutes;
 use Duon\Router\Exception\RuntimeException;
-use Duon\Router\RouteAdder;
 use Override;
 
 /** @psalm-api */

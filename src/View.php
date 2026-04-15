@@ -22,11 +22,11 @@ final class View
 {
 	use AddsBeforeAfter;
 
-	protected Creator $creator;
-	protected ?AttributesResolver $attributes = null;
+	private Creator $creator;
+	private ?AttributesResolver $attributes = null;
 
 	/** @var Closure|array{class-string, string} */
-	protected Closure|array $view;
+	private Closure|array $view;
 
 	/**
 	 * @param list<Before> $beforeHandlers
@@ -100,7 +100,7 @@ final class View
 	}
 
 	/** @return Closure|array{class-string, string} */
-	protected function prepareView(callable|string|array $view): Closure|array
+	private function prepareView(callable|string|array $view): Closure|array
 	{
 		if (is_callable($view)) {
 			/** @var callable $view -- Psalm complains even though we use is_callable() */
@@ -127,7 +127,7 @@ final class View
 		throw new RuntimeException("Controller not found {$controllerName}");
 	}
 
-	protected function getClosure(Request $request): Closure
+	private function getClosure(Request $request): Closure
 	{
 		if ($this->view instanceof Closure) {
 			return $this->view;
@@ -164,7 +164,7 @@ final class View
 	 *
 	 * @psalm-suppress MixedAssignment -- $args values are mixed
 	 */
-	protected function getArgs(ReflectionFunctionAbstract $rf, Request $request): array
+	private function getArgs(ReflectionFunctionAbstract $rf, Request $request): array
 	{
 		/** @var array<string, mixed> */
 		$args = [];
@@ -196,7 +196,7 @@ final class View
 		return $args;
 	}
 
-	protected function resolveUnknown(
+	private function resolveUnknown(
 		ReflectionParameter $param,
 		Request $request,
 		string $errMsg,
@@ -214,7 +214,7 @@ final class View
 		}
 	}
 
-	protected function resolveParam(ReflectionParameter $param, Request $request): mixed
+	private function resolveParam(ReflectionParameter $param, Request $request): mixed
 	{
 		$type = $param->getType();
 
@@ -261,7 +261,9 @@ final class View
 		}
 
 		return (
-			($rc ? $rc->getName() . '::' : '') . $rf->getName() . '(..., '
+			($rc ? $rc->getName() . '::' : '')
+			. $rf->getName()
+			. '(..., '
 			. ($type ? (string) $type . ' ' : '')
 			. '$'
 			. $param->getName()

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Duon\Router;
 
-use Duon\Router\Group;
-use Duon\Router\Route;
-
 /**
  * @psalm-api
  *

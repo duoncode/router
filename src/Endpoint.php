@@ -30,7 +30,7 @@ class Endpoint
 	public function add(): void
 	{
 		if (is_array($this->args)) {
-			$args = '/' . implode('/', array_map(fn($arg) => '{' . (string) $arg . '}', $this->args));
+			$args = '/' . implode('/', array_map(static fn($arg) => '{' . (string) $arg . '}', $this->args));
 		} else {
 			$args = '/{' . $this->args . '}';
 		}

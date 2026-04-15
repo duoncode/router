@@ -106,7 +106,9 @@ class Route
 	/** @no-named-arguments */
 	public function method(string ...$args): static
 	{
-		$this->methods = array_merge($this->methods ?? [], array_map(fn($m) => strtoupper($m), $args));
+		$this->methods = array_merge($this->methods ?? [], array_map(static fn($m) => strtoupper(
+			$m,
+		), $args));
 
 		return $this;
 	}
@@ -236,7 +238,7 @@ class Route
 			// Remove integer indexes from array
 			$matches = array_filter(
 				$matches,
-				fn($_, $k) => !is_int($k),
+				static fn($_, $k) => !is_int($k),
 				ARRAY_FILTER_USE_BOTH,
 			);
 

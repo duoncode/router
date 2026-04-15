@@ -19,11 +19,11 @@ class RouterTest extends TestCase
 	public function testMatching(): void
 	{
 		$router = new Router();
-		$index = new Route('/', fn() => null, 'index');
+		$index = new Route('/', static fn() => null, 'index');
 		$router->addRoute($index);
-		$albums = new Route('/albums', fn() => null);
+		$albums = new Route('/albums', static fn() => null);
 		$router->addRoute($albums);
-		$router->addGroup(new Group('/albums', function (Group $group) {
+		$router->addGroup(new Group('/albums', static function (Group $group) {
 			$ctrl = TestController::class;
 			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"));
 		}));
@@ -39,11 +39,11 @@ class RouterTest extends TestCase
 	public function testPrefixMatching(): void
 	{
 		$router = new Router('/prefix');
-		$index = new Route('/', fn() => null, 'index');
+		$index = new Route('/', static fn() => null, 'index');
 		$router->addRoute($index);
-		$albums = new Route('/albums', fn() => null);
+		$albums = new Route('/albums', static fn() => null);
 		$router->addRoute($albums);
-		$router->addGroup(new Group('/albums', function (Group $group) {
+		$router->addGroup(new Group('/albums', static function (Group $group) {
 			$ctrl = TestController::class;
 			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"));
 		}));
@@ -59,7 +59,7 @@ class RouterTest extends TestCase
 	public function testPrefixCleanUp(): void
 	{
 		$router = new Router('prefix');
-		$index = new Route('/test', fn() => null, 'test');
+		$index = new Route('/test', static fn() => null, 'test');
 		$router->addRoute($index);
 
 		$this->assertSame('test', $router->match($this->request('GET', '/prefix/test'))->name());
@@ -76,7 +76,7 @@ class RouterTest extends TestCase
 	public function testSimpleMatchingUrlEncoded(): void
 	{
 		$router = new Router();
-		$route = new Route('/album name/...slug', fn() => null, 'encoded');
+		$route = new Route('/album name/...slug', static fn() => null, 'encoded');
 		$router->addRoute($route);
 
 		$this->assertSame(
@@ -95,8 +95,8 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$index = $router->get('/', fn() => null, 'index');
-		$albums = $router->post('/albums', fn() => null);
+		$index = $router->get('/', static fn() => null, 'index');
+		$albums = $router->post('/albums', static fn() => null);
 
 		$this->assertSame('index', $router->match($this->request('GET', ''))->name());
 		$this->assertSame('', $router->match($this->request('POST', '/albums'))->name());
@@ -109,7 +109,7 @@ class RouterTest extends TestCase
 	public function testGenerateRouteUrl(): void
 	{
 		$router = new Router();
-		$albums = new Route('albums/{from}/{to}', fn() => null, 'albums');
+		$albums = new Route('albums/{from}/{to}', static fn() => null, 'albums');
 		$router->addRoute($albums);
 
 		$this->assertSame('/albums/1990/1995', $router->routeUrl('albums', from: 1990, to: 1995));
@@ -131,7 +131,7 @@ class RouterTest extends TestCase
 	public function testGETMatching(): void
 	{
 		$router = new Router();
-		$route = Route::get('/', fn() => null);
+		$route = Route::get('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/')));
@@ -141,7 +141,7 @@ class RouterTest extends TestCase
 	public function testHEADMatching(): void
 	{
 		$router = new Router();
-		$route = Route::head('/', fn() => null);
+		$route = Route::head('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('HEAD', '/')));
@@ -151,7 +151,7 @@ class RouterTest extends TestCase
 	public function testPUTMatching(): void
 	{
 		$router = new Router();
-		$route = Route::put('/', fn() => null);
+		$route = Route::put('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('PUT', '/')));
@@ -161,7 +161,7 @@ class RouterTest extends TestCase
 	public function testPOSTMatching(): void
 	{
 		$router = new Router();
-		$route = Route::post('/', fn() => null);
+		$route = Route::post('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('POST', '/')));
@@ -171,7 +171,7 @@ class RouterTest extends TestCase
 	public function testPATCHMatching(): void
 	{
 		$router = new Router();
-		$route = Route::patch('/', fn() => null);
+		$route = Route::patch('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('PATCH', '/')));
@@ -181,7 +181,7 @@ class RouterTest extends TestCase
 	public function testDELETEMatching(): void
 	{
 		$router = new Router();
-		$route = Route::delete('/', fn() => null);
+		$route = Route::delete('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('DELETE', '/')));
@@ -191,7 +191,7 @@ class RouterTest extends TestCase
 	public function testOPTIONSMatching(): void
 	{
 		$router = new Router();
-		$route = Route::options('/', fn() => null);
+		$route = Route::options('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('OPTIONS', '/')));
@@ -202,7 +202,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = Route::get('/', fn() => null);
+		$route = Route::get('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('POST', '/')));
@@ -214,7 +214,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = Route::get('/', fn() => null)->method('post');
+		$route = Route::get('/', static fn() => null)->method('post');
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/')));
@@ -228,7 +228,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = new Route('/', fn() => null)->method('gEt', 'Put');
+		$route = new Route('/', static fn() => null)->method('gEt', 'Put');
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/')));
@@ -242,7 +242,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = new Route('/', fn() => null)
+		$route = new Route('/', static fn() => null)
 			->method('get')
 			->method('head');
 		$router->addRoute($route);
@@ -255,7 +255,7 @@ class RouterTest extends TestCase
 	public function testAllMethodsMatching(): void
 	{
 		$router = new Router();
-		$route = new Route('/', fn() => null);
+		$route = new Route('/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/')));
@@ -272,9 +272,9 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$puthead = new Route('/', fn() => null, 'puthead')->method('HEAD', 'Put');
+		$puthead = new Route('/', static fn() => null, 'puthead')->method('HEAD', 'Put');
 		$router->addRoute($puthead);
-		$get = new Route('/', fn() => null, 'get')->method('GET');
+		$get = new Route('/', static fn() => null, 'get')->method('GET');
 		$router->addRoute($get);
 
 		$this->assertSame($get, $router->match($this->request('GET', '/')));
@@ -297,9 +297,9 @@ class RouterTest extends TestCase
 	public function testAddRoutesWithCallback(): void
 	{
 		$router = new Router();
-		$router->routes(function (Router $r): void {
-			$r->get('/', fn() => null, 'index');
-			$r->post('/albums', fn() => null);
+		$router->routes(static function (Router $r): void {
+			$r->get('/', static fn() => null, 'index');
+			$r->post('/albums', static fn() => null);
 		});
 
 		$this->assertSame('index', $router->match($this->request('GET', ''))->name());
@@ -311,7 +311,7 @@ class RouterTest extends TestCase
 		$this->throws(RuntimeException::class, 'Duplicate route: index');
 
 		$router = new Router();
-		$router->addRoute(new Route('/', fn() => null, 'index'));
-		$router->addRoute(new Route('albums', fn() => null, 'index'));
+		$router->addRoute(new Route('/', static fn() => null, 'index'));
+		$router->addRoute(new Route('albums', static fn() => null, 'index'));
 	}
 }
