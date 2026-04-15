@@ -21,12 +21,13 @@ preserve-breaking-conditional-expression = true
 integrations = []
 
 [linter.rules]
+function-name = { camel = true }
 literal-named-argument = { enabled = false }
 no-else-clause = { enabled = false }
 no-isset = { enabled = false }
+tagged-todo = { enabled = false }
 # TODO: Remove them
 too-many-methods = { enabled = false }
 kan-defect = { enabled = false }
 cyclomatic-complexity = { enabled = false }
-halstead = { enabled = false }
 no-boolean-flag-parameter = { enabled = false }
