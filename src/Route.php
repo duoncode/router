@@ -121,11 +121,11 @@ class Route
 
 	public function prefix(string $pattern = '', string $name = ''): static
 	{
-		if (!empty($pattern)) {
+		if ($pattern !== '') {
 			$this->pattern = $pattern . $this->pattern;
 		}
 
-		if (!empty($name)) {
+		if ($name !== '') {
 			$this->name = $name . $this->name;
 		}
 

@@ -88,7 +88,7 @@ class Router implements RouteAdder
 		string $dir,
 		string $name = '',
 	): void {
-		if (empty($name)) {
+		if ($name === '') {
 			$name = $prefix;
 		}
 
@@ -132,7 +132,7 @@ class Router implements RouteAdder
 
 			$buster = $this->getCacheBuster($route->dir, $file);
 
-			if (!empty($buster)) {
+			if ($buster !== '') {
 				$path .= $sep . 'v=' . $buster;
 			}
 		}
