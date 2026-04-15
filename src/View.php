@@ -109,8 +109,8 @@ final class View
 
 		if (is_array($view)) {
 			[$controllerName, $method] = $view;
-			assert(is_string($controllerName));
-			assert(is_string($method));
+			assert(is_string($controllerName), 'Expected controller class name to be a string.');
+			assert(is_string($method), 'Expected controller method name to be a string.');
 		} else {
 			if (!str_contains($view, '::')) {
 				$view .= '::__invoke';
@@ -191,7 +191,7 @@ final class View
 			}
 		}
 
-		assert(count($params) === count($args));
+		assert(count($params) === count($args), 'Resolved argument count must match parameter count.');
 
 		return $args;
 	}

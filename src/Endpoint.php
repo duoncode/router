@@ -36,8 +36,8 @@ class Endpoint
 		}
 
 		if (is_array($this->path)) {
-			assert(is_string($this->path[0]));
-			assert(is_string($this->path[1]));
+			assert(is_string($this->path[0]), 'Expected plural path segment to be a string.');
+			assert(is_string($this->path[1]), 'Expected singular path segment to be a string.');
 			$plural = $this->path[0];
 			$singular = $this->path[1] . $args;
 		} else {
