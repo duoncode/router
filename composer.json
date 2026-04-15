@@ -6,10 +6,10 @@
 	"authors": [
 		{
 			"name": "Ernst",
-			"email": "ernst@duon.run"
+			"email": "ernst@duon.sh"
 		}
 	],
-	"homepage": "https://duon.run/router",
+	"homepage": "https://duon.sh/router",
 	"autoload": {
 		"psr-4": {
 			"Duon\\Router\\": "src/"
