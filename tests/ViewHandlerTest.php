@@ -34,21 +34,19 @@ class ViewHandlerTest extends TestCase
 
 	public function testViewResponseWrapper(): void
 	{
-		$route = new Route('/', function () {
-			return new class($this->responseFactory()) implements ResponseWrapper {
-				public function __construct(
-					protected ResponseFactory $factory,
-				) {}
+		$route = new Route('/', fn() => new class($this->responseFactory()) implements ResponseWrapper {
+			public function __construct(
+				protected ResponseFactory $factory,
+			) {}
 
-				public function unwrap(): Response
-				{
-					$response = $this->factory->createResponse()
-						->withHeader('Content-Type', 'text/plain');
-					$response->getBody()->write('Duon PSR Response');
+			public function unwrap(): Response
+			{
+				$response = $this->factory->createResponse()
+					->withHeader('Content-Type', 'text/plain');
+				$response->getBody()->write('Duon PSR Response');
 
-					return $response;
-				}
-			};
+				return $response;
+			}
 		});
 		$route->match('/');
 		$view = new View($route, null);

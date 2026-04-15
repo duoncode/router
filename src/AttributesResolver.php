@@ -39,9 +39,7 @@ final class AttributesResolver
 	{
 		if ($filter) {
 			return array_values(
-				array_filter($this->attributes, static function ($attribute) use ($filter) {
-					return $attribute instanceof $filter;
-				}),
+				array_filter($this->attributes, static fn($attribute) => $attribute instanceof $filter),
 			);
 		}
 

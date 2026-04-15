@@ -199,9 +199,7 @@ class BeforeAfterTest extends TestCase
 		$factory = $this->responseFactory();
 		$route = new Route(
 			'/',
-			static function () {
-				return 'Duon';
-			},
+			static fn() => 'Duon',
 		);
 		$route->after(new TestAfterRendererText($factory))->after(new TestAfterAddHeader());
 		$dispatcher = new Dispatcher();
