@@ -2,8 +2,7 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
   test:
@@ -27,6 +26,8 @@ jobs:
 
       - name: Run tests, static type checker and linter
         run: |
+          ./vendor/bin/mago fmt --check
+          ./vendor/bin/mago lint
           php -d pcov.enabled=1 ./vendor/bin/phpunit --testdox --coverage-clover=clover.xml --coverage-text --coverage-php=coverage/cover.php --colors=always
           ./vendor/bin/coverlyzer coverage/cover.php
           ./vendor/bin/psalm --output-format=github --shepherd
