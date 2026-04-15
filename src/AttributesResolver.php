@@ -27,9 +27,7 @@ final class AttributesResolver
 		);
 
 		$this->attributes = array_map(
-			function ($attribute) {
-				return $this->newAttributeInstance($attribute);
-			},
+			$this->newAttributeInstance(...),
 			$reflectionAttributes,
 		);
 	}
