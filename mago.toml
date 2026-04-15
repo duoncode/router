@@ -1,0 +1,32 @@
+php-version = "8.5.0"
+
+[source]
+workspace = "."
+paths = ["src", "tests"]
+includes = ["vendor"]
+excludes = []
+
+[formatter]
+print-width = 100
+use-tabs = true
+array-table-style-alignment = false
+empty-line-between-same-symbols = false
+preserve-breaking-member-access-chain = true
+preserve-breaking-argument-list = true
+preserve-breaking-parameter-list = true
+preserve-breaking-attribute-list = true
+preserve-breaking-conditional-expression = true
+
+[linter]
+integrations = []
+
+[linter.rules]
+literal-named-argument = { enabled = false }
+no-else-clause = { enabled = false }
+no-isset = { enabled = false }
+# TODO: Remove them
+too-many-methods = { enabled = false }
+kan-defect = { enabled = false }
+cyclomatic-complexity = { enabled = false }
+halstead = { enabled = false }
+no-boolean-flag-parameter = { enabled = false }

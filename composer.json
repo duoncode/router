@@ -36,7 +36,7 @@
 		"psr/http-server-middleware": "^1.0"
 	},
 	"require-dev": {
-		"duon/dev": "^2.5",
+		"duon/dev": "^3.0",
 		"laminas/laminas-diactoros": "^3.3"
 	},
 	"scripts": {
@@ -44,8 +44,8 @@
 		"types": "./vendor/bin/psalm --no-cache",
 		"mdlint": "markdownlint-cli2 README.md CHANGELOG.md LICENSE.md docs/",
 		"coverage": [
-			"./vendor/bin/phpunit --testdox --path-coverage --coverage-text --coverage-php=coverage/cover.php --colors=always",
-			"./vendor/bin/coverlyzer coverage/cover.php"
+			"./vendor/bin/phpunit --testdox --path-coverage --coverage-text --coverage-php=.coverage/cover.php --colors=always",
+			"./vendor/bin/coverlyzer .coverage/cover.php"
 		],
 		"ci": [
 			"composer coverage",
