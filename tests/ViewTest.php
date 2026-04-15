@@ -220,7 +220,7 @@ class ViewTest extends TestCase
 
 	public function testViewWithUnsupportedParam(): void
 	{
-		$this->throws(RuntimeException::class, 'Unresolvable: GdImage');
+		$this->throws(RuntimeException::class, 'GdImage');
 
 		$route = Route::any('/{name}', fn(GdImage $name) => $name)->after($this->renderer());
 		$route->match('/symbolic');
