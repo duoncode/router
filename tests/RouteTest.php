@@ -55,12 +55,15 @@ class RouteTest extends TestCase
 		$route = new Route('/album/{name}', static fn() => null);
 
 		$this->assertSame($route, $route->match('/album/leprosy'));
-		$this->assertSame(['name' => 'leprosy'], $route->args());
+		$this->assertSame(['name' => 'leprosy'], $route->matchPath('/album/leprosy'));
 
 		$route = new Route('/contributed/{from}/{to}', static fn() => null);
 
 		$this->assertSame($route, $route->match('/contributed/1983/1991'));
-		$this->assertSame(['from' => '1983', 'to' => '1991'], $route->args());
+		$this->assertSame(
+			['from' => '1983', 'to' => '1991'],
+			$route->matchPath('/contributed/1983/1991'),
+		);
 	}
 
 	public function testParameterMatchingRegex(): void
@@ -69,7 +72,10 @@ class RouteTest extends TestCase
 
 		$this->assertSame(null, $route->match('/contributed/1983/1991'));
 		$this->assertSame($route, $route->match('/contributed/19937/701'));
-		$this->assertSame(['from' => '19937', 'to' => '701'], $route->args());
+		$this->assertSame(
+			['from' => '19937', 'to' => '701'],
+			$route->matchPath('/contributed/19937/701'),
+		);
 
 		$route = new Route('/albums/{from:\d{4}}', static fn() => null);
 		$this->assertSame($route, $route->match('/albums/1995'));
@@ -86,19 +92,19 @@ class RouteTest extends TestCase
 		$this->assertSame(null, $route->match('/albums/457/1709'));
 		$this->assertSame($route, $route->match('/albums/73/5183'));
 		$this->assertSame($route, $route->match('/albums/43/93911'));
-		$this->assertSame(['from' => '43', 'to' => '93911'], $route->args());
+		$this->assertSame(['from' => '43', 'to' => '93911'], $route->matchPath('/albums/43/93911'));
 
 		$route = new Route('/albums{format:\.?(json|xml|)}', static fn() => null);
 		$this->assertSame($route, $route->match('/albums'));
-		$this->assertSame(['format' => ''], $route->args());
+		$this->assertSame(['format' => ''], $route->matchPath('/albums'));
 		$this->assertSame($route, $route->match('/albums.json'));
-		$this->assertSame(['format' => '.json'], $route->args());
+		$this->assertSame(['format' => '.json'], $route->matchPath('/albums.json'));
 		$this->assertSame($route, $route->match('/albums.xml'));
-		$this->assertSame(['format' => '.xml'], $route->args());
+		$this->assertSame(['format' => '.xml'], $route->matchPath('/albums.xml'));
 
 		$route = new Route('/files/{name:[^/]+}', static fn() => null);
 		$this->assertSame($route, $route->match('/files/report.json'));
-		$this->assertSame(['name' => 'report.json'], $route->args());
+		$this->assertSame(['name' => 'report.json'], $route->matchPath('/files/report.json'));
 		$this->assertSame(null, $route->match('/files/nested/report.json'));
 	}
 
