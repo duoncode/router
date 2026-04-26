@@ -6,6 +6,7 @@ namespace Duon\Router\Tests;
 
 use Duon\Router\Dispatcher;
 use Duon\Router\Route;
+use Duon\Router\Router;
 use Duon\Router\Tests\Fixtures\TestAfterAddText;
 use Duon\Router\Tests\Fixtures\TestAfterRendererText;
 use Duon\Router\Tests\Fixtures\TestBeforeFirst;
@@ -67,6 +68,23 @@ class DispatcherTest extends TestCase
 		$this->assertSame(2, count($handlers));
 		$this->assertInstanceof(TestAfterRendererText::class, $handlers[0]);
 		$this->assertInstanceof(TestAfterAddText::class, $handlers[1]);
+	}
+
+	public function testDispatchUsesMatchParamsWithoutLeaking(): void
+	{
+		$router = new Router();
+		$router->get('/albums/{name}', static fn(string $name): string => $name, 'album')
+			->after($this->renderer());
+		$dispatcher = new Dispatcher();
+
+		$firstRequest = $this->request('GET', '/albums/symbolic');
+		$secondRequest = $this->request('GET', '/albums/leprosy');
+
+		$first = $dispatcher->dispatch($firstRequest, $router->match($firstRequest));
+		$second = $dispatcher->dispatch($secondRequest, $router->match($secondRequest));
+
+		$this->assertSame('symbolic', (string) $first->getBody());
+		$this->assertSame('leprosy', (string) $second->getBody());
 	}
 
 	public function testDispatchMiddlewareApplied(): void

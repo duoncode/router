@@ -4,6 +4,9 @@
 
 ### Changed
 
+- `Router::match()` now returns `RouteMatch` instead of mutating and returning the matched `Route`.
+- `Dispatcher::dispatch()` and `View` now consume `RouteMatch` so route params are request-local.
+- `MethodNotAllowedException` now exposes `allowedMethods()` and no longer extends `NotFoundException`.
 - Aligned view argument resolution with the latest `duon/wire` behavior.
 - `View` now bubbles exceptions thrown while constructing autowired dependencies instead of always wrapping them in `Duon\Router\Exception\RuntimeException`.
 - Default parameter values are still used when argument resolution itself fails.

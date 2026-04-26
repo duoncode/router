@@ -8,14 +8,24 @@
 
 A PSR-7 compatible router and view dispatcher.
 
+Using your PSR-7 request and response factory:
+
 ```php
 <?php
+
+use Duon\Router\Dispatcher;
+use Duon\Router\Router;
+
 $router = new Router();
-$router->get('/{name}', funtion (string $name) { return "<h1>{$name}</h1>"; });
-$request = new ServerRequest();
-$route = $router->match($request);
-$dispatcher = new Dispatcher();
-$response = $dispatcher->dispatch($request, $route);
+$router->get('/{name}', function (string $name) use ($responseFactory) {
+	$response = $responseFactory->createResponse();
+	$response->getBody()->write("<h1>{$name}</h1>");
+
+	return $response;
+});
+
+$match = $router->match($request);
+$response = (new Dispatcher())->dispatch($request, $match);
 ```
 
 ## License
