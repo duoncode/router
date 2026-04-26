@@ -22,7 +22,8 @@ class Router implements RouteAdder
 
 	public function __construct(string $globalPrefix = '')
 	{
-		$this->globalPrefix = $globalPrefix === '' ? '' : '/' . trim($globalPrefix, '/');
+		$globalPrefix = trim($globalPrefix, '/');
+		$this->globalPrefix = $globalPrefix === '' ? '' : '/' . $globalPrefix;
 	}
 
 	protected const string ANY = 'ANY';
