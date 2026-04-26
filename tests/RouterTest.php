@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Duon\Router\Tests;
 
+use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\MethodNotAllowedException;
 use Duon\Router\Exception\NotFoundException;
 use Duon\Router\Exception\RuntimeException;
@@ -131,7 +132,7 @@ class RouterTest extends TestCase
 		$albums = new Route('albums/{from}/{to}', static fn() => null, 'albums');
 		$router->addRoute($albums);
 
-		$this->assertSame('/albums/1990/1995', $router->routeUrl('albums', [
+		$this->assertSame('/albums/1990/1995', $router->url('albums', [
 			'from' => 1990,
 			'to' => 1995,
 		]));
@@ -141,12 +142,51 @@ class RouterTest extends TestCase
 		]));
 	}
 
+	public function testGenerateRouteUrlWithPrefixHostAndQuery(): void
+	{
+		$router = new Router('/cms/');
+		$router->get('/albums/{id:\d+}', static fn() => null, 'albums.show');
+
+		$this->assertSame(
+			'https://duon.sh/cms/albums/13?page=2&sort=death%20metal',
+			$router->url(
+				'albums.show',
+				['id' => 13],
+				query: ['page' => 2, 'sort' => 'death metal', 'empty' => null],
+				host: 'https://duon.sh/',
+			),
+		);
+	}
+
+	public function testGenerateRouteUrlWithQueryList(): void
+	{
+		$router = new Router();
+		$router->get('/albums', static fn() => null, 'albums');
+
+		$this->assertSame(
+			'/albums?tag%5B0%5D=death&tag%5B1%5D=thrash',
+			$router->url('albums', query: ['tag' => ['death', 'thrash']]),
+		);
+	}
+
+	public function testGenerateRouteUrlRejectsNestedQuery(): void
+	{
+		$this->throws(
+			InvalidArgumentException::class,
+			'Query parameter must be scalar or a list of scalars',
+		);
+
+		$router = new Router();
+		$router->get('/albums', static fn() => null, 'albums');
+		$router->url('albums', query: ['filters' => ['genre' => 'death']]);
+	}
+
 	public function testFailToGenerateRouteUrl(): void
 	{
 		$this->throws(RuntimeException::class, 'Route not found');
 
 		$router = new Router();
-		$router->routeUrl('fantasy');
+		$router->url('fantasy');
 	}
 
 	#[TestDox('GET matching')]
