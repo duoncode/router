@@ -75,6 +75,15 @@ class RouterTest extends TestCase
 		$this->assertSame('test', $router->match($this->request('GET', '/prefix/test'))->route()->name());
 	}
 
+	public function testEmptyPrefixCleanUp(): void
+	{
+		$router = new Router('/');
+		$router->get('/albums', static fn() => null, 'albums');
+
+		$this->assertSame('albums', $router->match($this->request('GET', '/albums'))->route()->name());
+		$this->assertSame('/albums', $router->url('albums'));
+	}
+
 	public function testThrowingNotFoundException(): void
 	{
 		$this->throws(NotFoundException::class);
