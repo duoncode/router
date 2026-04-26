@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Duon\Router\Tests;
 
+use Duon\Router\Route;
+use Duon\Router\RouteMatch;
 use Duon\Router\Tests\Fixtures\TestAfterRendererText;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -54,6 +56,14 @@ class TestCase extends BaseTestCase
 	public function renderer(): TestAfterRendererText
 	{
 		return new TestAfterRendererText($this->responseFactory());
+	}
+
+	public function routeMatch(Route $route, string $path = '/', string $method = 'GET'): RouteMatch
+	{
+		$params = $route->matchPath($path);
+		$this->assertNotNull($params);
+
+		return new RouteMatch($route, $params, $method);
 	}
 
 	public function fullTrim(string $text): string

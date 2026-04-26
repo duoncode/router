@@ -33,11 +33,12 @@ final class View
 	 * @param list<After> $afterHandlers
 	 */
 	public function __construct(
-		protected readonly Route $route,
+		protected readonly RouteMatch $match,
 		protected readonly ?Container $container,
 		array $beforeHandlers = [],
 		array $afterHandlers = [],
 	) {
+		$route = $match->route();
 		$this->creator = new Creator($container);
 		$this->view = $this->prepareView($route->view());
 		$this->setBeforeHandlers($this->doMergeBeforeHandlers($beforeHandlers, $route->beforeHandlers()));
@@ -173,7 +174,7 @@ final class View
 
 		foreach ($params as $param) {
 			$name = $param->getName();
-			$routeArgs = $this->route->args();
+			$routeArgs = $this->match->params();
 
 			if (array_key_exists($name, $routeArgs)) {
 				$args[$name] = match ((string) $param->getType()) {
@@ -226,7 +227,7 @@ final class View
 			}
 
 			if ($typeName === Route::class || is_subclass_of($typeName, Route::class)) {
-				return $this->route;
+				return $this->match->route();
 			}
 
 			if (!class_exists($typeName) && !interface_exists($typeName)) {
@@ -276,7 +277,7 @@ final class View
 		$middlewareAttributes = $this->attributes(Middleware::class);
 
 		return array_merge(
-			$this->route->getMiddleware(),
+			$this->match->route()->getMiddleware(),
 			$middlewareAttributes,
 		);
 	}

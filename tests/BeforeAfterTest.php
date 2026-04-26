@@ -136,7 +136,7 @@ class BeforeAfterTest extends TestCase
 			->before(new TestBeforeReplace())
 			->before(new TestBeforeThird());
 		$view = new View(
-			$route,
+			$this->routeMatch($route),
 			null,
 			[new TestBeforeFirst(), new TestBeforeSecond()],
 			[],
@@ -154,7 +154,7 @@ class BeforeAfterTest extends TestCase
 			->after(new TestAfterRendererText($factory))
 			->after(new TestAfterAddText());
 		$view = new View(
-			$route,
+			$this->routeMatch($route),
 			null,
 			[],
 			[new TestAfterRendererJson($factory), new TestAfterAddHeader()],
@@ -185,7 +185,7 @@ class BeforeAfterTest extends TestCase
 		$dispatcher = new Dispatcher();
 		$dispatcher->before(new TestBeforeFirst());
 		$dispatcher->before(new TestBeforeSecond());
-		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
+		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(
@@ -205,7 +205,7 @@ class BeforeAfterTest extends TestCase
 		$dispatcher = new Dispatcher();
 		$dispatcher->after(new TestAfterRendererJson($factory));
 		$dispatcher->after(new TestAfterAddText());
-		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
+		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame('Duon-appended', (string) $response->getBody());

@@ -30,7 +30,7 @@ class DispatcherTest extends TestCase
 			},
 		);
 		$dispatcher = new Dispatcher();
-		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
+		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame('Duon', (string) $response->getBody());
 	}
@@ -89,7 +89,7 @@ class DispatcherTest extends TestCase
 			->middleware(new TestMiddleware3());
 		$dispatcher = new Dispatcher();
 		$dispatcher->middleware(new TestMiddleware1());
-		$response = $dispatcher->dispatch($this->request('GET', '/'), $route);
+		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 
 		$this->assertInstanceOf(Response::class, $response);
 		$this->assertSame(

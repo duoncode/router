@@ -14,9 +14,12 @@ final class Dispatcher
 	use AddsBeforeAfter;
 	use AddsMiddleware;
 
-	public function dispatch(Request $request, Route $route, ?Container $container = null): Response
-	{
-		$view = new View($route, $container, $this->beforeHandlers, $this->afterHandlers);
+	public function dispatch(
+		Request $request,
+		RouteMatch $match,
+		?Container $container = null,
+	): Response {
+		$view = new View($match, $container, $this->beforeHandlers, $this->afterHandlers);
 		$handler = new ViewHandler($view, $this->middleware);
 
 		return $handler->handle($request);

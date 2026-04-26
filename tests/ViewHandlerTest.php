@@ -24,7 +24,7 @@ class ViewHandlerTest extends TestCase
 			return $response;
 		});
 		$route->match('/');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
@@ -50,7 +50,7 @@ class ViewHandlerTest extends TestCase
 			}
 		});
 		$route->match('/');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
@@ -63,7 +63,7 @@ class ViewHandlerTest extends TestCase
 		$this->throws(RuntimeException::class, 'Unable to determine a response handler');
 
 		$route = new Route('/', TestController::class . '::wrongReturnType');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$handler = new ViewHandler($view, [], []);
 		$handler->handle($this->request());
 	}

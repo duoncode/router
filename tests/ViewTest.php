@@ -26,7 +26,7 @@ class ViewTest extends TestCase
 	public function testAttribute(): void
 	{
 		$route = Route::any('/', #[TestAttribute] static fn() => 'duon')->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
 	}
@@ -36,7 +36,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', #[TestCallableAttribute] static fn() => 'duon')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		/** @var TestCallableAttribute $attr */
 		$attr = $view->attributes(TestCallableAttribute::class)[0];
@@ -46,7 +46,7 @@ class ViewTest extends TestCase
 	public function testClosure(): void
 	{
 		$route = Route::any('/', static fn() => 'duon')->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame('duon', (string) $view->execute($this->request())->getBody());
 	}
@@ -54,8 +54,7 @@ class ViewTest extends TestCase
 	public function testFunction(): void
 	{
 		$route = Route::any('/{name}', 'testViewWithAttribute')->after($this->renderer());
-		$route->match('/symbolic');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic'), null);
 
 		$this->assertSame('symbolic', (string) $view->execute($this->request())->getBody());
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -66,7 +65,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', '\Duon\Router\Tests\Fixtures\TestController::textView')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -75,7 +74,7 @@ class ViewTest extends TestCase
 	public function testControllerClassMethod(): void
 	{
 		$route = Route::any('/', [TestController::class, 'textView'])->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -85,7 +84,7 @@ class ViewTest extends TestCase
 	{
 		$controller = new TestController();
 		$route = Route::any('/', [$controller, 'textView'])->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -96,7 +95,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', 'Duon\Router\Tests\Fixtures\TestInvokableClass')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame('Invokable', (string) $view->execute($this->request())->getBody());
 	}
@@ -106,7 +105,7 @@ class ViewTest extends TestCase
 		$this->throws(RuntimeException::class, 'View method not found');
 
 		$route = Route::any('/', TestController::class . '::nonexistentView')->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
 
@@ -117,7 +116,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', NonexisitentTestController::class . '::nonexistentView')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
 
@@ -127,7 +126,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', TestControllerWithRequest::class . '::requestOnly')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame($request::class, (string) $view->execute($request)->getBody());
 	}
@@ -137,7 +136,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', TestControllerWithRoute::class . '::routeOnly')->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame($route::class, (string) $view->execute($this->request())->getBody());
 	}
@@ -149,8 +148,7 @@ class ViewTest extends TestCase
 			'/{param}',
 			TestControllerWithRequestAndRoute::class . '::requestAndRoute',
 		)->after($this->renderer());
-		$route->match('/duon');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/duon'), null);
 
 		$this->assertSame(
 			$request::class . $route::class . 'duon',
@@ -165,8 +163,7 @@ class ViewTest extends TestCase
 			'/{string}/{float}-{int}',
 			TestControllerWithRequest::class . '::routeParams',
 		)->after($this->renderer());
-		$route->match('/symbolic/7.13-23');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic/7.13-23'), null);
 
 		$this->assertSame(
 			'{"string":"symbolic","float":7.13,"int":23,"request":"Laminas\\\\Diactoros\\\\ServerRequest"}',
@@ -181,8 +178,7 @@ class ViewTest extends TestCase
 			'/{string}/{int}',
 			TestController::class . '::routeDefaultValueParams',
 		)->after($this->renderer());
-		$route->match('/symbolic/17');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic/17'), null);
 
 		$this->assertSame(
 			'{"string":"symbolic","int":17}',
@@ -193,8 +189,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/{string}', TestController::class . '::routeDefaultValueParams')->after(
 			$this->renderer(),
 		);
-		$route->match('/symbolic');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic'), null);
 
 		$this->assertSame(
 			'{"string":"symbolic","int":13}',
@@ -210,8 +205,7 @@ class ViewTest extends TestCase
 			'/{wrong}/{param}',
 			TestControllerWithRequest::class . '::routeParams',
 		)->after($this->renderer());
-		$route->match('/symbolic/test');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic/test'), null);
 		$view->execute($this->request());
 	}
 
@@ -223,8 +217,7 @@ class ViewTest extends TestCase
 			'/{string}/{float}-{int}',
 			TestControllerWithRequest::class . '::routeParams',
 		)->after($this->renderer());
-		$route->match('/symbolic/7.13-wrong');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic/7.13-wrong'), null);
 		$view->execute($this->request());
 	}
 
@@ -236,8 +229,7 @@ class ViewTest extends TestCase
 			'/{string}/{float}-{int}',
 			TestControllerWithRequest::class . '::routeParams',
 		)->after($this->renderer());
-		$route->match('/symbolic/wrong-13');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic/wrong-13'), null);
 		$view->execute($this->request());
 	}
 
@@ -246,8 +238,7 @@ class ViewTest extends TestCase
 		$this->throws(Error::class, 'GdImage');
 
 		$route = Route::any('/{name}', static fn(GdImage $name) => $name)->after($this->renderer());
-		$route->match('/symbolic');
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route, '/symbolic'), null);
 		$view->execute($this->request());
 	}
 
@@ -258,7 +249,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', static fn(?TestThrowingClass $param = null) => $param)->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
 
@@ -268,7 +259,7 @@ class ViewTest extends TestCase
 			'/',
 			#[TestAttribute, TestAttributeExt, TestAttributeDiff] static fn() => 'duon',
 		)->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame(3, count($view->attributes()));
 		$this->assertSame(2, count($view->attributes(TestAttribute::class)));
@@ -279,7 +270,7 @@ class ViewTest extends TestCase
 	public function testAttributeFilteringControllerView(): void
 	{
 		$route = new Route('/', [TestController::class, 'arrayView']);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 
 		$this->assertSame(3, count($view->attributes()));
 		$this->assertSame(2, count($view->attributes(TestAttribute::class)));
@@ -292,7 +283,7 @@ class ViewTest extends TestCase
 		$this->throws(RuntimeException::class, 'does not support union or intersection types');
 
 		$route = Route::any('/', static fn(string|int $param) => $param)->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
 
@@ -301,7 +292,7 @@ class ViewTest extends TestCase
 		$this->throws(RuntimeException::class, 'need to have typed constructor parameters');
 
 		$route = Route::any('/', static fn($param) => $param)->after($this->renderer());
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
 
@@ -311,7 +302,7 @@ class ViewTest extends TestCase
 		$route = Route::any('/', static fn(?TestUnresolvableClass $param = null) => $param)->after(
 			$this->renderer(),
 		);
-		$view = new View($route, null);
+		$view = new View($this->routeMatch($route), null);
 		$response = $view->execute($this->request());
 
 		// Default value (null) is used because TestUnresolvableClass can't be autowired
