@@ -28,7 +28,7 @@
 	},
 	"require": {
 		"php": "^8.5",
-		"duon/wire": "dev-main",
+		"duon/wire": "v0.5.0",
 		"psr/container": "^2.0",
 		"psr/http-message": "^1.1 || ^2.0",
 		"psr/http-message-implementation": "^1.0",
