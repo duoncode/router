@@ -131,7 +131,10 @@ class RouterTest extends TestCase
 		$albums = new Route('albums/{from}/{to}', static fn() => null, 'albums');
 		$router->addRoute($albums);
 
-		$this->assertSame('/albums/1990/1995', $router->routeUrl('albums', from: 1990, to: 1995));
+		$this->assertSame('/albums/1990/1995', $router->routeUrl('albums', [
+			'from' => 1990,
+			'to' => 1995,
+		]));
 		$this->assertSame('/albums/1988/1991', $router->routeUrl('albums', [
 			'from' => 1988,
 			'to' => 1991,

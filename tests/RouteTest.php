@@ -137,7 +137,7 @@ class RouteTest extends TestCase
 
 	public function testUrlConstructionRegularParameters(): void
 	{
-		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
+		$route = new Route('/contributed/{from:\d+}/{to:\d+}', static fn() => null);
 
 		$obj = new class(1991) extends stdClass {
 			public function __construct(
@@ -151,7 +151,6 @@ class RouteTest extends TestCase
 		};
 
 		$this->assertSame('/contributed/1983/1991', $route->url(['from' => 1983, 'to' => $obj]));
-		$this->assertSame('/contributed/1983/1991', $route->url(from: 1983, to: 1991));
 	}
 
 	public function testUrlConstructionNoParameters(): void
@@ -159,15 +158,6 @@ class RouteTest extends TestCase
 		$route = new Route('/albums', static fn() => null);
 
 		$this->assertSame('/albums', $route->url());
-		$this->assertSame('/albums', $route->url(test: 1));
-	}
-
-	public function testUrlConstructionInvalidCall(): void
-	{
-		$this->throws(InvalidArgumentException::class);
-
-		$route = new Route('/albums', static fn() => null);
-		$route->url(1, 2);
 	}
 
 	public function testUrlConstructionInvalidParameters(): void
@@ -175,7 +165,7 @@ class RouteTest extends TestCase
 		$this->throws(InvalidArgumentException::class);
 
 		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
-		$route->url(from: 1983, to: []);
+		$route->url(['from' => 1983, 'to' => []]);
 	}
 
 	public function testRoutePrefix(): void
