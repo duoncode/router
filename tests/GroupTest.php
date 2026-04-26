@@ -53,7 +53,7 @@ class GroupTest extends TestCase
 			'albums:list',
 			$router->match($this->request(method: 'GET', uri: '/albums'))->route()->name(),
 		);
-		$this->assertSame('/albums/symbolic', $router->routeUrl('albums:name', name: 'symbolic'));
+		$this->assertSame('/albums/symbolic', $router->routeUrl('albums:name', ['name' => 'symbolic']));
 	}
 
 	public function testMatchingUnnamed(): void

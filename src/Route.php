@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Duon\Router;
 
 use Closure;
-use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\ValueError;
-use Stringable;
 
 /**
  * @psalm-api
@@ -152,58 +150,10 @@ class Route
 		return $this->name;
 	}
 
-	/**
-	 * @psalm-suppress MixedAssignment
-	 *
-	 * Types are checked in the body.
-	 */
-	public function url(mixed ...$args): string
+	/** @param array<string, mixed> $params */
+	public function url(array $params = []): string
 	{
-		$url = '/' . ltrim($this->pattern, '/');
-
-		if (count($args) > 0) {
-			if (is_array($args[0] ?? null)) {
-				$args = $args[0];
-			} else {
-				// Check if args is an associative array
-				if (array_keys($args) === range(0, count($args) - 1)) {
-					throw new InvalidArgumentException(
-						'Route::url: either pass an associative array or named arguments',
-					);
-				}
-			}
-
-			/**
-			 * @psalm-suppress MixedAssignment
-			 *
-			 * We check if $value can be transformed into a string, Psalm
-			 * complains anyway.
-			 */
-			foreach ($args as $name => $value) {
-				// TODO: throw error if args do not match url params
-				if (is_scalar($value) or $value instanceof Stringable) {
-					// basic variables
-					$replaced = preg_replace(
-						'/\{' . (string) $name . '(:.*?)?\}/',
-						urlencode((string) $value),
-						$url,
-					);
-					$url = $replaced ?? $url;
-
-					// remainder variables
-					$replaced = preg_replace(
-						'/\.\.\.' . (string) $name . '/',
-						urlencode((string) $value),
-						$url,
-					);
-					$url = $replaced ?? $url;
-				} else {
-					throw new InvalidArgumentException('No valid url argument');
-				}
-			}
-		}
-
-		return $url;
+		return $this->routePattern()->generate($params);
 	}
 
 	/** @psalm-return Closure|list{string, string}|string */

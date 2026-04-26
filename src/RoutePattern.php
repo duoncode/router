@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Duon\Router;
 
+use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\ValueError;
+use Stringable;
 
 /** @internal */
 final readonly class RoutePattern
@@ -53,6 +55,110 @@ final readonly class RoutePattern
 			static fn($_, $key) => !is_int($key),
 			ARRAY_FILTER_USE_BOTH,
 		);
+	}
+
+	/** @param array<string, mixed> $params */
+	public function generate(array $params = []): string
+	{
+		$this->assertKnownParams($params);
+		$path = '';
+
+		foreach ($this->tokens as $token) {
+			$path .= match ($token->type()) {
+				RouteToken::LITERAL => $token->value(),
+				RouteToken::PARAMETER => $this->generateParameter($token, $params),
+				RouteToken::REMAINDER => $this->generateRemainder($token, $params),
+			};
+		}
+
+		return $path;
+	}
+
+	/** @param array<string, mixed> $params */
+	private function generateParameter(RouteToken $token, array $params): string
+	{
+		$name = (string) $token->name();
+		$value = $this->stringParam($params, $name);
+		$constraint = $token->constraint() ?? '[.\w-]+';
+
+		if (!$this->matchesConstraint($constraint, $value)) {
+			throw new InvalidArgumentException('Route parameter does not match constraint: ' . $name);
+		}
+
+		return rawurlencode($value);
+	}
+
+	/** @param array<string, mixed> $params */
+	private function generateRemainder(RouteToken $token, array $params): string
+	{
+		$name = (string) $token->name();
+		$value = $this->stringParam($params, $name);
+		$this->assertSafeRemainder($name, $value);
+
+		return implode('/', array_map(rawurlencode(...), explode('/', $value)));
+	}
+
+	/** @param array<string, mixed> $params */
+	private function stringParam(array $params, string $name): string
+	{
+		if (!array_key_exists($name, $params)) {
+			throw new InvalidArgumentException('Missing route parameter: ' . $name);
+		}
+
+		$value = $params[$name];
+
+		if (is_scalar($value) || $value instanceof Stringable) {
+			return (string) $value;
+		}
+
+		throw new InvalidArgumentException('Route parameter must be scalar or Stringable: ' . $name);
+	}
+
+	private function matchesConstraint(string $constraint, string $value): bool
+	{
+		return @preg_match('~^(?:' . str_replace('~', '\\~', $constraint) . ')$~', $value) === 1;
+	}
+
+	private function assertSafeRemainder(string $name, string $value): void
+	{
+		if (str_contains($value, "\0") || str_contains($value, '\\') || str_starts_with($value, '/')) {
+			throw new InvalidArgumentException('Remainder route parameter must be a relative path: '
+			. $name);
+		}
+
+		foreach (explode('/', $value) as $segment) {
+			if ($segment === '..') {
+				throw new InvalidArgumentException('Remainder route parameter must stay relative: ' . $name);
+			}
+		}
+	}
+
+	/** @param array<string, mixed> $params */
+	private function assertKnownParams(array $params): void
+	{
+		$names = array_flip($this->parameterNames());
+
+		foreach ($params as $name => $_) {
+			if (!is_string($name) || !array_key_exists($name, $names)) {
+				throw new InvalidArgumentException('Unknown route parameter: ' . (string) $name);
+			}
+		}
+	}
+
+	/** @return list<string> */
+	private function parameterNames(): array
+	{
+		$names = [];
+
+		foreach ($this->tokens as $token) {
+			$name = $token->name();
+
+			if ($name !== null) {
+				$names[] = $name;
+			}
+		}
+
+		return $names;
 	}
 
 	private static function normalize(string $pattern): string
