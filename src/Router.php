@@ -11,6 +11,7 @@ use Duon\Router\Exception\NotFoundException;
 use Duon\Router\Exception\RuntimeException;
 use Override;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Stringable;
 
 /** @psalm-api */
 class Router implements RouteAdder
@@ -21,7 +22,7 @@ class Router implements RouteAdder
 
 	public function __construct(string $globalPrefix = '')
 	{
-		$this->globalPrefix = $globalPrefix ? '/' . ltrim($globalPrefix, '/') : '';
+		$this->globalPrefix = $globalPrefix === '' ? '' : '/' . trim($globalPrefix, '/');
 	}
 
 	protected const string ANY = 'ANY';
@@ -118,7 +119,21 @@ class Router implements RouteAdder
 		bool $bust = false,
 		?string $host = null,
 	): string {
-		$route = $this->staticRoutes[$name];
+		return $this->asset($name, $path, $bust, $host);
+	}
+
+	public function asset(
+		string $name,
+		string $path,
+		bool $bust = false,
+		?string $host = null,
+	): string {
+		$route = $this->staticRoutes[$name] ?? null;
+
+		if (!$route) {
+			throw new NotFoundException('Static route not found: ' . $name);
+		}
+
 		[$file, $hasQuery] = $this->splitStaticPath($path);
 		$this->assertSafeStaticPath($file);
 
@@ -130,18 +145,46 @@ class Router implements RouteAdder
 			}
 		}
 
-		return ($host !== null ? trim($host, '/') : '') . $route->prefix . trim($path, '/');
+		return $this->prependHost($route->prefix . trim($path, '/'), $host);
 	}
 
-	public function routeUrl(string $__routeName__, mixed ...$args): string
-	{
-		$route = $this->names[$__routeName__] ?? null;
+	/**
+	 * @param array<string, mixed> $params
+	 * @param array<string, mixed> $query
+	 */
+	public function url(
+		string $name,
+		array $params = [],
+		array $query = [],
+		?string $host = null,
+	): string {
+		$route = $this->names[$name] ?? null;
 
-		if ($route) {
-			return $route->url(...$args);
+		if (!$route) {
+			throw new NotFoundException('Route not found: ' . $name);
 		}
 
-		throw new NotFoundException('Route not found: ' . $__routeName__);
+		$url = $this->applyGlobalPrefix($route->url($params));
+		$queryString = $this->queryString($query);
+
+		if ($queryString !== '') {
+			$url .= '?' . $queryString;
+		}
+
+		return $this->prependHost($url, $host);
+	}
+
+	/**
+	 * @param array<string, mixed> $params
+	 * @param array<string, mixed> $query
+	 */
+	public function routeUrl(
+		string $name,
+		array $params = [],
+		array $query = [],
+		?string $host = null,
+	): string {
+		return $this->url($name, $params, $query, $host);
 	}
 
 	public function match(Request $request): RouteMatch
@@ -183,6 +226,76 @@ class Router implements RouteAdder
 		}
 
 		throw new NotFoundException();
+	}
+
+	private function applyGlobalPrefix(string $path): string
+	{
+		if ($this->globalPrefix === '') {
+			return $path;
+		}
+
+		return $path === '/' ? $this->globalPrefix : $this->globalPrefix . $path;
+	}
+
+	private function prependHost(string $path, ?string $host): string
+	{
+		return $host === null ? $path : rtrim($host, '/') . $path;
+	}
+
+	/** @param array<string, mixed> $query */
+	private function queryString(array $query): string
+	{
+		$normalized = $this->normalizeQuery($query);
+
+		return http_build_query($normalized, '', '&', PHP_QUERY_RFC3986);
+	}
+
+	/**
+	 * @param array<string, mixed> $query
+	 * @return array<string, bool|int|float|string|list<bool|int|float|string>>
+	 */
+	private function normalizeQuery(array $query): array
+	{
+		$normalized = [];
+
+		foreach ($query as $name => $value) {
+			if ($value === null) {
+				continue;
+			}
+
+			if (is_array($value)) {
+				if (!array_is_list($value)) {
+					throw new InvalidArgumentException(
+						'Query parameter must be scalar or a list of scalars: ' . $name,
+					);
+				}
+
+				$normalized[$name] = array_map(
+					fn(mixed $item): bool|int|float|string => $this->queryValue($item, $name),
+					$value,
+				);
+
+				continue;
+			}
+
+			$normalized[$name] = $this->queryValue($value, $name);
+		}
+
+		return $normalized;
+	}
+
+	private function queryValue(mixed $value, string $name): bool|int|float|string
+	{
+		if (is_scalar($value)) {
+			return $value;
+		}
+
+		if ($value instanceof Stringable) {
+			return (string) $value;
+		}
+
+		throw new InvalidArgumentException('Query parameter must be scalar or a list of scalars: '
+		. $name);
 	}
 
 	protected function getCacheBuster(string $dir, string $path): string

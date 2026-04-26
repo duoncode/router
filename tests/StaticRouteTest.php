@@ -15,8 +15,9 @@ class StaticRouteTest extends TestCase
 		$router = new Router();
 		$router->addStatic('/static', $this->root . '/public/static');
 
+		$this->assertSame('/static/test.json', $router->asset('/static', 'test.json'));
 		$this->assertSame('/static/test.json', $router->staticUrl('/static', 'test.json'));
-		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl(
+		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->asset(
 			'/static',
 			'test.json',
 			true,
@@ -69,7 +70,7 @@ class StaticRouteTest extends TestCase
 		$router = new Router();
 		$router->addStatic('/static', $this->root . '/public/static', 'staticroute');
 
-		$this->assertSame('/static/test.json', $router->staticUrl('staticroute', 'test.json'));
+		$this->assertSame('/static/test.json', $router->asset('staticroute', 'test.json'));
 	}
 
 	public function testStaticRoutesPrefixed(): void
