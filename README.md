@@ -28,6 +28,30 @@ $match = $router->match($request);
 $response = (new Dispatcher())->dispatch($request, $match);
 ```
 
+## URL generation
+
+Use named routes through the router. Generated URLs include the router prefix and fail fast when path params are missing, unknown, or do not match route constraints.
+
+```php
+$router = new Router('/cms');
+$router->get('/albums/{id:\d+}', $view, 'albums.show');
+
+$url = $router->url(
+	'albums.show',
+	['id' => 13],
+	query: ['tab' => 'tracks'],
+);
+// /cms/albums/13?tab=tracks
+```
+
+Static assets stay separate from named routes:
+
+```php
+$router->addStatic('/assets', __DIR__ . '/public/assets', 'assets');
+
+$css = $router->asset('assets', 'app.css', bust: true);
+```
+
 ## License
 
 This project is licensed under the [MIT license](LICENSE.md).
