@@ -101,6 +101,38 @@ class StaticRouteTest extends TestCase
 		));
 	}
 
+	public function testMissingStaticRootDoesNotAddCachebuster(): void
+	{
+		$base = sys_get_temp_dir() . '/duon-router-static-' . str_replace('.', '', uniqid('', true));
+		$static = $base . '/static';
+		mkdir($static, recursive: true);
+
+		try {
+			$router = new Router();
+			$router->addStatic('/static', $static);
+			rmdir($static);
+
+			$this->assertSame('/static/test.json', $router->staticUrl('/static', 'test.json', true));
+		} finally {
+			if (is_dir($static)) {
+				rmdir($static);
+			}
+
+			if (is_dir($base)) {
+				rmdir($base);
+			}
+		}
+	}
+
+	public function testStaticRouteRejectsNullBytePath(): void
+	{
+		$this->throws(InvalidArgumentException::class, 'Static path must stay inside static root');
+
+		$router = new Router();
+		$router->addStatic('/static', $this->root . '/public/static');
+		$router->staticUrl('/static', "test\0.json");
+	}
+
 	public function testStaticRouteRejectsTraversalPath(): void
 	{
 		$this->throws(InvalidArgumentException::class, 'Static path must stay inside static root');
