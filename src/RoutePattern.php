@@ -33,7 +33,10 @@ final readonly class RoutePattern
 		return $this->pattern;
 	}
 
-	/** @return list<RouteToken> */
+	/**
+	 * @psalm-api
+	 * @return list<RouteToken>
+	 */
 	public function tokens(): array
 	{
 		return $this->tokens;
@@ -57,7 +60,7 @@ final readonly class RoutePattern
 		);
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	public function generate(array $params = []): string
 	{
 		$this->assertKnownParams($params);
@@ -74,7 +77,7 @@ final readonly class RoutePattern
 		return $path;
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	private function generateParameter(RouteToken $part, array $params): string
 	{
 		$name = (string) $part->name();
@@ -88,7 +91,7 @@ final readonly class RoutePattern
 		return rawurlencode($value);
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	private function generateRemainder(RouteToken $part, array $params): string
 	{
 		$name = (string) $part->name();
@@ -98,13 +101,14 @@ final readonly class RoutePattern
 		return implode('/', array_map(rawurlencode(...), explode('/', $value)));
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	private function stringParam(array $params, string $name): string
 	{
 		if (!array_key_exists($name, $params)) {
 			throw new InvalidArgumentException('Missing route parameter: ' . $name);
 		}
 
+		/** @psalm-suppress MixedAssignment */
 		$value = $params[$name];
 
 		if (is_scalar($value) || $value instanceof Stringable) {
@@ -133,7 +137,7 @@ final readonly class RoutePattern
 		}
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	private function assertKnownParams(array $params): void
 	{
 		$names = array_flip($this->parameterNames());

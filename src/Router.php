@@ -258,6 +258,7 @@ class Router implements RouteAdder
 	{
 		$normalized = [];
 
+		/** @psalm-suppress MixedAssignment */
 		foreach ($query as $name => $value) {
 			if ($value === null) {
 				continue;

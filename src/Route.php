@@ -150,7 +150,7 @@ class Route
 		return $this->name;
 	}
 
-	/** @param array<string, mixed> $params */
+	/** @param array<array-key, mixed> $params */
 	public function url(array $params = []): string
 	{
 		return $this->routePattern()->generate($params);
