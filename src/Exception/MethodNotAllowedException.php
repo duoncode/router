@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Duon\Router\Exception;
 
+/** @psalm-api */
 final class MethodNotAllowedException extends RuntimeException
 {
 	/** @var list<string> */
@@ -17,10 +18,13 @@ final class MethodNotAllowedException extends RuntimeException
 			$allowedMethods,
 		)));
 
-		parent::__construct($message ?: 'Method not allowed');
+		parent::__construct($message !== '' ? $message : 'Method not allowed');
 	}
 
-	/** @return list<string> */
+	/**
+	 * @psalm-api
+	 * @return list<string>
+	 */
 	public function allowedMethods(): array
 	{
 		return $this->allowedMethods;
