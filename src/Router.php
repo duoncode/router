@@ -144,46 +144,42 @@ class Router implements RouteAdder
 		throw new NotFoundException('Route not found: ' . $__routeName__);
 	}
 
-	public function match(Request $request): Route
+	public function match(Request $request): RouteMatch
 	{
 		$url = rawurldecode($request->getUri()->getPath());
-		$requestMethod = $request->getMethod();
+		$requestMethod = strtoupper($request->getMethod());
 
 		foreach ([$requestMethod, self::ANY] as $method) {
 			foreach ($this->routes[$method] ?? [] as $route) {
-				if ($route->match($url, $this->globalPrefix)) {
-					return $route;
+				$params = $route->matchPath($url, $this->globalPrefix);
+
+				if ($params !== null) {
+					return new RouteMatch($route, $params, $requestMethod);
 				}
 			}
 		}
 
-		// We know now, that the route does not match.
-		// Check if it would match one of the remaining methods
-		$wrongMethod = false;
-		$remainingMethods = array_keys($this->routes);
+		/** @var list<string> $allowedMethods */
+		$allowedMethods = [];
 
-		foreach ([$requestMethod, self::ANY] as $method) {
-			if (($key = array_search($method, $remainingMethods, true)) === false) {
+		foreach ($this->routes as $method => $routes) {
+			if ($method === $requestMethod || $method === self::ANY) {
 				continue;
 			}
 
-			unset($remainingMethods[$key]);
-		}
-
-		foreach ($remainingMethods as $method) {
-			foreach ($this->routes[$method] as $route) {
-				if (!$route->match($url, $this->globalPrefix)) {
+			foreach ($routes as $route) {
+				if ($route->matchPath($url, $this->globalPrefix) === null) {
 					continue;
 				}
 
-				$wrongMethod = true;
+				$allowedMethods[] = $method;
 
 				break;
 			}
 		}
 
-		if ($wrongMethod) {
-			throw new MethodNotAllowedException();
+		if (count($allowedMethods) > 0) {
+			throw new MethodNotAllowedException($allowedMethods);
 		}
 
 		throw new NotFoundException();

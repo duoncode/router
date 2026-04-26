@@ -77,17 +77,17 @@ class BeforeAfterTest extends TestCase
 			->after(new TestAfterAddHeader());
 		$group->create($router);
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'))->route();
 		$this->assertInstanceof(TestAfterRendererJson::class, $route->afterHandlers()[0]);
 		$this->assertInstanceof(TestAfterAddHeader::class, $route->afterHandlers()[1]);
 		$this->assertInstanceof(TestAfterAddText::class, $route->afterHandlers()[2]);
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums/home'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums/home'))->route();
 		$this->assertInstanceof(TestAfterRendererText::class, $route->afterHandlers()[0]);
 		$this->assertInstanceof(TestAfterAddHeader::class, $route->afterHandlers()[1]);
 		$this->assertFalse(isset($route->afterHandlers()[2]));
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums'))->route();
 		$this->assertInstanceof(TestAfterRendererJson::class, $route->afterHandlers()[0]);
 		$this->assertInstanceof(TestAfterAddHeader::class, $route->afterHandlers()[1]);
 		$this->assertFalse(isset($route->afterHandlers()[2]));
@@ -114,17 +114,17 @@ class BeforeAfterTest extends TestCase
 			->before(new TestBeforeSecond());
 		$group->create($router);
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'))->route();
 		$this->assertInstanceof(TestBeforeFirst::class, $route->beforeHandlers()[0]);
 		$this->assertInstanceof(TestBeforeSecond::class, $route->beforeHandlers()[1]);
 		$this->assertInstanceof(TestBeforeThird::class, $route->beforeHandlers()[2]);
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums/home'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums/home'))->route();
 		$this->assertInstanceof(TestBeforeReplace::class, $route->beforeHandlers()[0]);
 		$this->assertInstanceof(TestBeforeSecond::class, $route->beforeHandlers()[1]);
 		$this->assertFalse(isset($route->beforeHandlers()[2]));
 
-		$route = $router->match($this->request(method: 'GET', uri: '/albums'));
+		$route = $router->match($this->request(method: 'GET', uri: '/albums'))->route();
 		$this->assertInstanceof(TestBeforeFirst::class, $route->beforeHandlers()[0]);
 		$this->assertInstanceof(TestBeforeSecond::class, $route->beforeHandlers()[1]);
 		$this->assertFalse(isset($route->beforeHandlers()[2]));
