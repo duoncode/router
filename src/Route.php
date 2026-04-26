@@ -311,29 +311,41 @@ class Route
 			$pattern = rtrim($pattern, '/');
 		}
 
-		// Escape forward slashes
-		//     /evil/chuck  to \/evil\/chuck
-		$replaced = preg_replace('/\//', '\\/', $pattern);
-		$pattern = $replaced ?? $pattern;
-
 		$pattern = $this->hideInnerBraces($pattern);
 
-		// Convert variables to named group patterns
-		//     /evil/{chuck}  to  /evil/(?P<chuck>[\w-]+)
-		$replaced = preg_replace('/\{(\w+?)\}/', '(?P<\1>[.\w-]+)', $pattern);
-		$pattern = $replaced ?? $pattern;
+		return '~^' . $this->compilePatternTokens($pattern) . '$~';
+	}
 
-		// Convert variables with custom patterns e.g. {evil:\d+}
-		//     /evil/{chuck:\d+}  to  /evil/(?P<chuck>\d+)
-		$replaced = preg_replace('/\{(\w+?):(.+?)\}/', '(?P<\1>\2)', $pattern);
-		$pattern = $replaced ?? $pattern;
+	private function compilePatternTokens(string $pattern): string
+	{
+		$regex = '';
+		$offset = 0;
+		$length = strlen($pattern);
 
-		// Convert remainder pattern ...slug to (?P<slug>.*)
-		$replaced = preg_replace('/\.\.\.(\w+?)$/', '(?P<\1>.*)', $pattern);
-		$pattern = $replaced ?? $pattern;
+		while ($offset < $length) {
+			if (preg_match('/\G\{(\w+)(?::([^}]+))?\}/', $pattern, $matches, 0, $offset) === 1) {
+				$name = $matches[1];
+				$customPattern = $matches[2] ?? null;
 
-		$pattern = '/^' . $pattern . '$/';
+				$regex .= $customPattern === null
+					? "(?P<{$name}>[.\w-]+)"
+					: "(?P<{$name}>" . str_replace('~', '\\~', $this->restoreInnerBraces($customPattern)) . ')';
+				$offset += strlen($matches[0]);
 
-		return $this->restoreInnerBraces($pattern);
+				continue;
+			}
+
+			if (preg_match('/\G\.\.\.(\w+)\z/', $pattern, $matches, 0, $offset) === 1) {
+				$regex .= "(?P<{$matches[1]}>.*)";
+				$offset += strlen($matches[0]);
+
+				continue;
+			}
+
+			$regex .= preg_quote($pattern[$offset], '~');
+			$offset++;
+		}
+
+		return $regex;
 	}
 }

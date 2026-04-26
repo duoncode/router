@@ -37,6 +37,19 @@ class RouteTest extends TestCase
 		$this->assertSame(null, $route->match('/chuck'));
 	}
 
+	public function testLiteralRegexMetacharactersAreEscaped(): void
+	{
+		$route = new Route('/file.json', static fn() => null);
+
+		$this->assertSame($route, $route->match('/file.json'));
+		$this->assertSame(null, $route->match('/fileXjson'));
+
+		$route = new Route('/v1.0+/albums(legacy)', static fn() => null);
+
+		$this->assertSame($route, $route->match('/v1.0+/albums(legacy)'));
+		$this->assertSame(null, $route->match('/v1X00/albumslegacy'));
+	}
+
 	public function testParameterMatching(): void
 	{
 		$route = new Route('/album/{name}', static fn() => null);
@@ -82,6 +95,11 @@ class RouteTest extends TestCase
 		$this->assertSame(['format' => '.json'], $route->args());
 		$this->assertSame($route, $route->match('/albums.xml'));
 		$this->assertSame(['format' => '.xml'], $route->args());
+
+		$route = new Route('/files/{name:[^/]+}', static fn() => null);
+		$this->assertSame($route, $route->match('/files/report.json'));
+		$this->assertSame(['name' => 'report.json'], $route->args());
+		$this->assertSame(null, $route->match('/files/nested/report.json'));
 	}
 
 	public function testParameterMatchingBraceErrorI(): void
