@@ -75,11 +75,11 @@ final readonly class RoutePattern
 	}
 
 	/** @param array<string, mixed> $params */
-	private function generateParameter(RouteToken $token, array $params): string
+	private function generateParameter(RouteToken $part, array $params): string
 	{
-		$name = (string) $token->name();
+		$name = (string) $part->name();
 		$value = $this->stringParam($params, $name);
-		$constraint = $token->constraint() ?? '[.\w-]+';
+		$constraint = $part->constraint() ?? '[.\w-]+';
 
 		if (!$this->matchesConstraint($constraint, $value)) {
 			throw new InvalidArgumentException('Route parameter does not match constraint: ' . $name);
@@ -89,9 +89,9 @@ final readonly class RoutePattern
 	}
 
 	/** @param array<string, mixed> $params */
-	private function generateRemainder(RouteToken $token, array $params): string
+	private function generateRemainder(RouteToken $part, array $params): string
 	{
-		$name = (string) $token->name();
+		$name = (string) $part->name();
 		$value = $this->stringParam($params, $name);
 		$this->assertSafeRemainder($name, $value);
 
@@ -116,7 +116,7 @@ final readonly class RoutePattern
 
 	private function matchesConstraint(string $constraint, string $value): bool
 	{
-		return @preg_match('~^(?:' . str_replace('~', '\\~', $constraint) . ')$~', $value) === 1;
+		return preg_match('~^(?:' . str_replace('~', '\\~', $constraint) . ')$~', $value) === 1;
 	}
 
 	private function assertSafeRemainder(string $name, string $value): void
@@ -288,18 +288,18 @@ final readonly class RoutePattern
 		return $regex;
 	}
 
-	private function compileParameter(RouteToken $token): string
+	private function compileParameter(RouteToken $part): string
 	{
-		$name = (string) $token->name();
-		$constraint = $token->constraint();
+		$name = (string) $part->name();
+		$constraint = $part->constraint();
 
 		return $constraint === null
 			? "(?P<{$name}>[.\w-]+)"
 			: "(?P<{$name}>" . str_replace('~', '\\~', $constraint) . ')';
 	}
 
-	private function compileRemainder(RouteToken $token): string
+	private function compileRemainder(RouteToken $part): string
 	{
-		return '(?P<' . (string) $token->name() . '>.*)';
+		return '(?P<' . (string) $part->name() . '>.*)';
 	}
 }
