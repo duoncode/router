@@ -226,6 +226,12 @@ class Route
 
 	public function match(string $url, string $prefix = ''): ?Route
 	{
+		return $this->matchPath($url, $prefix) === null ? null : $this;
+	}
+
+	/** @return null|array<string, string> */
+	public function matchPath(string $url, string $prefix = ''): ?array
+	{
 		$pattern = $this->compiledPattern($prefix);
 
 		/**
@@ -235,18 +241,14 @@ class Route
 		 * @psalm-suppress ArgumentTypeCoercion
 		 */
 		if (preg_match($pattern, $url, $matches)) {
-			// Remove integer indexes from array
-			$matches = array_filter(
+			/** @var array<string, string> $params */
+			$params = array_filter(
 				$matches,
-				static fn($_, $k) => !is_int($k),
+				static fn($_, $key) => !is_int($key),
 				ARRAY_FILTER_USE_BOTH,
 			);
 
-			foreach ($matches as $key => $match) {
-				$this->args[$key] = $match;
-			}
-
-			return $this;
+			return $params;
 		}
 
 		return null;
