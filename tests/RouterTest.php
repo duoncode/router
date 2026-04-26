@@ -112,6 +112,19 @@ class RouterTest extends TestCase
 		$router->match($this->request('GET', '/albums'))->route();
 	}
 
+	public function testRepeatedMatchesKeepSeparateParams(): void
+	{
+		$router = new Router();
+		$router->get('/albums/{name}', static fn() => null, 'album');
+
+		$first = $router->match($this->request('GET', '/albums/symbolic'));
+		$second = $router->match($this->request('GET', '/albums/leprosy'));
+
+		$this->assertSame(['name' => 'symbolic'], $first->params());
+		$this->assertSame(['name' => 'leprosy'], $second->params());
+		$this->assertSame($first->route(), $second->route());
+	}
+
 	public function testGenerateRouteUrl(): void
 	{
 		$router = new Router();

@@ -22,8 +22,6 @@ class Route
 	protected const string LEFT_BRACE = '§§§€§§§';
 	protected const string RIGHT_BRACE = '§§§£§§§';
 
-	protected array $args = [];
-
 	/** @psalm-var null|list<string> */
 	protected ?array $methods = null;
 
@@ -212,11 +210,6 @@ class Route
 	public function view(): Closure|array|string
 	{
 		return $this->view;
-	}
-
-	public function args(): array
-	{
-		return $this->args;
 	}
 
 	public function pattern(): string
