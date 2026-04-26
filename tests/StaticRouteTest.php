@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Duon\Router\Tests;
 
+use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\RuntimeException;
 use Duon\Router\Router;
 
@@ -98,6 +99,72 @@ class StaticRouteTest extends TestCase
 			host: 'https://duon.local/',
 			bust: true,
 		));
+	}
+
+	public function testStaticRouteRejectsTraversalPath(): void
+	{
+		$this->throws(InvalidArgumentException::class, 'Static path must stay inside static root');
+
+		$router = new Router();
+		$router->addStatic('/static', $this->root . '/public/static');
+		$router->staticUrl('/static', '../../TestController.php');
+	}
+
+	public function testStaticRouteRejectsEncodedTraversalPath(): void
+	{
+		$this->throws(InvalidArgumentException::class, 'Static path must stay inside static root');
+
+		$router = new Router();
+		$router->addStatic('/static', $this->root . '/public/static');
+		$router->staticUrl('/static', '%2e%2e/%2e%2e/TestController.php', true);
+	}
+
+	public function testStaticRouteDoesNotCacheBustSymlinkEscapes(): void
+	{
+		if (!function_exists('symlink')) {
+			$this->markTestSkipped('Symlinks are not available.');
+		}
+
+		$base = sys_get_temp_dir() . '/duon-router-static-' . str_replace('.', '', uniqid('', true));
+		$static = $base . '/static';
+		$outside = $base . '/outside';
+		$staticLink = $static . '/secret.txt';
+		$outsideFile = $outside . '/secret.txt';
+
+		mkdir($static, recursive: true);
+		mkdir($outside, recursive: true);
+		file_put_contents($outsideFile, 'secret');
+
+		try {
+			set_error_handler(static fn(): bool => true);
+
+			try {
+				$linked = symlink($outsideFile, $staticLink);
+			} finally {
+				restore_error_handler();
+			}
+
+			if (!$linked) {
+				$this->markTestSkipped('Could not create symlink.');
+			}
+
+			$router = new Router();
+			$router->addStatic('/static', $static);
+
+			$this->assertSame('/static/secret.txt', $router->staticUrl('/static', 'secret.txt', true));
+		} finally {
+			if (is_link($staticLink)) {
+				unlink($staticLink);
+			}
+
+			if (is_file($outsideFile)) {
+				unlink($outsideFile);
+			}
+
+			rmdir($static);
+			rmdir($outside);
+			rmdir($base);
+		}
 	}
 
 	public function testStaticRouteDuplicateNamed(): void

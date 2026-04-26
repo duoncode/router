@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Duon\Router;
 
 use Closure;
+use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\MethodNotAllowedException;
 use Duon\Router\Exception\NotFoundException;
 use Duon\Router\Exception\RuntimeException;
@@ -118,22 +119,14 @@ class Router implements RouteAdder
 		?string $host = null,
 	): string {
 		$route = $this->staticRoutes[$name];
+		[$file, $hasQuery] = $this->splitStaticPath($path);
+		$this->assertSafeStaticPath($file);
 
 		if ($bust) {
-			// Check if there is already a query parameter present
-			if (str_contains($path, '?')) {
-				$filePart = strtok($path, '?');
-				$file = $filePart !== false ? $filePart : $path;
-				$sep = '&';
-			} else {
-				$file = $path;
-				$sep = '?';
-			}
-
 			$buster = $this->getCacheBuster($route->dir, $file);
 
 			if ($buster !== '') {
-				$path .= $sep . 'v=' . $buster;
+				$path .= ($hasQuery ? '&' : '?') . 'v=' . $buster;
 			}
 		}
 
@@ -198,13 +191,53 @@ class Router implements RouteAdder
 
 	protected function getCacheBuster(string $dir, string $path): string
 	{
-		$ds = DIRECTORY_SEPARATOR;
-		$file = realpath($dir . $ds . ltrim(str_replace('/', $ds, $path), $ds));
+		$root = realpath($dir);
 
-		if ($file !== false) {
-			return hash('xxh32', (string) filemtime($file));
+		if ($root === false) {
+			return '';
 		}
 
-		return '';
+		$ds = DIRECTORY_SEPARATOR;
+		$file = realpath($root . $ds . ltrim(str_replace('/', $ds, $path), $ds));
+
+		if ($file === false || !$this->isInsideDirectory($file, $root)) {
+			return '';
+		}
+
+		$mtime = filemtime($file);
+
+		return $mtime === false ? '' : hash('xxh32', (string) $mtime);
+	}
+
+	/** @return array{string, bool} */
+	private function splitStaticPath(string $path): array
+	{
+		$queryStart = strpos($path, '?');
+
+		if ($queryStart === false) {
+			return [$path, false];
+		}
+
+		return [substr($path, 0, $queryStart), true];
+	}
+
+	private function assertSafeStaticPath(string $path): void
+	{
+		$decodedPath = str_replace('\\', '/', rawurldecode($path));
+
+		if (str_contains($decodedPath, "\0")) {
+			throw new InvalidArgumentException('Static path must stay inside static root');
+		}
+
+		foreach (explode('/', $decodedPath) as $segment) {
+			if ($segment === '..') {
+				throw new InvalidArgumentException('Static path must stay inside static root');
+			}
+		}
+	}
+
+	private function isInsideDirectory(string $file, string $dir): bool
+	{
+		return str_starts_with($file, rtrim($dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
 	}
 }
