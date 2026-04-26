@@ -234,14 +234,12 @@ class Route
 		 * @psalm-suppress ArgumentTypeCoercion
 		 */
 		if (preg_match($pattern, $url, $matches)) {
-			/** @var array<string, string> $params */
-			$params = array_filter(
+			/** @var array<string, string> */
+			return array_filter(
 				$matches,
 				static fn($_, $key) => !is_int($key),
 				ARRAY_FILTER_USE_BOTH,
 			);
-
-			return $params;
 		}
 
 		return null;
