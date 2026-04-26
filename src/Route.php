@@ -19,14 +19,13 @@ class Route
 	use AddsBeforeAfter;
 	use AddsMiddleware;
 
-	protected const string LEFT_BRACE = '§§§€§§§';
-	protected const string RIGHT_BRACE = '§§§£§§§';
-
 	/** @psalm-var null|list<string> */
 	protected ?array $methods = null;
 
 	/** @psalm-var Closure|list{string, string}|string */
 	protected Closure|array|string $view;
+
+	protected ?RoutePattern $routePattern = null;
 
 	/**
 	 * @param string $pattern The URL pattern of the route
@@ -121,6 +120,7 @@ class Route
 	{
 		if ($pattern !== '') {
 			$this->pattern = $pattern . $this->pattern;
+			$this->routePattern = null;
 		}
 
 		if ($name !== '') {
@@ -225,120 +225,48 @@ class Route
 	/** @return null|array<string, string> */
 	public function matchPath(string $url, string $prefix = ''): ?array
 	{
-		$pattern = $this->compiledPattern($prefix);
+		$path = $this->pathWithoutPrefix($url, $prefix);
 
-		/**
-		 * The previous assert does not satisfy psalm regarding
-		 * `preg_match` pattern must be a non-empty-string.
-		 *
-		 * @psalm-suppress ArgumentTypeCoercion
-		 */
-		if (preg_match($pattern, $url, $matches)) {
-			/** @var array<string, string> */
-			return array_filter(
-				$matches,
-				static fn($_, $key) => !is_int($key),
-				ARRAY_FILTER_USE_BOTH,
-			);
+		if ($path === null) {
+			return null;
 		}
 
-		return null;
+		return $this->routePattern()->match($path);
 	}
 
-	protected function hideInnerBraces(string $str): string
+	private function routePattern(): RoutePattern
 	{
-		if (str_contains($str, '\{') || str_contains($str, '\}')) {
-			throw new ValueError('Escaped braces are not allowed: ' . $this->pattern);
-		}
-
-		$new = '';
-		$level = 0;
-
-		foreach (str_split($str) as $c) {
-			if ($c === '{') {
-				$level++;
-
-				if ($level > 1) {
-					$new .= self::LEFT_BRACE;
-				} else {
-					$new .= '{';
-				}
-
-				continue;
-			}
-
-			if ($c === '}') {
-				if ($level > 1) {
-					$new .= self::RIGHT_BRACE;
-				} else {
-					$new .= '}';
-				}
-
-				$level--;
-
-				continue;
-			}
-
-			$new .= $c;
-		}
-
-		if ($level !== 0) {
-			throw new ValueError('Unbalanced braces in route pattern: ' . $this->pattern);
-		}
-
-		return $new;
+		return $this->routePattern ??= new RoutePattern($this->pattern);
 	}
 
-	protected function restoreInnerBraces(string $str): string
+	private function pathWithoutPrefix(string $url, string $prefix): ?string
 	{
-		return str_replace(self::LEFT_BRACE, '{', str_replace(self::RIGHT_BRACE, '}', $str));
-	}
+		$path = $url === '' ? '/' : $url;
+		$prefix = self::normalizePrefix($prefix);
 
-	/* TODO: improve prefix handling. Get rid of the many trim calls */
-	protected function compiledPattern(string $prefix): string
-	{
-		// Ensure leading slash, $prefix is already cleaned up by Router
-		$pattern = $prefix . '/' . ltrim($this->pattern, '/');
-
-		if (strlen($pattern) > 1) {
-			$pattern = rtrim($pattern, '/');
+		if ($prefix === '') {
+			return $path;
 		}
 
-		$pattern = $this->hideInnerBraces($pattern);
-
-		return '~^' . $this->compilePatternTokens($pattern) . '$~';
-	}
-
-	private function compilePatternTokens(string $pattern): string
-	{
-		$regex = '';
-		$offset = 0;
-		$length = strlen($pattern);
-
-		while ($offset < $length) {
-			if (preg_match('/\G\{(\w+)(?::([^}]+))?\}/', $pattern, $matches, 0, $offset) === 1) {
-				$name = $matches[1];
-				$customPattern = $matches[2] ?? null;
-
-				$regex .= $customPattern === null
-					? "(?P<{$name}>[.\w-]+)"
-					: "(?P<{$name}>" . str_replace('~', '\\~', $this->restoreInnerBraces($customPattern)) . ')';
-				$offset += strlen($matches[0]);
-
-				continue;
-			}
-
-			if (preg_match('/\G\.\.\.(\w+)\z/', $pattern, $matches, 0, $offset) === 1) {
-				$regex .= "(?P<{$matches[1]}>.*)";
-				$offset += strlen($matches[0]);
-
-				continue;
-			}
-
-			$regex .= preg_quote($pattern[$offset], '~');
-			$offset++;
+		if ($path === $prefix) {
+			return '/';
 		}
 
-		return $regex;
+		if (!str_starts_with($path, $prefix . '/')) {
+			return null;
+		}
+
+		$path = substr($path, strlen($prefix));
+
+		if ($path === '/' && $this->routePattern()->pattern() === '/') {
+			return null;
+		}
+
+		return $path;
+	}
+
+	private static function normalizePrefix(string $prefix): string
+	{
+		return $prefix === '' ? '' : '/' . trim($prefix, '/');
 	}
 }
