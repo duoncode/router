@@ -16,20 +16,19 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		$this->assertSame('/static/test.json', $router->asset('/static', 'test.json'));
-		$this->assertSame('/static/test.json', $router->staticUrl('/static', 'test.json'));
 		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->asset(
 			'/static',
 			'test.json',
 			true,
 		));
-		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl(
+		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->asset(
 			'/static',
 			'test.json?exists=true',
 			true,
 		));
 		$this->assertMatchesRegularExpression(
 			'/https:\/\/duon.local\/static\/test.json\?v=[a-f0-9]{8}$/',
-			$router->staticUrl(
+			$router->asset(
 				'/static',
 				'test.json',
 				host: 'https://duon.local/',
@@ -43,20 +42,20 @@ class StaticRouteTest extends TestCase
 		$router = new Router('/prefix');
 		$router->addStatic('/static', $this->root . '/public/static');
 
-		$this->assertSame('/prefix/static/test.json', $router->staticUrl('/static', 'test.json'));
-		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->staticUrl(
+		$this->assertSame('/prefix/static/test.json', $router->asset('/static', 'test.json'));
+		$this->assertMatchesRegularExpression('/\?v=[a-f0-9]{8}$/', $router->asset(
 			'/static',
 			'test.json',
 			true,
 		));
-		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->staticUrl(
+		$this->assertMatchesRegularExpression('/\?exists=true&v=[a-f0-9]{8}$/', $router->asset(
 			'/static',
 			'test.json?exists=true',
 			true,
 		));
 		$this->assertMatchesRegularExpression(
 			'/https:\/\/duon.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
-			$router->staticUrl(
+			$router->asset(
 				'/static',
 				'test.json',
 				host: 'https://duon.local/',
@@ -78,7 +77,7 @@ class StaticRouteTest extends TestCase
 		$router = new Router('/prefix');
 		$router->addStatic('/static', $this->root . '/public/static', 'staticroute');
 
-		$this->assertSame('/prefix/static/test.json', $router->staticUrl('staticroute', 'test.json'));
+		$this->assertSame('/prefix/static/test.json', $router->asset('staticroute', 'test.json'));
 	}
 
 	public function testStaticRoutesToNonexistentDirectory(): void
@@ -94,7 +93,7 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		// Non existing files should not have a cachebuster attached
-		$this->assertMatchesRegularExpression('/https:\/\/duon.local\/static\/does-not-exist.json$/', $router->staticUrl(
+		$this->assertMatchesRegularExpression('/https:\/\/duon.local\/static\/does-not-exist.json$/', $router->asset(
 			'/static',
 			'does-not-exist.json',
 			host: 'https://duon.local/',
@@ -113,7 +112,7 @@ class StaticRouteTest extends TestCase
 			$router->addStatic('/static', $static);
 			rmdir($static);
 
-			$this->assertSame('/static/test.json', $router->staticUrl('/static', 'test.json', true));
+			$this->assertSame('/static/test.json', $router->asset('/static', 'test.json', true));
 		} finally {
 			if (is_dir($static)) {
 				rmdir($static);
@@ -131,7 +130,7 @@ class StaticRouteTest extends TestCase
 
 		$router = new Router();
 		$router->addStatic('/static', $this->root . '/public/static');
-		$router->staticUrl('/static', "test\0.json");
+		$router->asset('/static', "test\0.json");
 	}
 
 	public function testStaticRouteRejectsTraversalPath(): void
@@ -140,7 +139,7 @@ class StaticRouteTest extends TestCase
 
 		$router = new Router();
 		$router->addStatic('/static', $this->root . '/public/static');
-		$router->staticUrl('/static', '../../TestController.php');
+		$router->asset('/static', '../../TestController.php');
 	}
 
 	public function testStaticRouteRejectsEncodedTraversalPath(): void
@@ -149,7 +148,7 @@ class StaticRouteTest extends TestCase
 
 		$router = new Router();
 		$router->addStatic('/static', $this->root . '/public/static');
-		$router->staticUrl('/static', '%2e%2e/%2e%2e/TestController.php', true);
+		$router->asset('/static', '%2e%2e/%2e%2e/TestController.php', true);
 	}
 
 	public function testStaticRouteDoesNotCacheBustSymlinkEscapes(): void
@@ -184,7 +183,7 @@ class StaticRouteTest extends TestCase
 			$router = new Router();
 			$router->addStatic('/static', $static);
 
-			$this->assertSame('/static/secret.txt', $router->staticUrl('/static', 'secret.txt', true));
+			$this->assertSame('/static/secret.txt', $router->asset('/static', 'secret.txt', true));
 		} finally {
 			if (is_link($staticLink)) {
 				unlink($staticLink);
