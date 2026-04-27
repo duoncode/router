@@ -7,7 +7,37 @@ title: Introduction
 !!! warning "Note"
     This library is under active development, some of the listed features are still experimental and subject to change. Large parts of the documentation are missing.
 
-A router and view dispatcher. `Router::match()` returns an immutable `RouteMatch` with the matched route and path params; pass that match to `Dispatcher::dispatch()` to execute the view.
+A router and view dispatcher. `RoutingHandler` implements PSR-15 `RequestHandlerInterface` and is the primary runtime entry point.
+
+```php
+use Duon\Router\Dispatcher;
+use Duon\Router\Router;
+use Duon\Router\RoutingHandler;
+
+$router = new Router();
+$handler = new RoutingHandler($router, new Dispatcher());
+$response = $handler->handle($request);
+```
+
+`RoutingHandler` lets `NotFoundException` and `MethodNotAllowedException` bubble by default so your application can render 404 and 405 responses. `MethodNotAllowedException::allowedMethods()` returns the allowed method list.
+
+Use the low-level match and dispatch APIs when you need to inspect the route before execution:
+
+```php
+$match = $router->match($request);
+$response = (new Dispatcher())->dispatch($request, $match);
+```
+
+Middleware and handlers run in this order:
+
+1. Dispatcher middleware
+2. Route middleware
+3. View middleware attributes
+4. `Before` handlers immediately before the view
+5. View execution
+6. `After` handlers for rendering or response changes
+
+Use PSR middleware for cross-cutting request/response behavior. Use `Before` for final request changes before the view. Use `After` to render arbitrary view data or modify a response.
 
 ## URL generation
 

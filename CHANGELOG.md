@@ -2,6 +2,10 @@
 
 ## [Unreleased](https://github.com/duoncode/router/compare/0.1.0...HEAD)
 
+### Added
+
+- `RoutingHandler` provides a PSR-15 request handler that matches and dispatches a request in one call.
+
 ### Breaking
 
 - `Router::match()` now returns `RouteMatch` instead of mutating and returning the matched `Route`.
