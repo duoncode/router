@@ -175,19 +175,6 @@ class Router implements RouteAdder
 		return $this->prependHost($url, $host);
 	}
 
-	/**
-	 * @param array<string, mixed> $params
-	 * @param array<string, mixed> $query
-	 */
-	public function routeUrl(
-		string $name,
-		array $params = [],
-		array $query = [],
-		?string $host = null,
-	): string {
-		return $this->url($name, $params, $query, $host);
-	}
-
 	public function match(Request $request): RouteMatch
 	{
 		$url = rawurldecode($request->getUri()->getPath());

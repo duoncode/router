@@ -4,7 +4,8 @@
 
 ### Changed
 
-- Added `Router::url()` as the primary named route URL generator with prefix, host, and query support.
+- Added `Router::url()` as the named route URL generator with prefix, host, and query support.
+- Removed the redundant `Router::routeUrl()` alias.
 - Added `Router::asset()` as the primary static asset URL generator.
 - `Route::url()` and named route URL generation now throw on missing params, unknown params, invalid param values, and route constraint mismatches.
 - `Router::match()` now returns `RouteMatch` instead of mutating and returning the matched `Route`.
