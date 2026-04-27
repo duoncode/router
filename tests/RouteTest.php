@@ -17,7 +17,7 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('/', static fn() => null);
 
-		$this->assertSame($route, $route->match('/'));
+		$this->assertSame([], $route->match('/'));
 		$this->assertSame(null, $route->match('/rick'));
 	}
 
@@ -25,7 +25,7 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('/chuck', static fn() => null);
 
-		$this->assertSame($route, $route->match('/chuck'));
+		$this->assertSame([], $route->match('/chuck'));
 		$this->assertSame(null, $route->match('/rick'));
 	}
 
@@ -33,7 +33,7 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('chuck/and/rick', static fn() => null);
 
-		$this->assertSame($route, $route->match('/chuck/and/rick'));
+		$this->assertSame([], $route->match('/chuck/and/rick'));
 		$this->assertSame(null, $route->match('/chuck'));
 	}
 
@@ -41,12 +41,12 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('/file.json', static fn() => null);
 
-		$this->assertSame($route, $route->match('/file.json'));
+		$this->assertSame([], $route->match('/file.json'));
 		$this->assertSame(null, $route->match('/fileXjson'));
 
 		$route = new Route('/v1.0+/albums(legacy)', static fn() => null);
 
-		$this->assertSame($route, $route->match('/v1.0+/albums(legacy)'));
+		$this->assertSame([], $route->match('/v1.0+/albums(legacy)'));
 		$this->assertSame(null, $route->match('/v1X00/albumslegacy'));
 	}
 
@@ -54,15 +54,13 @@ class RouteTest extends TestCase
 	{
 		$route = new Route('/album/{name}', static fn() => null);
 
-		$this->assertSame($route, $route->match('/album/leprosy'));
-		$this->assertSame(['name' => 'leprosy'], $route->matchPath('/album/leprosy'));
+		$this->assertSame(['name' => 'leprosy'], $route->match('/album/leprosy'));
 
 		$route = new Route('/contributed/{from}/{to}', static fn() => null);
 
-		$this->assertSame($route, $route->match('/contributed/1983/1991'));
 		$this->assertSame(
 			['from' => '1983', 'to' => '1991'],
-			$route->matchPath('/contributed/1983/1991'),
+			$route->match('/contributed/1983/1991'),
 		);
 	}
 
@@ -71,40 +69,34 @@ class RouteTest extends TestCase
 		$route = new Route('/contributed/{from:\d+}/{to:\d\d\d}', static fn() => null);
 
 		$this->assertSame(null, $route->match('/contributed/1983/1991'));
-		$this->assertSame($route, $route->match('/contributed/19937/701'));
 		$this->assertSame(
 			['from' => '19937', 'to' => '701'],
-			$route->matchPath('/contributed/19937/701'),
+			$route->match('/contributed/19937/701'),
 		);
 
 		$route = new Route('/albums/{from:\d{4}}', static fn() => null);
-		$this->assertSame($route, $route->match('/albums/1995'));
+		$this->assertSame(['from' => '1995'], $route->match('/albums/1995'));
 		$this->assertSame(null, $route->match('/albums/521'));
 
 		$route = new Route('/albums/{from:\d{3,4}}', static fn() => null);
-		$this->assertSame($route, $route->match('/albums/2001'));
-		$this->assertSame($route, $route->match('/albums/127'));
+		$this->assertSame(['from' => '2001'], $route->match('/albums/2001'));
+		$this->assertSame(['from' => '127'], $route->match('/albums/127'));
 		$this->assertSame(null, $route->match('/albums/13'));
 
 		$route = new Route('/albums/{from:\d{2}}/{to:\d{4,5}}', static fn() => null);
 		$this->assertSame(null, $route->match('/albums/aa/bbbb'));
 		$this->assertSame(null, $route->match('/albums/13/773'));
 		$this->assertSame(null, $route->match('/albums/457/1709'));
-		$this->assertSame($route, $route->match('/albums/73/5183'));
-		$this->assertSame($route, $route->match('/albums/43/93911'));
-		$this->assertSame(['from' => '43', 'to' => '93911'], $route->matchPath('/albums/43/93911'));
+		$this->assertSame(['from' => '73', 'to' => '5183'], $route->match('/albums/73/5183'));
+		$this->assertSame(['from' => '43', 'to' => '93911'], $route->match('/albums/43/93911'));
 
 		$route = new Route('/albums{format:\.?(json|xml|)}', static fn() => null);
-		$this->assertSame($route, $route->match('/albums'));
-		$this->assertSame(['format' => ''], $route->matchPath('/albums'));
-		$this->assertSame($route, $route->match('/albums.json'));
-		$this->assertSame(['format' => '.json'], $route->matchPath('/albums.json'));
-		$this->assertSame($route, $route->match('/albums.xml'));
-		$this->assertSame(['format' => '.xml'], $route->matchPath('/albums.xml'));
+		$this->assertSame(['format' => ''], $route->match('/albums'));
+		$this->assertSame(['format' => '.json'], $route->match('/albums.json'));
+		$this->assertSame(['format' => '.xml'], $route->match('/albums.xml'));
 
 		$route = new Route('/files/{name:[^/]+}', static fn() => null);
-		$this->assertSame($route, $route->match('/files/report.json'));
-		$this->assertSame(['name' => 'report.json'], $route->matchPath('/files/report.json'));
+		$this->assertSame(['name' => 'report.json'], $route->match('/files/report.json'));
 		$this->assertSame(null, $route->match('/files/nested/report.json'));
 	}
 
@@ -171,15 +163,15 @@ class RouteTest extends TestCase
 	public function testRoutePrefix(): void
 	{
 		$route = Route::get('/albums', static fn() => 'chuck')->prefix(pattern: 'api');
-		$this->assertSame($route, $route->match('/api/albums'));
+		$this->assertSame([], $route->match('/api/albums'));
 
 		$route = Route::get('albums', static fn() => 'chuck', 'albums')->prefix('api/', 'api::');
 		$this->assertSame('api/albums', $route->pattern());
 		$this->assertSame('api::albums', $route->name());
-		$this->assertSame($route, $route->match('/api/albums'));
+		$this->assertSame([], $route->match('/api/albums'));
 
 		$route = Route::get('albums', static fn() => 'chuck', 'albums')->prefix(name: 'api::');
-		$this->assertSame($route, $route->match('/albums'));
+		$this->assertSame([], $route->match('/albums'));
 		$this->assertSame('api::albums', $route->name());
 	}
 
@@ -187,14 +179,14 @@ class RouteTest extends TestCase
 	{
 		$route = Route::get('/albums', static fn() => 'chuck');
 
-		$this->assertNull($route->matchPath('/api/albums', '/admin'));
+		$this->assertNull($route->match('/api/albums', '/admin'));
 	}
 
 	public function testPrefixedIndexDoesNotMatchTrailingSlash(): void
 	{
 		$route = Route::get('/', static fn() => 'chuck');
 
-		$this->assertNull($route->matchPath('/api/', '/api'));
+		$this->assertNull($route->match('/api/', '/api'));
 	}
 
 	public function testGetViewClosure(): void

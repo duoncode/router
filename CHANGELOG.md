@@ -5,6 +5,7 @@
 ### Breaking
 
 - `Router::match()` now returns `RouteMatch` instead of mutating and returning the matched `Route`.
+- `Route::match()` now returns matched route params and replaces `Route::matchPath()`.
 - `Dispatcher::dispatch()` and `View` now consume `RouteMatch` so route params are request-local.
 - `MethodNotAllowedException` no longer extends `NotFoundException`.
 - Named route URLs are generated with `Router::url()` and now include the router global prefix, optional host, query params, and strict path param validation.

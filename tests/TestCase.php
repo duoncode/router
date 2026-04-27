@@ -60,7 +60,7 @@ class TestCase extends BaseTestCase
 
 	public function routeMatch(Route $route, string $path = '/', string $method = 'GET'): RouteMatch
 	{
-		$params = $route->matchPath($path);
+		$params = $route->match($path);
 		$this->assertNotNull($params);
 
 		return new RouteMatch($route, $params, $method);

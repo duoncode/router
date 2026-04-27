@@ -167,13 +167,8 @@ class Route
 		return $this->pattern;
 	}
 
-	public function match(string $url, string $prefix = ''): ?Route
-	{
-		return $this->matchPath($url, $prefix) === null ? null : $this;
-	}
-
 	/** @return null|array<string, string> */
-	public function matchPath(string $url, string $prefix = ''): ?array
+	public function match(string $url, string $prefix = ''): ?array
 	{
 		$path = $this->pathWithoutPrefix($url, $prefix);
 

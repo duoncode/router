@@ -173,7 +173,7 @@ class Router implements RouteAdder
 
 		foreach ([$requestMethod, self::ANY] as $method) {
 			foreach ($this->routes[$method] ?? [] as $route) {
-				$params = $route->matchPath($url, $this->globalPrefix);
+				$params = $route->match($url, $this->globalPrefix);
 
 				if ($params !== null) {
 					return new RouteMatch($route, $params, $requestMethod);
@@ -190,7 +190,7 @@ class Router implements RouteAdder
 			}
 
 			foreach ($routes as $route) {
-				if ($route->matchPath($url, $this->globalPrefix) === null) {
+				if ($route->match($url, $this->globalPrefix) === null) {
 					continue;
 				}
 
