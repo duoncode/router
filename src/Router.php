@@ -114,15 +114,6 @@ class Router implements RouteAdder
 		}
 	}
 
-	public function staticUrl(
-		string $name,
-		string $path,
-		bool $bust = false,
-		?string $host = null,
-	): string {
-		return $this->asset($name, $path, $bust, $host);
-	}
-
 	public function asset(
 		string $name,
 		string $path,
