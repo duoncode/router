@@ -18,6 +18,7 @@ use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 
+/** @internal */
 final class View
 {
 	use AddsBeforeAfter;
