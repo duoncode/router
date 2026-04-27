@@ -183,6 +183,20 @@ class RouteTest extends TestCase
 		$this->assertSame('api::albums', $route->name());
 	}
 
+	public function testRoutePrefixMismatch(): void
+	{
+		$route = Route::get('/albums', static fn() => 'chuck');
+
+		$this->assertNull($route->matchPath('/api/albums', '/admin'));
+	}
+
+	public function testPrefixedIndexDoesNotMatchTrailingSlash(): void
+	{
+		$route = Route::get('/', static fn() => 'chuck');
+
+		$this->assertNull($route->matchPath('/api/', '/api'));
+	}
+
 	public function testGetViewClosure(): void
 	{
 		$route = new Route('/', static fn() => 'chuck');

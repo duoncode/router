@@ -80,6 +80,13 @@ class StaticRouteTest extends TestCase
 		$this->assertSame('/prefix/static/test.json', $router->asset('staticroute', 'test.json'));
 	}
 
+	public function testUnknownStaticRoute(): void
+	{
+		$this->throws(\Duon\Router\Exception\NotFoundException::class, 'Static route not found: fantasy');
+
+		new Router()->asset('fantasy', 'test.json');
+	}
+
 	public function testStaticRoutesToNonexistentDirectory(): void
 	{
 		$this->throws(RuntimeException::class, 'does not exist');

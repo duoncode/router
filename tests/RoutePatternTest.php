@@ -15,6 +15,7 @@ final class RoutePatternTest extends TestCase
 		$pattern = new RoutePattern('/albums/{year:\d{2,4}}/...slug');
 		$tokens = $pattern->tokens();
 
+		$this->assertSame('/albums/{year:\d{2,4}}/...slug', $pattern->pattern());
 		$this->assertCount(4, $tokens);
 		$this->assertSame(RouteToken::LITERAL, $tokens[0]->type());
 		$this->assertSame('/albums/', $tokens[0]->value());
@@ -106,7 +107,7 @@ final class RoutePatternTest extends TestCase
 		new RoutePattern('/albums/{id:\d+}')->generate(['id' => 'abc']);
 	}
 
-	public function testGenerateRejectsUnsafeRemainder(): void
+	public function testGenerateRejectsParentRelativeRemainder(): void
 	{
 		$this->throws(
 			\Duon\Router\Exception\InvalidArgumentException::class,
@@ -114,6 +115,16 @@ final class RoutePatternTest extends TestCase
 		);
 
 		new RoutePattern('/files/...slug')->generate(['slug' => '../secret.txt']);
+	}
+
+	public function testGenerateRejectsAbsoluteRemainder(): void
+	{
+		$this->throws(
+			\Duon\Router\Exception\InvalidArgumentException::class,
+			'Remainder route parameter must be a relative path: slug',
+		);
+
+		new RoutePattern('/files/...slug')->generate(['slug' => '/secret.txt']);
 	}
 
 	public function testRejectDuplicateParameterNames(): void
