@@ -178,6 +178,22 @@ class RouterTest extends TestCase
 		);
 	}
 
+	public function testGenerateRouteUrlWithStringableQuery(): void
+	{
+		$value = new class() {
+			public function __toString(): string
+			{
+				return 'death metal';
+			}
+		};
+		$router = new Router();
+		$router->get('/albums', static fn() => null, 'albums');
+
+		$this->assertSame('/albums?sort=death%20metal', $router->url('albums', query: [
+			'sort' => $value,
+		]));
+	}
+
 	public function testGenerateRouteUrlRejectsNestedQuery(): void
 	{
 		$this->throws(
@@ -188,6 +204,18 @@ class RouterTest extends TestCase
 		$router = new Router();
 		$router->get('/albums', static fn() => null, 'albums');
 		$router->url('albums', query: ['filters' => ['genre' => 'death']]);
+	}
+
+	public function testGenerateRouteUrlRejectsObjectQuery(): void
+	{
+		$this->throws(
+			InvalidArgumentException::class,
+			'Query parameter must be scalar or a list of scalars',
+		);
+
+		$router = new Router();
+		$router->get('/albums', static fn() => null, 'albums');
+		$router->url('albums', query: ['sort' => new \stdClass()]);
 	}
 
 	public function testFailToGenerateRouteUrl(): void
