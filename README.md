@@ -6,7 +6,7 @@
 [![Psalm level](https://shepherd.dev/github/duoncode/router/level.svg?)](https://duon.sh/router)
 [![Psalm coverage](https://shepherd.dev/github/duoncode/router/coverage.svg?)](https://shepherd.dev/github/duoncode/router)
 
-A PSR-7 compatible router and view dispatcher.
+A PSR-7/PSR-15 compatible router and view dispatcher.
 
 Using your PSR-7 request and response factory:
 
@@ -15,6 +15,7 @@ Using your PSR-7 request and response factory:
 
 use Duon\Router\Dispatcher;
 use Duon\Router\Router;
+use Duon\Router\RoutingHandler;
 
 $router = new Router();
 $router->get('/{name}', function (string $name) use ($responseFactory) {
@@ -24,9 +25,33 @@ $router->get('/{name}', function (string $name) use ($responseFactory) {
 	return $response;
 });
 
+$handler = new RoutingHandler($router, new Dispatcher());
+$response = $handler->handle($request);
+```
+
+## Dispatching
+
+`RoutingHandler` implements PSR-15 `RequestHandlerInterface`. It matches the request through the router and dispatches the matched route through the dispatcher.
+
+Routing exceptions bubble by default. Catch `NotFoundException` for 404 responses and `MethodNotAllowedException` for 405 responses.
+
+Use the low-level match API when you need route inspection before dispatching:
+
+```php
 $match = $router->match($request);
 $response = (new Dispatcher())->dispatch($request, $match);
 ```
+
+Middleware and handlers run in this order:
+
+1. Dispatcher middleware
+2. Route middleware
+3. View middleware attributes
+4. `Before` handlers immediately before the view
+5. View execution
+6. `After` handlers for rendering or response changes
+
+Use PSR middleware for cross-cutting request/response behavior. Use `Before` for final request changes before the view. Use `After` to render arbitrary view data or modify a response.
 
 ## URL generation
 
