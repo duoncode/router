@@ -145,7 +145,7 @@ class RouterTest extends TestCase
 			'from' => 1990,
 			'to' => 1995,
 		]));
-		$this->assertSame('/albums/1988/1991', $router->routeUrl('albums', [
+		$this->assertSame('/albums/1988/1991', $router->url('albums', [
 			'from' => 1988,
 			'to' => 1991,
 		]));
