@@ -13,6 +13,7 @@ use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionObject;
 
+/** @internal */
 final class AttributesResolver
 {
 	private readonly array $attributes;
