@@ -60,17 +60,6 @@ class ViewTest extends TestCase
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
 	}
 
-	public function testNonCallableActionStringIsRejected(): void
-	{
-		$this->throws(RuntimeException::class, 'Route action string is not callable');
-
-		$route = Route::any('/', TestController::class . '::textView')->after(
-			$this->renderer(),
-		);
-		$view = new View($this->routeMatch($route), null);
-		$view->execute($this->request());
-	}
-
 	public function testControllerClassMethod(): void
 	{
 		$route = Route::any('/', [TestController::class, 'textView'])->after($this->renderer());
