@@ -64,31 +64,31 @@ class Route
 			throw new ValueError('Route method list cannot be empty.');
 		}
 
-		return new self($pattern, $view, $name)->method(...array_values($methods));
+		return new self($pattern, $view, $name)->withMethods(...array_values($methods));
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function get(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return new self($pattern, $view, $name)->method('GET');
+		return new self($pattern, $view, $name)->withMethods('GET');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function post(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return new self($pattern, $view, $name)->method('POST');
+		return new self($pattern, $view, $name)->withMethods('POST');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function put(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return new self($pattern, $view, $name)->method('PUT');
+		return new self($pattern, $view, $name)->withMethods('PUT');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function patch(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return new self($pattern, $view, $name)->method('PATCH');
+		return new self($pattern, $view, $name)->withMethods('PATCH');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
@@ -97,13 +97,13 @@ class Route
 		callable|array|string $view,
 		string $name = '',
 	): self {
-		return new self($pattern, $view, $name)->method('DELETE');
+		return new self($pattern, $view, $name)->withMethods('DELETE');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function head(string $pattern, callable|array|string $view, string $name = ''): self
 	{
-		return new self($pattern, $view, $name)->method('HEAD');
+		return new self($pattern, $view, $name)->withMethods('HEAD');
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
@@ -112,15 +112,14 @@ class Route
 		callable|array|string $view,
 		string $name = '',
 	): self {
-		return new self($pattern, $view, $name)->method('OPTIONS');
+		return new self($pattern, $view, $name)->withMethods('OPTIONS');
 	}
 
-	/** @no-named-arguments */
-	public function method(string ...$args): static
+	private function withMethods(string ...$args): self
 	{
-		$this->methods = array_merge($this->methods ?? [], array_map(static fn($m) => strtoupper(
-			$m,
-		), $args));
+		/** @var list<string> $methods */
+		$methods = array_map(static fn(string $method): string => strtoupper($method), $args);
+		$this->methods = [...($this->methods ?? []), ...$methods];
 
 		return $this;
 	}

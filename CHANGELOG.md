@@ -19,6 +19,7 @@
 - Static asset URLs are generated with `Router::asset()`.
 - `Router::routes()` was removed; register routes directly on `Router` or use `Router::group()` for scoped callbacks.
 - The methodless route helper is now `any()`; the old `route()` helper was removed.
+- `Route::method()` was removed; use verb helpers or `map()` to choose request methods before registration.
 - `Endpoint` and the `endpoint()` route-adder helper were removed.
 - `Router::addGroup()` and `Group::addGroup()` were removed; use `Router::group()` or nested `$group->group()` callbacks instead.
 - `Router::group()` and nested `$group->group()` now return `void`; define all group configuration inside the callback.
