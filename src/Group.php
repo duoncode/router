@@ -9,25 +9,34 @@ use Duon\Router\Exception\RuntimeException;
 use Override;
 
 /** @psalm-api */
-class Group implements RouteAdder
+final class Group implements RouteAdder
 {
 	use AddsBeforeAfter;
 	use AddsMiddleware;
 	use AddsRoutes;
 
 	/** @var list<Route|Group> */
-	protected array $entries = [];
+	private array $entries = [];
 
-	protected ?RouteAdder $routeAdder = null;
-	protected ?string $controller = null;
-	protected bool $created = false;
-	protected bool $finalizing = false;
+	private ?RouteAdder $routeAdder = null;
+	private ?string $controller = null;
+	private bool $registered = false;
+	private bool $finalizing = false;
 
-	public function __construct(
-		protected string $patternPrefix,
-		protected Closure $createClosure,
-		protected string $namePrefix = '',
+	private function __construct(
+		private string $patternPrefix,
+		private Closure $createClosure,
+		private string $namePrefix = '',
 	) {}
+
+	/** @internal */
+	public static function create(
+		string $patternPrefix,
+		Closure $createClosure,
+		string $namePrefix = '',
+	): self {
+		return new self($patternPrefix, $createClosure, $namePrefix);
+	}
 
 	public function controller(string $controller): static
 	{
@@ -58,7 +67,7 @@ class Group implements RouteAdder
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
-		$group = new Group($patternPrefix, $createClosure, $namePrefix);
+		$group = self::create($patternPrefix, $createClosure, $namePrefix);
 
 		if ($this->routeAdder === null) {
 			throw new RuntimeException('RouteAdder not set');
@@ -70,19 +79,19 @@ class Group implements RouteAdder
 			return $group;
 		}
 
-		$group->create($this);
+		$group->register($this);
 
 		return $group;
 	}
 
 	/** @internal */
-	public function create(RouteAdder $adder): void
+	public function register(RouteAdder $adder): void
 	{
-		if ($this->created) {
+		if ($this->registered) {
 			return;
 		}
 
-		$this->created = true;
+		$this->registered = true;
 		$this->routeAdder = $adder;
 		($this->createClosure)($this);
 
@@ -93,7 +102,7 @@ class Group implements RouteAdder
 				if ($entry instanceof Route) {
 					$this->forwardRoute($entry);
 				} else {
-					$entry->create($this);
+					$entry->register($this);
 				}
 			}
 		} finally {
