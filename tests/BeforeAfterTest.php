@@ -60,22 +60,21 @@ class BeforeAfterTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = new Group('/albums', function (Group $group) {
+		$router->group('/albums', function (Group $group): void {
 			$ctrl = TestController::class;
 
-			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
+			$group->get('', "{$ctrl}::albumList");
 
 			// overwrite first after renderer
-			$group->addRoute(
-				Route::get('/home', "{$ctrl}::albumHome")
-					->after(new TestAfterRendererText($this->responseFactory())),
-			);
+			$group
+				->get('/home', "{$ctrl}::albumHome")
+				->after(new TestAfterRendererText($this->responseFactory()));
 
-			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"))->after(new TestAfterAddText());
-		})
-			->after(new TestAfterRendererJson($this->responseFactory()))
-			->after(new TestAfterAddHeader());
-		$group->create($router);
+			$group->get('/{name}', "{$ctrl}::albumName")->after(new TestAfterAddText());
+			$group
+				->after(new TestAfterRendererJson($this->responseFactory()))
+				->after(new TestAfterAddHeader());
+		});
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'))->route();
 		$this->assertInstanceof(TestAfterRendererJson::class, $route->afterHandlers()[0]);
@@ -97,22 +96,21 @@ class BeforeAfterTest extends TestCase
 	{
 		$router = new Router();
 
-		$group = new Group('/albums', static function (Group $group) {
+		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
 
-			$group->addRoute(Route::get('', "{$ctrl}::albumList"));
+			$group->get('', "{$ctrl}::albumList");
 
 			// overwrite first before
-			$group->addRoute(
-				Route::get('/home', "{$ctrl}::albumHome")
-					->before(new TestBeforeReplace()),
-			);
+			$group
+				->get('/home', "{$ctrl}::albumHome")
+				->before(new TestBeforeReplace());
 
-			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"))->before(new TestBeforeThird());
-		})
-			->before(new TestBeforeFirst())
-			->before(new TestBeforeSecond());
-		$group->create($router);
+			$group->get('/{name}', "{$ctrl}::albumName")->before(new TestBeforeThird());
+			$group
+				->before(new TestBeforeFirst())
+				->before(new TestBeforeSecond());
+		});
 
 		$route = $router->match($this->request(method: 'GET', uri: '/albums/human'))->route();
 		$this->assertInstanceof(TestBeforeFirst::class, $route->beforeHandlers()[0]);

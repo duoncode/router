@@ -86,6 +86,18 @@ class Router implements RouteAdder
 		$group->create($this);
 	}
 
+	#[Override]
+	public function group(
+		string $patternPrefix,
+		Closure $createClosure,
+		string $namePrefix = '',
+	): Group {
+		$group = new Group($patternPrefix, $createClosure, $namePrefix);
+		$this->addGroup($group);
+
+		return $group;
+	}
+
 	public function addStatic(
 		string $prefix,
 		string $dir,

@@ -25,10 +25,10 @@ class RouterTest extends TestCase
 		$router->addRoute($index);
 		$albums = new Route('/albums', static fn() => null);
 		$router->addRoute($albums);
-		$router->addGroup(new Group('/albums', static function (Group $group) {
+		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
-			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"));
-		}));
+			$group->get('/{name}', "{$ctrl}::albumName");
+		});
 
 		$match = $router->match($this->request('GET', ''));
 		$this->assertInstanceOf(RouteMatch::class, $match);
@@ -47,10 +47,10 @@ class RouterTest extends TestCase
 		$router->addRoute($index);
 		$albums = new Route('/albums', static fn() => null);
 		$router->addRoute($albums);
-		$router->addGroup(new Group('/albums', static function (Group $group) {
+		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
-			$group->addRoute(Route::get('/{name}', "{$ctrl}::albumName"));
-		}));
+			$group->get('/{name}', "{$ctrl}::albumName");
+		});
 
 		$this->assertSame('index', $router->match($this->request('GET', '/prefix'))->route()->name());
 
