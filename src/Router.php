@@ -69,8 +69,8 @@ class Router implements RouteAdder
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
-		$group = new Group($patternPrefix, $createClosure, $namePrefix);
-		$group->create($this);
+		$group = Group::create($patternPrefix, $createClosure, $namePrefix);
+		$group->register($this);
 
 		return $group;
 	}

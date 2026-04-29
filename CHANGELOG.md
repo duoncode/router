@@ -20,7 +20,7 @@
 - The methodless route helper is now `any()`; the old `route()` helper was removed.
 - `Endpoint` and the `endpoint()` route-adder helper were removed.
 - `Router::addGroup()` and `Group::addGroup()` were removed; use `Router::group()` or nested `$group->group()` callbacks instead.
-- Manual `Group::create()` usage is internal.
+- Manual `Group` construction was removed. Group lifecycle methods are internal.
 
 ### Changed
 

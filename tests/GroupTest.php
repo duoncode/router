@@ -279,7 +279,7 @@ class GroupTest extends TestCase
 		$this->assertSame([$mw2, $mw3], $route->getMiddleware());
 	}
 
-	public function testCreateIsIdempotent(): void
+	public function testRegisterIsIdempotent(): void
 	{
 		$router = new Router();
 		$group = $router->group(
@@ -290,7 +290,7 @@ class GroupTest extends TestCase
 			'albums.',
 		);
 
-		$group->create($router);
+		$group->register($router);
 
 		$this->assertSame('/albums', $router->url('albums.index'));
 	}
@@ -299,7 +299,7 @@ class GroupTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
-		$group = new Group('/albums', static function (Group $group): void {}, 'test:');
+		$group = Group::create('/albums', static function (Group $group): void {}, 'test:');
 		$group->addRoute(Route::get('/', static fn() => ''));
 	}
 
@@ -307,7 +307,7 @@ class GroupTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
-		$group = new Group('/albums', static function (Group $group): void {}, 'test:');
+		$group = Group::create('/albums', static function (Group $group): void {}, 'test:');
 		$group->group('/photos', static function (Group $group): void {});
 	}
 }
