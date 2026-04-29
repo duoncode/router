@@ -13,7 +13,6 @@ use Duon\Router\Route;
 use Duon\Router\RouteMatch;
 use Duon\Router\Router;
 use Duon\Router\Tests\Fixtures\TestController;
-use Duon\Router\Tests\Fixtures\TestEndpoint;
 use PHPUnit\Framework\Attributes\TestDox;
 
 class RouterTest extends TestCase
@@ -395,18 +394,6 @@ class RouterTest extends TestCase
 		$this->assertSame($puthead, $router->match($this->request('PUT', '/'))->route());
 		$this->assertSame($puthead, $router->match($this->request('HEAD', '/'))->route());
 		$router->match($this->request('POST', '/'))->route();
-	}
-
-	public function testAddEndpoint(): void
-	{
-		$router = new Router();
-		$router->endpoint('/endpoints', TestEndpoint::class, ['id', 'category'])->add();
-
-		$match = $router->match($this->request('POST', '/endpoints'));
-		$requestRoute = $match->route();
-		$this->assertSame('/endpoints', $requestRoute->pattern());
-		$this->assertSame([TestEndpoint::class, 'post'], $requestRoute->view());
-		$this->assertSame([], $match->params());
 	}
 
 	public function testAddRoutesWithCallback(): void

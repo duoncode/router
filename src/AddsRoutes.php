@@ -56,10 +56,4 @@ trait AddsRoutes
 	{
 		return $this->addRoute(Route::options($pattern, $view, $name));
 	}
-
-	/** @param class-string $controller */
-	public function endpoint(array|string $path, string $controller, string|array $args): Endpoint
-	{
-		return new Endpoint($this, $path, $controller, $args);
-	}
 }
