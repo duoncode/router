@@ -21,6 +21,7 @@
 - `Endpoint` and the `endpoint()` route-adder helper were removed.
 - `Router::addGroup()` and `Group::addGroup()` were removed; use `Router::group()` or nested `$group->group()` callbacks instead.
 - `Router::group()` and nested `$group->group()` now return `void`; define all group configuration inside the callback.
+- `Group` instances can only be modified while their own callback is running.
 - Manual `Group` construction was removed. Group lifecycle methods are internal.
 
 ### Changed
