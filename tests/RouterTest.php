@@ -398,7 +398,7 @@ class RouterTest extends TestCase
 
 	public function testDuplicateRouteName(): void
 	{
-		$this->throws(RuntimeException::class, 'Duplicate route: index');
+		$this->throws(RuntimeException::class, 'Duplicate route name: index');
 
 		$router = new Router();
 		$router->addRoute(new Route('/', static fn() => null, 'index'));

@@ -54,12 +54,7 @@ class Router implements RouteAdder
 
 		if ($name) {
 			if (array_key_exists($name, $this->names)) {
-				throw new RuntimeException(
-					'Duplicate route: '
-					. $name
-					. '. If     ||    you want to use the same '
-					. 'url pattern with different methods, you have to create routes with names.',
-				);
+				throw new RuntimeException('Duplicate route name: ' . $name);
 			}
 
 			$this->names[$name] = $route;
