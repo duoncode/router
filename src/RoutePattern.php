@@ -34,7 +34,7 @@ final readonly class RoutePattern
 	}
 
 	/**
-	 * @psalm-api
+	 * @psalm-suppress PossiblyUnusedMethod -- exposed for parser tests.
 	 * @return list<RouteToken>
 	 */
 	public function tokens(): array

@@ -6,4 +6,5 @@ namespace Duon\Router\Exception;
 
 use Throwable;
 
+/** @psalm-api */
 interface RouteException extends Throwable {}
