@@ -7,6 +7,7 @@
 - `RoutingHandler` provides a PSR-15 request handler that matches and dispatches a request in one call.
 - `Router::group()` registers callback groups without manually constructing `Group` objects.
 - Route adders now expose `any()` for methodless routes.
+- Route adders now expose `map()` for routes with an explicit method list.
 
 ### Breaking
 

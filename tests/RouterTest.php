@@ -8,6 +8,7 @@ use Duon\Router\Exception\InvalidArgumentException;
 use Duon\Router\Exception\MethodNotAllowedException;
 use Duon\Router\Exception\NotFoundException;
 use Duon\Router\Exception\RuntimeException;
+use Duon\Router\Exception\ValueError;
 use Duon\Router\Group;
 use Duon\Router\Route;
 use Duon\Router\RouteMatch;
@@ -122,6 +123,32 @@ class RouterTest extends TestCase
 		$this->assertSame($any, $router->match($this->request('DELETE', '/any'))->route());
 
 		$router->match($this->request('GET', '/albums'))->route();
+	}
+
+	public function testMapHelperMatching(): void
+	{
+		$router = new Router();
+		$route = $router->map(['get', 'POST'], '/login', static fn() => null, 'login');
+
+		$this->assertSame(['GET', 'POST'], $route->methods());
+		$this->assertSame($route, $router->match($this->request('GET', '/login'))->route());
+		$this->assertSame($route, $router->match($this->request('POST', '/login'))->route());
+		$this->assertSame('/login', $router->url('login'));
+
+		try {
+			$router->match($this->request('PUT', '/login'));
+			$this->fail('Expected method not allowed exception.');
+		} catch (MethodNotAllowedException $e) {
+			$this->assertSame(['GET', 'POST'], $e->allowedMethods());
+		}
+	}
+
+	public function testMapHelperRejectsEmptyMethods(): void
+	{
+		$this->throws(ValueError::class, 'Route method list cannot be empty.');
+
+		$router = new Router();
+		$router->map([], '/login', static fn() => null);
 	}
 
 	public function testRepeatedMatchesKeepSeparateParams(): void

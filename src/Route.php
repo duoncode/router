@@ -50,6 +50,23 @@ class Route
 		return new self($pattern, $view, $name);
 	}
 
+	/**
+	 * @param array<array-key, string> $methods
+	 * @param callable|list{string, string}|non-empty-string $view
+	 */
+	public static function map(
+		array $methods,
+		string $pattern,
+		callable|array|string $view,
+		string $name = '',
+	): self {
+		if ($methods === []) {
+			throw new ValueError('Route method list cannot be empty.');
+		}
+
+		return new self($pattern, $view, $name)->method(...array_values($methods));
+	}
+
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function get(string $pattern, callable|array|string $view, string $name = ''): self
 	{
