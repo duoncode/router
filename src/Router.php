@@ -68,11 +68,9 @@ class Router implements RouteAdder
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
-	): Group {
+	): void {
 		$group = Group::make($patternPrefix, $createClosure, $namePrefix);
 		$group->register($this);
-
-		return $group;
 	}
 
 	public function addStatic(
