@@ -83,7 +83,7 @@ final class View
 	public function attributes(?string $filter = null): array
 	{
 		if (!isset($this->attributes)) {
-			if (is_callable($this->view)) {
+			if ($this->view instanceof Closure) {
 				$this->attributes = new AttributesResolver(
 					[getReflectionFunction($this->view)],
 					$this->container,

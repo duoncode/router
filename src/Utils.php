@@ -9,6 +9,7 @@ use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionObject;
 
+/** @param Closure|callable-object|callable-string $callable */
 function getReflectionFunction(
 	callable $callable,
 ): ReflectionFunction|ReflectionMethod {
@@ -20,6 +21,5 @@ function getReflectionFunction(
 		return new ReflectionObject($callable)->getMethod('__invoke');
 	}
 
-	/** @var Closure|non-falsy-string $callable */
 	return new ReflectionFunction($callable);
 }
