@@ -37,12 +37,6 @@ class Router implements RouteAdder
 	/** @var array<string, Route> */
 	protected array $names = [];
 
-	/** @param Closure(Router): void $creator */
-	public function routes(Closure $creator): void
-	{
-		$creator($this);
-	}
-
 	#[Override]
 	public function addRoute(Route $route): Route
 	{

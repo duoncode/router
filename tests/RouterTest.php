@@ -396,18 +396,6 @@ class RouterTest extends TestCase
 		$router->match($this->request('POST', '/'))->route();
 	}
 
-	public function testAddRoutesWithCallback(): void
-	{
-		$router = new Router();
-		$router->routes(static function (Router $r): void {
-			$r->get('/', static fn() => null, 'index');
-			$r->post('/albums', static fn() => null);
-		});
-
-		$this->assertSame('index', $router->match($this->request('GET', ''))->route()->name());
-		$this->assertSame('', $router->match($this->request('POST', '/albums'))->route()->name());
-	}
-
 	public function testDuplicateRouteName(): void
 	{
 		$this->throws(RuntimeException::class, 'Duplicate route: index');
