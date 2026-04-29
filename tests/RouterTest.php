@@ -113,11 +113,14 @@ class RouterTest extends TestCase
 		$router = new Router();
 		$index = $router->get('/', static fn() => null, 'index');
 		$albums = $router->post('/albums', static fn() => null);
+		$any = $router->any('/any', static fn() => null, 'any');
 
 		$this->assertSame('index', $router->match($this->request('GET', ''))->route()->name());
 		$this->assertSame('', $router->match($this->request('POST', '/albums'))->route()->name());
+		$this->assertSame('any', $router->match($this->request('PATCH', '/any'))->route()->name());
 		$this->assertSame($index, $router->match($this->request('GET', ''))->route());
 		$this->assertSame($albums, $router->match($this->request('POST', '/albums'))->route());
+		$this->assertSame($any, $router->match($this->request('DELETE', '/any'))->route());
 
 		$router->match($this->request('GET', '/albums'))->route();
 	}

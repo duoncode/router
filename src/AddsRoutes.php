@@ -10,12 +10,9 @@ trait AddsRoutes
 	abstract public function addRoute(Route $route): Route;
 
 	/** @param callable|list{string, string}|non-empty-string $view */
-	public function route(string $pattern, callable|array|string $view, string $name = ''): Route
+	public function any(string $pattern, callable|array|string $view, string $name = ''): Route
 	{
-		$route = new Route($pattern, $view, $name);
-		$this->addRoute($route);
-
-		return $route;
+		return $this->addRoute(Route::any($pattern, $view, $name));
 	}
 
 	/** @param callable|list{string, string}|non-empty-string $view */
