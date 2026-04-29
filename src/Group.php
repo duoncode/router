@@ -53,25 +53,24 @@ class Group implements RouteAdder
 	}
 
 	#[Override]
-	public function addGroup(Group $group): void
-	{
-		if ($this->routeAdder !== null && !$this->finalizing) {
-			$this->entries[] = $group;
-
-			return;
-		}
-
-		$group->create($this);
-	}
-
-	#[Override]
 	public function group(
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
 		$group = new Group($patternPrefix, $createClosure, $namePrefix);
-		$this->addGroup($group);
+
+		if ($this->routeAdder === null) {
+			throw new RuntimeException('RouteAdder not set');
+		}
+
+		if (!$this->finalizing) {
+			$this->entries[] = $group;
+
+			return $group;
+		}
+
+		$group->create($this);
 
 		return $group;
 	}
