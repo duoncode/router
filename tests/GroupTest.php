@@ -358,17 +358,17 @@ class GroupTest extends TestCase
 		);
 	}
 
-	public function testFailWithoutCallingRegisterBefore(): void
+	public function testFailAddingRouteBeforeRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'RouteAdder not set');
+		$this->throws(RuntimeException::class, 'Cannot add routes outside the group callback.');
 
 		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->addRoute(Route::get('/', static fn() => ''));
 	}
 
-	public function testFailNestedGroupWithoutCallingRegisterBefore(): void
+	public function testFailAddingGroupBeforeRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'RouteAdder not set');
+		$this->throws(RuntimeException::class, 'Cannot add groups outside the group callback.');
 
 		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->group('/photos', static function (Group $group): void {});

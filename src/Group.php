@@ -97,10 +97,6 @@ final class Group implements RouteAdder
 	#[Override]
 	public function addRoute(Route $route): Route
 	{
-		if ($this->routeAdder === null) {
-			throw new RuntimeException('RouteAdder not set');
-		}
-
 		if (!$this->finalizing) {
 			$this->assertCollecting('Cannot add routes outside the group callback.');
 			$this->entries[] = $route;
@@ -118,10 +114,6 @@ final class Group implements RouteAdder
 		string $namePrefix = '',
 	): void {
 		$group = self::make($patternPrefix, $createClosure, $namePrefix);
-
-		if ($this->routeAdder === null) {
-			throw new RuntimeException('RouteAdder not set');
-		}
 
 		if (!$this->finalizing) {
 			$this->assertCollecting('Cannot add groups outside the group callback.');
