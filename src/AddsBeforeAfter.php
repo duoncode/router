@@ -20,13 +20,17 @@ trait AddsBeforeAfter
 		return $this;
 	}
 
-	/** @return list<Before> */
+	/**
+	 * @internal
+	 * @return list<Before>
+	 */
 	public function beforeHandlers(): array
 	{
 		return $this->beforeHandlers;
 	}
 
 	/**
+	 * @internal
 	 * @param list<Before> $beforeHandlers
 	 * @return list<Before>
 	 */
@@ -35,7 +39,10 @@ trait AddsBeforeAfter
 		return $this->doMergeBeforeHandlers($this->beforeHandlers, $beforeHandlers);
 	}
 
-	/** @param list<Before> $beforeHandlers */
+	/**
+	 * @internal
+	 * @param list<Before> $beforeHandlers
+	 */
 	public function setBeforeHandlers(array $beforeHandlers): static
 	{
 		$this->beforeHandlers = $beforeHandlers;
@@ -51,13 +58,17 @@ trait AddsBeforeAfter
 		return $this;
 	}
 
-	/** @return list<After> */
+	/**
+	 * @internal
+	 * @return list<After>
+	 */
 	public function afterHandlers(): array
 	{
 		return $this->afterHandlers;
 	}
 
 	/**
+	 * @internal
 	 * @param list<After> $afterHandlers
 	 * @return list<After>
 	 */
@@ -66,7 +77,10 @@ trait AddsBeforeAfter
 		return $this->doMergeAfterHandlers($this->afterHandlers, $afterHandlers);
 	}
 
-	/** @param list<After> $afterHandlers */
+	/**
+	 * @internal
+	 * @param list<After> $afterHandlers
+	 */
 	public function setAfterHandlers(array $afterHandlers): static
 	{
 		$this->afterHandlers = $afterHandlers;

@@ -114,6 +114,7 @@ class Route
 		return $this->methods ?? [];
 	}
 
+	/** @internal */
 	public function prefix(string $pattern = '', string $name = ''): static
 	{
 		if ($pattern !== '') {
@@ -128,9 +129,7 @@ class Route
 		return $this;
 	}
 
-	/**
-	 * Simply prefixes the current $this->view string with $controller.
-	 */
+	/** @internal */
 	public function controller(string $controller): static
 	{
 		if (is_string($this->view)) {
