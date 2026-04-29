@@ -300,7 +300,7 @@ class GroupTest extends TestCase
 
 	public function testFailAddingRouteAfterRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'Cannot add routes outside the group callback.');
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
 
 		$router = new Router();
 		$group = Group::make('/albums', static function (Group $group): void {}, 'albums.');
@@ -310,7 +310,7 @@ class GroupTest extends TestCase
 
 	public function testFailAddingGroupAfterRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'Cannot add groups outside the group callback.');
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
 
 		$router = new Router();
 		$group = Group::make('/albums', static function (Group $group): void {}, 'albums.');
@@ -360,7 +360,7 @@ class GroupTest extends TestCase
 
 	public function testFailAddingRouteBeforeRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'Cannot add routes outside the group callback.');
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
 
 		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->addRoute(Route::get('/', static fn() => ''));
@@ -368,7 +368,7 @@ class GroupTest extends TestCase
 
 	public function testFailAddingGroupBeforeRegister(): void
 	{
-		$this->throws(RuntimeException::class, 'Cannot add groups outside the group callback.');
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
 
 		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->group('/photos', static function (Group $group): void {});
@@ -387,7 +387,7 @@ class GroupTest extends TestCase
 		try {
 			$configure($group);
 		} catch (RuntimeException $e) {
-			$this->assertSame('Cannot configure group outside the group callback.', $e->getMessage());
+			$this->assertSame('Cannot modify group outside the group callback.', $e->getMessage());
 
 			return;
 		}
