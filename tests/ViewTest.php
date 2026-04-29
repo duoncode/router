@@ -139,6 +139,24 @@ class ViewTest extends TestCase
 		$view->execute($this->request());
 	}
 
+	public function testInvalidControllerActionArray(): void
+	{
+		$this->throws(RuntimeException::class, 'Controller actions must use');
+
+		$route = new Route('/', []);
+		$view = new View($this->routeMatch($route), null);
+		$view->execute($this->request());
+	}
+
+	public function testNonCallableControllerMethod(): void
+	{
+		$this->throws(RuntimeException::class, 'Route action method is not callable');
+
+		$route = Route::any('/', [TestController::class, 'privateView'])->after($this->renderer());
+		$view = new View($this->routeMatch($route), null);
+		$view->execute($this->request());
+	}
+
 	public function testControllerWithRequestInConstructor(): void
 	{
 		$request = $this->request();

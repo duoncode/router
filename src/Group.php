@@ -114,9 +114,7 @@ class Group implements RouteAdder
 		$route->setBeforeHandlers($this->mergeBeforeHandlers($route->beforeHandlers()));
 		$route->setAfterHandlers($this->mergeAfterHandlers($route->afterHandlers()));
 
-		if ($this->routeAdder === null) {
-			throw new RuntimeException('RouteAdder not set');
-		}
+		assert($this->routeAdder !== null, 'RouteAdder must be set before forwarding routes.');
 
 		return $this->routeAdder->addRoute($route);
 	}

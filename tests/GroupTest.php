@@ -256,6 +256,30 @@ class GroupTest extends TestCase
 		$this->assertSame([$mw2, $mw3], $route->getMiddleware());
 	}
 
+	public function testCreateIsIdempotent(): void
+	{
+		$router = new Router();
+		$group = $router->group(
+			'/albums',
+			static function (Group $group): void {
+				$group->get('', [TestController::class, 'textView'], 'index');
+			},
+			'albums.',
+		);
+
+		$group->create($router);
+
+		$this->assertSame('/albums', $router->url('albums.index'));
+	}
+
+	public function testAddGroupCanCreateEmptyGroupBeforeParentCreation(): void
+	{
+		$parent = new Group('/parent', static function (Group $group): void {});
+		$parent->addGroup(new Group('/child', static function (Group $group): void {}));
+
+		$this->addToAssertionCount(1);
+	}
+
 	public function testFailWithoutCallingCreateBefore(): void
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');

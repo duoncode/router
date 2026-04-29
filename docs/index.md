@@ -2,12 +2,12 @@
 title: Introduction
 ---
 
-# Duon Route
+# Duon Router
 
-!!! warning "Note"
-    This library is under active development, some of the listed features are still experimental and subject to change. Large parts of the documentation are missing.
+> [!WARNING]
+> This library is under active development, some of the listed features are still experimental and subject to change. Large parts of the documentation are missing.
 
-A router and view dispatcher. `RoutingHandler` implements PSR-15 `RequestHandlerInterface` and is the primary runtime entry point.
+Duon Router is a PSR-7/PSR-15 router and view dispatcher. `RoutingHandler` implements PSR-15 `RequestHandlerInterface` and is the primary runtime entry point.
 
 ```php
 use Duon\Router\Dispatcher;
@@ -18,6 +18,42 @@ $router = new Router();
 $handler = new RoutingHandler($router, new Dispatcher());
 $response = $handler->handle($request);
 ```
+
+## Routes
+
+Define routes with HTTP method helpers. Use `any()` when a route intentionally accepts every request method.
+
+```php
+$router->get('/health', [HealthController::class, 'show'], 'health');
+$router->post('/albums', [AlbumController::class, 'create'], 'albums.create');
+$router->any('/webhook', $webhook, 'webhook');
+```
+
+Preferred route actions are callables and controller method arrays:
+
+```php
+$router->get('/status', fn() => $response);
+$router->get('/albums', [AlbumController::class, 'index']);
+```
+
+Groups compose route prefixes, name prefixes, middleware, `Before` handlers, `After` handlers, and controller classes. Group settings are collected while the callback runs and then applied to all routes in that group.
+
+```php
+use Duon\Router\Group;
+
+$router->group('/albums', function (Group $albums) use ($auth): void {
+    $albums->middleware($auth);
+    $albums->controller(AlbumController::class);
+
+    $albums->get('', 'index', 'albums.index');
+    $albums->get('/{id:\d+}', 'show', 'albums.show');
+    $albums->post('', 'create', 'albums.create');
+});
+```
+
+Inside a controller group, route actions can be bare method names. Outside a controller group, use a callable or `[Controller::class, 'method']`.
+
+## Dispatching
 
 `RoutingHandler` lets `NotFoundException` and `MethodNotAllowedException` bubble by default so your application can render 404 and 405 responses. `MethodNotAllowedException::allowedMethods()` returns the allowed method list.
 
