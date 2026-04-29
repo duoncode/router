@@ -11,6 +11,12 @@ interface RouteAdder
 
 	public function addGroup(Group $group): void;
 
+	public function group(
+		string $patternPrefix,
+		\Closure $createClosure,
+		string $namePrefix = '',
+	): Group;
+
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function route(string $pattern, callable|array|string $view, string $name = ''): Route;
 

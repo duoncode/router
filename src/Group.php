@@ -15,12 +15,13 @@ class Group implements RouteAdder
 	use AddsMiddleware;
 	use AddsRoutes;
 
-	/** @var list<Group> */
-	protected array $subgroups = [];
+	/** @var list<Route|Group> */
+	protected array $entries = [];
 
 	protected ?RouteAdder $routeAdder = null;
 	protected ?string $controller = null;
 	protected bool $created = false;
+	protected bool $finalizing = false;
 
 	public function __construct(
 		protected string $patternPrefix,
@@ -38,42 +39,44 @@ class Group implements RouteAdder
 	#[Override]
 	public function addRoute(Route $route): Route
 	{
-		$route->prefix($this->patternPrefix, $this->namePrefix);
-
-		if ($this->controller !== null) {
-			$route->controller($this->controller);
+		if ($this->routeAdder === null) {
+			throw new RuntimeException('RouteAdder not set');
 		}
 
-		$route->replaceMiddleware(array_merge($this->middleware, $route->getMiddleware()));
-		$route->setBeforeHandlers($this->mergeBeforeHandlers($route->beforeHandlers()));
-		$route->setAfterHandlers($this->mergeAfterHandlers($route->afterHandlers()));
-
-		if ($this->routeAdder) {
-			$this->routeAdder->addRoute($route);
+		if (!$this->finalizing) {
+			$this->entries[] = $route;
 
 			return $route;
 		}
 
-		throw new RuntimeException('RouteAdder not set');
+		return $this->forwardRoute($route);
 	}
 
 	#[Override]
 	public function addGroup(Group $group): void
 	{
+		if ($this->routeAdder !== null && !$this->finalizing) {
+			$this->entries[] = $group;
+
+			return;
+		}
+
 		$group->create($this);
 	}
 
+	#[Override]
 	public function group(
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
 		$group = new Group($patternPrefix, $createClosure, $namePrefix);
-		$this->subgroups[] = $group;
+		$this->addGroup($group);
 
 		return $group;
 	}
 
+	/** @internal */
 	public function create(RouteAdder $adder): void
 	{
 		if ($this->created) {
@@ -84,8 +87,37 @@ class Group implements RouteAdder
 		$this->routeAdder = $adder;
 		($this->createClosure)($this);
 
-		foreach ($this->subgroups as $subgroup) {
-			$subgroup->create($this);
+		$this->finalizing = true;
+
+		try {
+			foreach ($this->entries as $entry) {
+				if ($entry instanceof Route) {
+					$this->forwardRoute($entry);
+				} else {
+					$entry->create($this);
+				}
+			}
+		} finally {
+			$this->finalizing = false;
 		}
+	}
+
+	private function forwardRoute(Route $route): Route
+	{
+		$route->prefix($this->patternPrefix, $this->namePrefix);
+
+		if ($this->controller !== null) {
+			$route->controller($this->controller);
+		}
+
+		$route->replaceMiddleware(array_merge($this->middleware, $route->getMiddleware()));
+		$route->setBeforeHandlers($this->mergeBeforeHandlers($route->beforeHandlers()));
+		$route->setAfterHandlers($this->mergeAfterHandlers($route->afterHandlers()));
+
+		if ($this->routeAdder === null) {
+			throw new RuntimeException('RouteAdder not set');
+		}
+
+		return $this->routeAdder->addRoute($route);
 	}
 }
