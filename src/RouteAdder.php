@@ -18,7 +18,7 @@ interface RouteAdder
 	): Group;
 
 	/** @param callable|list{string, string}|non-empty-string $view */
-	public function route(string $pattern, callable|array|string $view, string $name = ''): Route;
+	public function any(string $pattern, callable|array|string $view, string $name = ''): Route;
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function get(string $pattern, callable|array|string $view, string $name = ''): Route;

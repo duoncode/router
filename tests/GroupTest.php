@@ -94,7 +94,7 @@ class GroupTest extends TestCase
 				$group->delete('/delete', "{$ctrl}::albumHome", 'deleteroute');
 				$group->options('/options', "{$ctrl}::albumHome", 'optionsroute');
 				$group->head('/head', "{$ctrl}::albumHome", 'headroute');
-				$group->route('/route', "{$ctrl}::albumHome", 'allroute');
+				$group->any('/route', "{$ctrl}::albumHome", 'allroute');
 			},
 			'helper:',
 		);
