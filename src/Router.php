@@ -28,9 +28,6 @@ class Router implements RouteAdder
 
 	protected const string ANY = 'ANY';
 
-	protected string $cacheFile = '';
-	protected bool $shouldCache = false;
-
 	/** @var array<string, list<Route>> */
 	protected array $routes = [];
 
@@ -41,11 +38,8 @@ class Router implements RouteAdder
 	protected array $names = [];
 
 	/** @param Closure(Router): void $creator */
-	public function routes(Closure $creator, string $cacheFile = '', bool $shouldCache = true): void
+	public function routes(Closure $creator): void
 	{
-		$this->cacheFile = $cacheFile;
-		$this->shouldCache = $shouldCache;
-
 		$creator($this);
 	}
 
