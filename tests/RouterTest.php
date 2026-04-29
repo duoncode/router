@@ -338,7 +338,7 @@ class RouterTest extends TestCase
 	public function testMethodNotAllowedListsAllowedMethods(): void
 	{
 		$router = new Router();
-		$router->addRoute(new Route('/', static fn() => null)->method('get', 'get', 'put'));
+		$router->addRoute(Route::map(['get', 'get', 'put'], '/', static fn() => null));
 
 		try {
 			$router->match($this->request('POST', '/'));
@@ -354,7 +354,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = Route::get('/', static fn() => null)->method('post');
+		$route = Route::map(['get', 'post'], '/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/'))->route());
@@ -368,7 +368,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = new Route('/', static fn() => null)->method('gEt', 'Put');
+		$route = Route::map(['gEt', 'Put'], '/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/'))->route());
@@ -382,9 +382,7 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$route = new Route('/', static fn() => null)
-			->method('get')
-			->method('head');
+		$route = Route::map(['get', 'head'], '/', static fn() => null);
 		$router->addRoute($route);
 
 		$this->assertSame($route, $router->match($this->request('GET', '/'))->route());
@@ -412,9 +410,9 @@ class RouterTest extends TestCase
 		$this->throws(MethodNotAllowedException::class);
 
 		$router = new Router();
-		$puthead = new Route('/', static fn() => null, 'puthead')->method('HEAD', 'Put');
+		$puthead = Route::map(['HEAD', 'Put'], '/', static fn() => null, 'puthead');
 		$router->addRoute($puthead);
-		$get = new Route('/', static fn() => null, 'get')->method('GET');
+		$get = Route::get('/', static fn() => null, 'get');
 		$router->addRoute($get);
 
 		$this->assertSame($get, $router->match($this->request('GET', '/'))->route());
