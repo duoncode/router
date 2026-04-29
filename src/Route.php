@@ -140,8 +140,7 @@ class Route
 		}
 
 		throw new ValueError(
-			'Cannot add controller to view of type Closure or array. '
-			. 'Also, Endpoints cannot be used in a Group which utilises controllers',
+			'Cannot add controller to route action. Controller groups require bare method names.',
 		);
 	}
 

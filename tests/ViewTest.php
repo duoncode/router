@@ -80,6 +80,16 @@ class ViewTest extends TestCase
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
 	}
 
+	public function testControllerGroupMethodString(): void
+	{
+		$route = Route::any('/', 'textView')
+			->controller(TestController::class)
+			->after($this->renderer());
+		$view = new View($this->routeMatch($route), null);
+
+		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
+	}
+
 	public function testControllerObjectMethod(): void
 	{
 		$controller = new TestController();
@@ -102,7 +112,7 @@ class ViewTest extends TestCase
 
 	public function testNonexistentControllerView(): void
 	{
-		$this->throws(RuntimeException::class, 'View method not found');
+		$this->throws(RuntimeException::class, 'Route action method not found');
 
 		$route = Route::any('/', TestController::class . '::nonexistentView')->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
@@ -111,11 +121,20 @@ class ViewTest extends TestCase
 
 	public function testNonexistentController(): void
 	{
-		$this->throws(RuntimeException::class, 'Controller not found');
+		$this->throws(RuntimeException::class, 'Route controller not found');
 
 		$route = Route::any('/', NonexisitentTestController::class . '::nonexistentView')->after(
 			$this->renderer(),
 		);
+		$view = new View($this->routeMatch($route), null);
+		$view->execute($this->request());
+	}
+
+	public function testBareMethodStringWithoutController(): void
+	{
+		$this->throws(RuntimeException::class, 'Route action string is not callable');
+
+		$route = Route::any('/', 'textView')->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
