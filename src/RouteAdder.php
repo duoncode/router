@@ -40,7 +40,4 @@ interface RouteAdder
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function options(string $pattern, callable|array|string $view, string $name = ''): Route;
-
-	/** @param class-string $controller */
-	public function endpoint(array|string $path, string $controller, string|array $args): Endpoint;
 }
