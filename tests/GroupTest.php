@@ -31,9 +31,9 @@ class GroupTest extends TestCase
 			static function (Group $group): void {
 				$ctrl = TestController::class;
 
-				$group->get('/home', "{$ctrl}::albumHome", 'home');
-				$group->get('/{name}', "{$ctrl}::albumName", 'name');
-				$group->get('', "{$ctrl}::albumList", 'list');
+				$group->get('/home', [$ctrl, 'textView'], 'home');
+				$group->get('/{name}', [$ctrl, 'textView'], 'name');
+				$group->get('', [$ctrl, 'textView'], 'list');
 			},
 			'albums:',
 		);
@@ -66,9 +66,9 @@ class GroupTest extends TestCase
 		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
 
-			$group->get('/home', "{$ctrl}::albumHome");
-			$group->get('/{name}', "{$ctrl}::albumName");
-			$group->get('', "{$ctrl}::albumList");
+			$group->get('/home', [$ctrl, 'textView']);
+			$group->get('/{name}', [$ctrl, 'textView']);
+			$group->get('', [$ctrl, 'textView']);
 		});
 
 		$this->assertSame('', $router->match($this->request('GET', ''))->route()->name());
@@ -90,15 +90,15 @@ class GroupTest extends TestCase
 			static function (Group $group): void {
 				$ctrl = TestController::class;
 
-				$group->get('/get', "{$ctrl}::albumHome", 'getroute');
-				$group->post('/post', "{$ctrl}::albumHome", 'postroute');
-				$group->put('/put', "{$ctrl}::albumHome", 'putroute');
-				$group->patch('/patch', "{$ctrl}::albumHome", 'patchroute');
-				$group->delete('/delete', "{$ctrl}::albumHome", 'deleteroute');
-				$group->options('/options', "{$ctrl}::albumHome", 'optionsroute');
-				$group->head('/head', "{$ctrl}::albumHome", 'headroute');
-				$group->map(['get', 'post'], '/map', "{$ctrl}::albumHome", 'maproute');
-				$group->any('/route', "{$ctrl}::albumHome", 'allroute');
+				$group->get('/get', [$ctrl, 'textView'], 'getroute');
+				$group->post('/post', [$ctrl, 'textView'], 'postroute');
+				$group->put('/put', [$ctrl, 'textView'], 'putroute');
+				$group->patch('/patch', [$ctrl, 'textView'], 'patchroute');
+				$group->delete('/delete', [$ctrl, 'textView'], 'deleteroute');
+				$group->options('/options', [$ctrl, 'textView'], 'optionsroute');
+				$group->head('/head', [$ctrl, 'textView'], 'headroute');
+				$group->map(['get', 'post'], '/map', [$ctrl, 'textView'], 'maproute');
+				$group->any('/route', [$ctrl, 'textView'], 'allroute');
 			},
 			'helper:',
 		);
@@ -280,9 +280,9 @@ class GroupTest extends TestCase
 		$router->group('/albums', static function (Group $group) use ($mw2, $mw3): void {
 			$ctrl = TestController::class;
 
-			$group->get('', "{$ctrl}::albumList");
-			$group->get('/home', "{$ctrl}::albumHome")->middleware($mw3);
-			$group->get('/{name}', "{$ctrl}::albumName");
+			$group->get('', [$ctrl, 'textView']);
+			$group->get('/home', [$ctrl, 'textView'])->middleware($mw3);
+			$group->get('/{name}', [$ctrl, 'textView']);
 			$group->middleware($mw2);
 		});
 

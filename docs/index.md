@@ -100,7 +100,7 @@ $router->get('/status', fn() => $response);
 $router->get('/albums', [AlbumController::class, 'index']);
 ```
 
-Invokable class strings and legacy `Class::method` strings are also supported. Inside a controller group, route actions can be bare method names. Outside a controller group, use a callable or `[Controller::class, 'method']`.
+Invokable class strings are also supported. Inside a controller group, route actions can be bare method names.
 
 ### Names
 

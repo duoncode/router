@@ -60,15 +60,15 @@ class ViewTest extends TestCase
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
 	}
 
-	public function testControllerString(): void
+	public function testNonCallableActionStringIsRejected(): void
 	{
-		$route = Route::any('/', '\Duon\Router\Tests\Fixtures\TestController::textView')->after(
+		$this->throws(RuntimeException::class, 'Route action string is not callable');
+
+		$route = Route::any('/', TestController::class . '::textView')->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
-
-		$this->assertSame('text', (string) $view->execute($this->request())->getBody());
-		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
+		$view->execute($this->request());
 	}
 
 	public function testControllerClassMethod(): void
@@ -114,7 +114,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'Route action method not found');
 
-		$route = Route::any('/', TestController::class . '::nonexistentView')->after($this->renderer());
+		$route = Route::any('/', [TestController::class, 'nonexistentView'])->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
 		$view->execute($this->request());
 	}
@@ -123,7 +123,7 @@ class ViewTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'Route controller not found');
 
-		$route = Route::any('/', NonexisitentTestController::class . '::nonexistentView')->after(
+		$route = Route::any('/', [NonexisitentTestController::class, 'nonexistentView'])->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
@@ -160,7 +160,7 @@ class ViewTest extends TestCase
 	public function testControllerWithRequestInConstructor(): void
 	{
 		$request = $this->request();
-		$route = Route::any('/', TestControllerWithRequest::class . '::requestOnly')->after(
+		$route = Route::any('/', [TestControllerWithRequest::class, 'requestOnly'])->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
@@ -170,7 +170,7 @@ class ViewTest extends TestCase
 
 	public function testControllerWithRouteInConstructor(): void
 	{
-		$route = Route::any('/', TestControllerWithRoute::class . '::routeOnly')->after(
+		$route = Route::any('/', [TestControllerWithRoute::class, 'routeOnly'])->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
@@ -183,7 +183,7 @@ class ViewTest extends TestCase
 		$request = $this->request();
 		$route = Route::any(
 			'/{param}',
-			TestControllerWithRequestAndRoute::class . '::requestAndRoute',
+			[TestControllerWithRequestAndRoute::class, 'requestAndRoute'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/duon'), null);
 
@@ -198,7 +198,7 @@ class ViewTest extends TestCase
 		$request = $this->request();
 		$route = Route::any(
 			'/{string}/{float}-{int}',
-			TestControllerWithRequest::class . '::routeParams',
+			[TestControllerWithRequest::class, 'routeParams'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/symbolic/7.13-23'), null);
 
@@ -213,7 +213,7 @@ class ViewTest extends TestCase
 		// Should overwrite the default value
 		$route = Route::any(
 			'/{string}/{int}',
-			TestController::class . '::routeDefaultValueParams',
+			[TestController::class, 'routeDefaultValueParams'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/symbolic/17'), null);
 
@@ -223,7 +223,7 @@ class ViewTest extends TestCase
 		);
 
 		// Should use the default value
-		$route = Route::any('/{string}', TestController::class . '::routeDefaultValueParams')->after(
+		$route = Route::any('/{string}', [TestController::class, 'routeDefaultValueParams'])->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route, '/symbolic'), null);
@@ -240,7 +240,7 @@ class ViewTest extends TestCase
 
 		$route = Route::any(
 			'/{wrong}/{param}',
-			TestControllerWithRequest::class . '::routeParams',
+			[TestControllerWithRequest::class, 'routeParams'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/symbolic/test'), null);
 		$view->execute($this->request());
@@ -252,7 +252,7 @@ class ViewTest extends TestCase
 
 		$route = Route::any(
 			'/{string}/{float}-{int}',
-			TestControllerWithRequest::class . '::routeParams',
+			[TestControllerWithRequest::class, 'routeParams'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/symbolic/7.13-wrong'), null);
 		$view->execute($this->request());
@@ -264,7 +264,7 @@ class ViewTest extends TestCase
 
 		$route = Route::any(
 			'/{string}/{float}-{int}',
-			TestControllerWithRequest::class . '::routeParams',
+			[TestControllerWithRequest::class, 'routeParams'],
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route, '/symbolic/wrong-13'), null);
 		$view->execute($this->request());
