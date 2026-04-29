@@ -33,6 +33,7 @@ Define routes directly or inside callback groups. Configure groups only inside t
 use Duon\Router\Group;
 
 $router->get('/health', [HealthController::class, 'show'], 'health');
+$router->map(['GET', 'POST'], '/login', [AuthController::class, 'login'], 'login');
 $router->any('/webhook', $webhook, 'webhook');
 
 $router->group('/albums', function (Group $albums) use ($auth): void {

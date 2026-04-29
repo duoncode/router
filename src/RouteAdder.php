@@ -18,6 +18,17 @@ interface RouteAdder
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function any(string $pattern, callable|array|string $view, string $name = ''): Route;
 
+	/**
+	 * @param array<array-key, string> $methods
+	 * @param callable|list{string, string}|non-empty-string $view
+	 */
+	public function map(
+		array $methods,
+		string $pattern,
+		callable|array|string $view,
+		string $name = '',
+	): Route;
+
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function get(string $pattern, callable|array|string $view, string $name = ''): Route;
 

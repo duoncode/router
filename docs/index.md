@@ -38,17 +38,21 @@ $response = $handler->handle($request);
 
 ## Routes
 
-Define routes with HTTP method helpers. Use `any()` when a route intentionally accepts every request method.
+Define routes with HTTP method helpers. Use `map()` when a route accepts a specific set of methods, and use `any()` when a route intentionally accepts every request method.
 
 ```php
 $router->get('/health', [HealthController::class, 'show'], 'health');
 $router->post('/albums', [AlbumController::class, 'create'], 'albums.create');
+$router->map(['GET', 'POST'], '/login', [AuthController::class, 'login'], 'login');
 $router->any('/webhook', $webhook, 'webhook');
 ```
+
+`map()` requires at least one method. Method names are normalized to uppercase.
 
 Available helpers are:
 
 - `any()`
+- `map()`
 - `get()`
 - `post()`
 - `put()`
@@ -64,6 +68,9 @@ use Duon\Router\Route;
 
 $route = Route::get('/albums', [AlbumController::class, 'index'], 'albums.index');
 $router->addRoute($route);
+
+$login = Route::map(['GET', 'POST'], '/login', [AuthController::class, 'login'], 'login');
+$router->addRoute($login);
 ```
 
 ### Route patterns

@@ -210,6 +210,21 @@ class RouteTest extends TestCase
 		$this->assertSame(['Duon\Router\Tests\Fixtures\TestController', 'textView'], $route->view());
 	}
 
+	public function testRouteMap(): void
+	{
+		$route = Route::map(['get', 'post'], '/albums', static fn() => 'chuck', 'albums');
+
+		$this->assertSame(['GET', 'POST'], $route->methods());
+		$this->assertSame('albums', $route->name());
+	}
+
+	public function testRouteMapRejectsEmptyMethods(): void
+	{
+		$this->throws(ValueError::class, 'Route method list cannot be empty.');
+
+		Route::map([], '/albums', static fn() => 'chuck');
+	}
+
 	public function testRouteNameUnnamed(): void
 	{
 		$route = Route::get('/albums', static fn() => 'chuck');

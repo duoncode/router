@@ -97,6 +97,7 @@ class GroupTest extends TestCase
 				$group->delete('/delete', "{$ctrl}::albumHome", 'deleteroute');
 				$group->options('/options', "{$ctrl}::albumHome", 'optionsroute');
 				$group->head('/head', "{$ctrl}::albumHome", 'headroute');
+				$group->map(['get', 'post'], '/map', "{$ctrl}::albumHome", 'maproute');
 				$group->any('/route', "{$ctrl}::albumHome", 'allroute');
 			},
 			'helper:',
@@ -129,6 +130,14 @@ class GroupTest extends TestCase
 		$this->assertSame(
 			'helper:headroute',
 			$router->match($this->request('HEAD', '/helper/head'))->route()->name(),
+		);
+		$this->assertSame(
+			'helper:maproute',
+			$router->match($this->request('GET', '/helper/map'))->route()->name(),
+		);
+		$this->assertSame(
+			'helper:maproute',
+			$router->match($this->request('POST', '/helper/map'))->route()->name(),
 		);
 		$this->assertSame(
 			'helper:allroute',
