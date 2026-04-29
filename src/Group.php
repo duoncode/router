@@ -7,12 +7,18 @@ namespace Duon\Router;
 use Closure;
 use Duon\Router\Exception\RuntimeException;
 use Override;
+use Psr\Http\Server\MiddlewareInterface as Middleware;
 
 /** @psalm-api */
 final class Group implements RouteAdder
 {
-	use AddsBeforeAfter;
-	use AddsMiddleware;
+	use AddsBeforeAfter {
+		before as private addBeforeHandler;
+		after as private addAfterHandler;
+	}
+	use AddsMiddleware {
+		middleware as private addMiddlewareHandlers;
+	}
 	use AddsRoutes;
 
 	/** @var list<Route|Group> */
@@ -61,9 +67,31 @@ final class Group implements RouteAdder
 
 	public function controller(string $controller): static
 	{
+		$this->assertCollecting('Cannot configure group outside the group callback.');
 		$this->controller = $controller;
 
 		return $this;
+	}
+
+	public function middleware(Middleware ...$middleware): static
+	{
+		$this->assertCollecting('Cannot configure group outside the group callback.');
+
+		return $this->addMiddlewareHandlers(...$middleware);
+	}
+
+	public function before(Before $beforeHandler): static
+	{
+		$this->assertCollecting('Cannot configure group outside the group callback.');
+
+		return $this->addBeforeHandler($beforeHandler);
+	}
+
+	public function after(After $afterHandler): static
+	{
+		$this->assertCollecting('Cannot configure group outside the group callback.');
+
+		return $this->addAfterHandler($afterHandler);
 	}
 
 	#[Override]

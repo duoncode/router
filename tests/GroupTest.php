@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Duon\Router\Tests;
 
+use Closure;
 use Duon\Router\Exception\MethodNotAllowedException;
 use Duon\Router\Exception\RuntimeException;
 use Duon\Router\Exception\ValueError;
 use Duon\Router\Group;
 use Duon\Router\Route;
 use Duon\Router\Router;
+use Duon\Router\Tests\Fixtures\TestAfterAddText;
+use Duon\Router\Tests\Fixtures\TestBeforeFirst;
 use Duon\Router\Tests\Fixtures\TestController;
 use Duon\Router\Tests\Fixtures\TestMiddleware1;
 use Duon\Router\Tests\Fixtures\TestMiddleware2;
@@ -315,6 +318,46 @@ class GroupTest extends TestCase
 		$group->group('/late', static function (Group $group): void {});
 	}
 
+	public function testFailConfiguringGroupBeforeRegister(): void
+	{
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->middleware(new TestMiddleware1()),
+			false,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->before(new TestBeforeFirst()),
+			false,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->after(new TestAfterAddText()),
+			false,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->controller(TestController::class),
+			false,
+		);
+	}
+
+	public function testFailConfiguringGroupAfterRegister(): void
+	{
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->middleware(new TestMiddleware1()),
+			true,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->before(new TestBeforeFirst()),
+			true,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->after(new TestAfterAddText()),
+			true,
+		);
+		$this->assertGroupConfigFails(
+			static fn(Group $group): Group => $group->controller(TestController::class),
+			true,
+		);
+	}
+
 	public function testFailWithoutCallingRegisterBefore(): void
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
@@ -329,5 +372,26 @@ class GroupTest extends TestCase
 
 		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->group('/photos', static function (Group $group): void {});
+	}
+
+	/** @param Closure(Group): mixed $configure */
+	private function assertGroupConfigFails(Closure $configure, bool $register): void
+	{
+		$router = new Router();
+		$group = Group::make('/albums', static function (Group $group): void {}, 'albums.');
+
+		if ($register) {
+			$group->register($router);
+		}
+
+		try {
+			$configure($group);
+		} catch (RuntimeException $e) {
+			$this->assertSame('Cannot configure group outside the group callback.', $e->getMessage());
+
+			return;
+		}
+
+		$this->fail('Group configuration did not fail.');
 	}
 }
