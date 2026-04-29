@@ -4,10 +4,9 @@ title: Introduction
 
 # Duon Router
 
-> [!WARNING]
-> This library is under active development, some of the listed features are still experimental and subject to change. Large parts of the documentation are missing.
-
 Duon Router is a PSR-7/PSR-15 router and view dispatcher. `RoutingHandler` implements PSR-15 `RequestHandlerInterface` and is the primary runtime entry point.
+
+Using a PSR-7 request and PSR-17 response factory:
 
 ```php
 use Duon\Router\Dispatcher;
@@ -15,6 +14,10 @@ use Duon\Router\Router;
 use Duon\Router\RoutingHandler;
 
 $router = new Router();
+$router->get('/health', function () use ($responseFactory) {
+    return $responseFactory->createResponse(204);
+}, 'health');
+
 $handler = new RoutingHandler($router, new Dispatcher());
 $response = $handler->handle($request);
 ```
@@ -29,6 +32,8 @@ $router->post('/albums', [AlbumController::class, 'create'], 'albums.create');
 $router->any('/webhook', $webhook, 'webhook');
 ```
 
+### Actions
+
 Preferred route actions are callables and controller method arrays:
 
 ```php
@@ -36,22 +41,26 @@ $router->get('/status', fn() => $response);
 $router->get('/albums', [AlbumController::class, 'index']);
 ```
 
-Groups compose route prefixes, name prefixes, middleware, `Before` handlers, `After` handlers, and controller classes. Group settings are collected while the callback runs and then applied to all routes in that group.
+Inside a controller group, route actions can be bare method names. Outside a controller group, use a callable or `[Controller::class, 'method']`.
+
+### Groups
+
+Groups compose route prefixes, name prefixes, middleware, `Before` handlers, `After` handlers, and controller classes. Configure groups only inside the group callback. `Router::group()` and nested `$group->group()` return `void`; the group is finalized after the callback completes.
+
+Group settings are collected while the callback runs and then applied to all routes in that group, even when the settings are declared after route lines.
 
 ```php
 use Duon\Router\Group;
 
 $router->group('/albums', function (Group $albums) use ($auth): void {
-    $albums->middleware($auth);
-    $albums->controller(AlbumController::class);
-
     $albums->get('', 'index', 'albums.index');
     $albums->get('/{id:\d+}', 'show', 'albums.show');
     $albums->post('', 'create', 'albums.create');
+
+    $albums->middleware($auth);
+    $albums->controller(AlbumController::class);
 });
 ```
-
-Inside a controller group, route actions can be bare method names. Outside a controller group, use a callable or `[Controller::class, 'method']`.
 
 ## Dispatching
 
