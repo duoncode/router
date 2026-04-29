@@ -19,7 +19,8 @@
 - `Router::routes()` was removed; register routes directly on `Router` or use `Router::group()` for scoped callbacks.
 - The methodless route helper is now `any()`; the old `route()` helper was removed.
 - `Endpoint` and the `endpoint()` route-adder helper were removed.
-- Manual `Group::create()` usage is internal; use `Router::group()` or nested `$group->group()` callbacks instead.
+- `Router::addGroup()` and `Group::addGroup()` were removed; use `Router::group()` or nested `$group->group()` callbacks instead.
+- Manual `Group::create()` usage is internal.
 
 ### Changed
 

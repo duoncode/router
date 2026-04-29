@@ -9,8 +9,6 @@ interface RouteAdder
 {
 	public function addRoute(Route $route): Route;
 
-	public function addGroup(Group $group): void;
-
 	public function group(
 		string $patternPrefix,
 		\Closure $createClosure,

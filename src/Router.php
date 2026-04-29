@@ -69,19 +69,13 @@ class Router implements RouteAdder
 	}
 
 	#[Override]
-	public function addGroup(Group $group): void
-	{
-		$group->create($this);
-	}
-
-	#[Override]
 	public function group(
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
 		$group = new Group($patternPrefix, $createClosure, $namePrefix);
-		$this->addGroup($group);
+		$group->create($this);
 
 		return $group;
 	}

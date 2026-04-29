@@ -210,6 +210,29 @@ class GroupTest extends TestCase
 		$this->assertSame([$mw1, $mw2, $mw3, $mw1], $route->getMiddleware());
 	}
 
+	public function testNestedGroupCanBeAddedWhileParentFinalizes(): void
+	{
+		$router = new Router();
+
+		$router->group(
+			'/media',
+			static function (Group $media): void {
+				$media->group('/music', static function (Group $music) use ($media): void {
+					$media->group(
+						'/photos',
+						static function (Group $photos): void {
+							$photos->get('/{id}', [TestController::class, 'textView'], 'show');
+						},
+						'photos.',
+					);
+				});
+			},
+			'media.',
+		);
+
+		$this->assertSame('/media/photos/1', $router->url('media.photos.show', ['id' => 1]));
+	}
+
 	public function testControllerPrefixingErrorUsingClosure(): void
 	{
 		$this->throws(ValueError::class, 'Cannot add controller');
@@ -272,19 +295,19 @@ class GroupTest extends TestCase
 		$this->assertSame('/albums', $router->url('albums.index'));
 	}
 
-	public function testAddGroupCanCreateEmptyGroupBeforeParentCreation(): void
-	{
-		$parent = new Group('/parent', static function (Group $group): void {});
-		$parent->addGroup(new Group('/child', static function (Group $group): void {}));
-
-		$this->addToAssertionCount(1);
-	}
-
 	public function testFailWithoutCallingCreateBefore(): void
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
 		$group = new Group('/albums', static function (Group $group): void {}, 'test:');
 		$group->addRoute(Route::get('/', static fn() => ''));
+	}
+
+	public function testFailNestedGroupWithoutCallingCreateBefore(): void
+	{
+		$this->throws(RuntimeException::class, 'RouteAdder not set');
+
+		$group = new Group('/albums', static function (Group $group): void {}, 'test:');
+		$group->group('/photos', static function (Group $group): void {});
 	}
 }
