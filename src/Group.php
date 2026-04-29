@@ -28,7 +28,6 @@ final class Group implements RouteAdder
 	private ?string $controller = null;
 	private bool $registered = false;
 	private bool $collecting = false;
-	private bool $finalizing = false;
 
 	/**
 	 * Groups are callback-scoped. Use Router::group() or nested Group::group()
@@ -97,14 +96,10 @@ final class Group implements RouteAdder
 	#[Override]
 	public function addRoute(Route $route): Route
 	{
-		if (!$this->finalizing) {
-			$this->assertCollecting();
-			$this->entries[] = $route;
+		$this->assertCollecting();
+		$this->entries[] = $route;
 
-			return $route;
-		}
-
-		return $this->forwardRoute($route);
+		return $route;
 	}
 
 	#[Override]
@@ -113,16 +108,8 @@ final class Group implements RouteAdder
 		Closure $createClosure,
 		string $namePrefix = '',
 	): void {
-		$group = self::make($patternPrefix, $createClosure, $namePrefix);
-
-		if (!$this->finalizing) {
-			$this->assertCollecting();
-			$this->entries[] = $group;
-
-			return;
-		}
-
-		$group->register($this);
+		$this->assertCollecting();
+		$this->entries[] = self::make($patternPrefix, $createClosure, $namePrefix);
 	}
 
 	/** @internal */
@@ -142,18 +129,12 @@ final class Group implements RouteAdder
 			$this->collecting = false;
 		}
 
-		$this->finalizing = true;
-
-		try {
-			foreach ($this->entries as $entry) {
-				if ($entry instanceof Route) {
-					$this->forwardRoute($entry);
-				} else {
-					$entry->register($this);
-				}
+		foreach ($this->entries as $entry) {
+			if ($entry instanceof Route) {
+				$this->forwardRoute($entry);
+			} else {
+				$entry->register($this);
 			}
-		} finally {
-			$this->finalizing = false;
 		}
 	}
 
@@ -162,6 +143,11 @@ final class Group implements RouteAdder
 		if (!$this->collecting) {
 			throw new RuntimeException('Cannot modify group outside the group callback.');
 		}
+	}
+
+	private function receive(Route $route): Route
+	{
+		return $this->forwardRoute($route);
 	}
 
 	private function forwardRoute(Route $route): Route
@@ -177,6 +163,10 @@ final class Group implements RouteAdder
 		$route->setAfterHandlers($this->mergeAfterHandlers($route->afterHandlers()));
 
 		assert($this->routeAdder !== null, 'RouteAdder must be set before forwarding routes.');
+
+		if ($this->routeAdder instanceof self) {
+			return $this->routeAdder->receive($route);
+		}
 
 		return $this->routeAdder->addRoute($route);
 	}

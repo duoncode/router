@@ -212,27 +212,30 @@ class GroupTest extends TestCase
 		$this->assertSame([$mw1, $mw2, $mw3, $mw1], $route->getMiddleware());
 	}
 
-	public function testNestedGroupCanBeAddedWhileParentFinalizes(): void
+	public function testFailAddingRouteToParentWhileChildRegisters(): void
 	{
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
+
 		$router = new Router();
+		$router->group('/media', static function (Group $media): void {
+			$media->group('/music', static function (Group $_music) use ($media): void {
+				$media->get('/late', [TestController::class, 'textView'], 'late');
+			});
+		});
+	}
 
-		$router->group(
-			'/media',
-			static function (Group $media): void {
-				$media->group('/music', static function (Group $music) use ($media): void {
-					$media->group(
-						'/photos',
-						static function (Group $photos): void {
-							$photos->get('/{id}', [TestController::class, 'textView'], 'show');
-						},
-						'photos.',
-					);
+	public function testFailAddingGroupToParentWhileChildRegisters(): void
+	{
+		$this->throws(RuntimeException::class, 'Cannot modify group outside the group callback.');
+
+		$router = new Router();
+		$router->group('/media', static function (Group $media): void {
+			$media->group('/music', static function (Group $_music) use ($media): void {
+				$media->group('/photos', static function (Group $photos): void {
+					$photos->get('/{id}', [TestController::class, 'textView'], 'show');
 				});
-			},
-			'media.',
-		);
-
-		$this->assertSame('/media/photos/1', $router->url('media.photos.show', ['id' => 1]));
+			});
+		});
 	}
 
 	public function testControllerPrefixingErrorUsingClosure(): void
