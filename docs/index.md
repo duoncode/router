@@ -237,7 +237,7 @@ final class JsonRenderer implements After
 
 Handlers are merged by calling `replace()` on existing handlers. Return `true` to replace a previous handler of the same kind; return `false` to append.
 
-You can also place middleware, `Before`, and `After` instances as PHP attributes on route callables or controller methods:
+You can also attach handlers as PHP attributes to route callables or controller methods. The instantiated attribute object must implement one of the supported handler interfaces: PSR-15 middleware, `Before`, or `After`.
 
 ```php
 #[AuditMiddleware]
@@ -248,7 +248,7 @@ function albumData(int $id): array
 }
 ```
 
-Attribute handlers are resolved when the view runs. Middleware attributes run after route middleware; `Before` and `After` attributes are merged with dispatcher and route handlers.
+In this example, `AuditMiddleware` must implement `Psr\Http\Server\MiddlewareInterface`, and `JsonRenderer` must implement `After`. Attribute handlers are resolved when the view runs. Middleware attributes run after route middleware; `Before` and `After` attributes are merged with dispatcher and route handlers.
 
 Middleware and handlers run in this order:
 
