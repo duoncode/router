@@ -109,22 +109,48 @@ final class View
 		}
 
 		if (is_array($view)) {
-			[$controllerName, $method] = $view;
-			assert(is_string($controllerName), 'Expected controller class name to be a string.');
-			assert(is_string($method), 'Expected controller method name to be a string.');
-		} else {
-			if (!str_contains($view, '::')) {
-				$view .= '::__invoke';
-			}
-
-			[$controllerName, $method] = explode('::', $view);
+			return $this->prepareControllerAction($view[0] ?? null, $view[1] ?? null);
 		}
 
-		if (class_exists($controllerName)) {
-			return [$controllerName, $method];
+		if (str_contains($view, '::')) {
+			$action = explode('::', $view, 2);
+
+			return $this->prepareControllerAction($action[0], $action[1] ?? '');
 		}
 
-		throw new RuntimeException("Controller not found {$controllerName}");
+		if (class_exists($view)) {
+			return $this->prepareControllerAction($view, '__invoke');
+		}
+
+		throw new RuntimeException(
+			'Route action string is not callable: '
+			. $view
+			. ". Use a callable, [Controller::class, 'method'], an invokable controller class, "
+			. 'or a controller group.',
+		);
+	}
+
+	/** @return array{class-string, string} */
+	private function prepareControllerAction(mixed $controllerName, mixed $method): array
+	{
+		if (
+			!is_string($controllerName)
+			|| $controllerName === ''
+			|| !is_string($method)
+			|| $method === ''
+		) {
+			throw new RuntimeException("Controller actions must use [Controller::class, 'method'].");
+		}
+
+		if (!class_exists($controllerName)) {
+			throw new RuntimeException('Route controller not found: ' . $controllerName);
+		}
+
+		if (!method_exists($controllerName, $method)) {
+			throw new RuntimeException('Route action method not found: ' . $controllerName . '::' . $method);
+		}
+
+		return [$controllerName, $method];
 	}
 
 	private function getClosure(Request $request): Closure
@@ -139,12 +165,13 @@ final class View
 		$args = $constructor ? $this->getArgs($constructor, $request) : [];
 		$controller = $rc->newInstance(...$args);
 
-		if (method_exists($controller, $method)) {
+		if (is_callable([$controller, $method])) {
 			return Closure::fromCallable([$controller, $method]);
 		}
-		$viewString = $controllerName . '::' . $method;
 
-		throw new RuntimeException("View method not found {$viewString}");
+		throw new RuntimeException(
+			'Route action method is not callable: ' . $controllerName . '::' . $method,
+		);
 	}
 
 	/**
