@@ -27,7 +27,7 @@ $response = $handler->handle($request);
 
 ## Routes
 
-Define routes directly or inside callback groups. Groups apply their prefix, name prefix, middleware, `Before` handlers, `After` handlers, and controller to every route in the group, even when those settings are declared after the route lines in the callback.
+Define routes directly or inside callback groups. Configure groups only inside the group callback. Groups apply their prefix, name prefix, middleware, `Before` handlers, `After` handlers, and controller to every route in the group, even when those settings are declared after the route lines in the callback.
 
 ```php
 use Duon\Router\Group;
@@ -36,12 +36,12 @@ $router->get('/health', [HealthController::class, 'show'], 'health');
 $router->any('/webhook', $webhook, 'webhook');
 
 $router->group('/albums', function (Group $albums) use ($auth): void {
-	$albums->middleware($auth);
-	$albums->controller(AlbumController::class);
-
 	$albums->get('', 'index', 'albums.index');
 	$albums->get('/{id:\d+}', 'show', 'albums.show');
 	$albums->post('', 'create', 'albums.create');
+
+	$albums->middleware($auth);
+	$albums->controller(AlbumController::class);
 });
 ```
 
