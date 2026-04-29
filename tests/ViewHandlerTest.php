@@ -62,7 +62,7 @@ class ViewHandlerTest extends TestCase
 	{
 		$this->throws(RuntimeException::class, 'Unable to determine a response handler');
 
-		$route = new Route('/', TestController::class . '::wrongReturnType');
+		$route = new Route('/', [TestController::class, 'wrongReturnType']);
 		$view = new View($this->routeMatch($route), null);
 		$handler = new ViewHandler($view, [], []);
 		$handler->handle($this->request());

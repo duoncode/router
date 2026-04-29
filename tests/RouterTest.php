@@ -27,7 +27,7 @@ class RouterTest extends TestCase
 		$router->addRoute($albums);
 		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
-			$group->get('/{name}', "{$ctrl}::albumName");
+			$group->get('/{name}', [$ctrl, 'textView']);
 		});
 
 		$match = $router->match($this->request('GET', ''));
@@ -49,7 +49,7 @@ class RouterTest extends TestCase
 		$router->addRoute($albums);
 		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
-			$group->get('/{name}', "{$ctrl}::albumName");
+			$group->get('/{name}', [$ctrl, 'textView']);
 		});
 
 		$this->assertSame('index', $router->match($this->request('GET', '/prefix'))->route()->name());

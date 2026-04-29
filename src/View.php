@@ -112,12 +112,6 @@ final class View
 			return $this->prepareControllerAction($view[0] ?? null, $view[1] ?? null);
 		}
 
-		if (str_contains($view, '::')) {
-			$action = explode('::', $view, 2);
-
-			return $this->prepareControllerAction($action[0], $action[1] ?? '');
-		}
-
 		if (class_exists($view)) {
 			return $this->prepareControllerAction($view, '__invoke');
 		}

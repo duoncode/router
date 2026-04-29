@@ -63,14 +63,14 @@ class BeforeAfterTest extends TestCase
 		$router->group('/albums', function (Group $group): void {
 			$ctrl = TestController::class;
 
-			$group->get('', "{$ctrl}::albumList");
+			$group->get('', [$ctrl, 'textView']);
 
 			// overwrite first after renderer
 			$group
-				->get('/home', "{$ctrl}::albumHome")
+				->get('/home', [$ctrl, 'textView'])
 				->after(new TestAfterRendererText($this->responseFactory()));
 
-			$group->get('/{name}', "{$ctrl}::albumName")->after(new TestAfterAddText());
+			$group->get('/{name}', [$ctrl, 'textView'])->after(new TestAfterAddText());
 			$group
 				->after(new TestAfterRendererJson($this->responseFactory()))
 				->after(new TestAfterAddHeader());
@@ -99,14 +99,14 @@ class BeforeAfterTest extends TestCase
 		$router->group('/albums', static function (Group $group): void {
 			$ctrl = TestController::class;
 
-			$group->get('', "{$ctrl}::albumList");
+			$group->get('', [$ctrl, 'textView']);
 
 			// overwrite first before
 			$group
-				->get('/home', "{$ctrl}::albumHome")
+				->get('/home', [$ctrl, 'textView'])
 				->before(new TestBeforeReplace());
 
-			$group->get('/{name}', "{$ctrl}::albumName")->before(new TestBeforeThird());
+			$group->get('/{name}', [$ctrl, 'textView'])->before(new TestBeforeThird());
 			$group
 				->before(new TestBeforeFirst())
 				->before(new TestBeforeSecond());
