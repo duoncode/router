@@ -9,7 +9,10 @@ use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionObject;
 
-/** @param Closure|callable-object|callable-string $callable */
+/**
+ * @internal
+ * @param Closure|callable-object|callable-string $callable
+ */
 function getReflectionFunction(
 	callable $callable,
 ): ReflectionFunction|ReflectionMethod {
