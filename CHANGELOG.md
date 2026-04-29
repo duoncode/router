@@ -16,7 +16,7 @@
 - `MethodNotAllowedException` no longer extends `NotFoundException`.
 - Named route URLs are generated with `Router::url()` and now include the router global prefix, optional host, query params, and strict path param validation.
 - Static asset URLs are generated with `Router::asset()`.
-- `Router::routes()` no longer accepts unused route-cache arguments.
+- `Router::routes()` was removed; register routes directly on `Router` or use `Router::group()` for scoped callbacks.
 - The methodless route helper is now `any()`; the old `route()` helper was removed.
 - `Endpoint` and the `endpoint()` route-adder helper were removed.
 - Manual `Group::create()` usage is internal; use `Router::group()` or nested `$group->group()` callbacks instead.
