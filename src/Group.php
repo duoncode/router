@@ -67,7 +67,7 @@ final class Group implements RouteAdder
 
 	public function controller(string $controller): static
 	{
-		$this->assertCollecting('Cannot configure group outside the group callback.');
+		$this->assertCollecting();
 		$this->controller = $controller;
 
 		return $this;
@@ -75,21 +75,21 @@ final class Group implements RouteAdder
 
 	public function middleware(Middleware ...$middleware): static
 	{
-		$this->assertCollecting('Cannot configure group outside the group callback.');
+		$this->assertCollecting();
 
 		return $this->addMiddlewareHandlers(...$middleware);
 	}
 
 	public function before(Before $beforeHandler): static
 	{
-		$this->assertCollecting('Cannot configure group outside the group callback.');
+		$this->assertCollecting();
 
 		return $this->addBeforeHandler($beforeHandler);
 	}
 
 	public function after(After $afterHandler): static
 	{
-		$this->assertCollecting('Cannot configure group outside the group callback.');
+		$this->assertCollecting();
 
 		return $this->addAfterHandler($afterHandler);
 	}
@@ -98,7 +98,7 @@ final class Group implements RouteAdder
 	public function addRoute(Route $route): Route
 	{
 		if (!$this->finalizing) {
-			$this->assertCollecting('Cannot add routes outside the group callback.');
+			$this->assertCollecting();
 			$this->entries[] = $route;
 
 			return $route;
@@ -116,7 +116,7 @@ final class Group implements RouteAdder
 		$group = self::make($patternPrefix, $createClosure, $namePrefix);
 
 		if (!$this->finalizing) {
-			$this->assertCollecting('Cannot add groups outside the group callback.');
+			$this->assertCollecting();
 			$this->entries[] = $group;
 
 			return;
@@ -157,10 +157,10 @@ final class Group implements RouteAdder
 		}
 	}
 
-	private function assertCollecting(string $message): void
+	private function assertCollecting(): void
 	{
 		if (!$this->collecting) {
-			throw new RuntimeException($message);
+			throw new RuntimeException('Cannot modify group outside the group callback.');
 		}
 	}
 
