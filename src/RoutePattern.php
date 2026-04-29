@@ -52,12 +52,26 @@ final readonly class RoutePattern
 			return null;
 		}
 
-		/** @var array<string, string> */
-		return array_filter(
-			$matches,
-			static fn($_, $key) => !is_int($key),
-			ARRAY_FILTER_USE_BOTH,
-		);
+		return self::namedMatches($matches);
+	}
+
+	/**
+	 * @param array<array-key, string> $matches
+	 * @return array<string, string>
+	 */
+	private static function namedMatches(array $matches): array
+	{
+		$params = [];
+
+		foreach ($matches as $key => $value) {
+			if (!is_string($key)) {
+				continue;
+			}
+
+			$params[$key] = $value;
+		}
+
+		return $params;
 	}
 
 	/** @param array<array-key, mixed> $params */
