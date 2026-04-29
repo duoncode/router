@@ -295,19 +295,39 @@ class GroupTest extends TestCase
 		$this->assertSame('/albums', $router->url('albums.index'));
 	}
 
-	public function testFailWithoutCallingCreateBefore(): void
+	public function testFailAddingRouteAfterRegister(): void
+	{
+		$this->throws(RuntimeException::class, 'Cannot add routes outside the group callback.');
+
+		$router = new Router();
+		$group = Group::make('/albums', static function (Group $group): void {}, 'albums.');
+		$group->register($router);
+		$group->get('/late', static fn() => 'late', 'late');
+	}
+
+	public function testFailAddingGroupAfterRegister(): void
+	{
+		$this->throws(RuntimeException::class, 'Cannot add groups outside the group callback.');
+
+		$router = new Router();
+		$group = Group::make('/albums', static function (Group $group): void {}, 'albums.');
+		$group->register($router);
+		$group->group('/late', static function (Group $group): void {});
+	}
+
+	public function testFailWithoutCallingRegisterBefore(): void
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
-		$group = Group::create('/albums', static function (Group $group): void {}, 'test:');
+		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->addRoute(Route::get('/', static fn() => ''));
 	}
 
-	public function testFailNestedGroupWithoutCallingCreateBefore(): void
+	public function testFailNestedGroupWithoutCallingRegisterBefore(): void
 	{
 		$this->throws(RuntimeException::class, 'RouteAdder not set');
 
-		$group = Group::create('/albums', static function (Group $group): void {}, 'test:');
+		$group = Group::make('/albums', static function (Group $group): void {}, 'test:');
 		$group->group('/photos', static function (Group $group): void {});
 	}
 }

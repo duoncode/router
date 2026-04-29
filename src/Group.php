@@ -21,16 +21,37 @@ final class Group implements RouteAdder
 	private ?RouteAdder $routeAdder = null;
 	private ?string $controller = null;
 	private bool $registered = false;
+	private bool $collecting = false;
 	private bool $finalizing = false;
 
+	/**
+	 * Groups are callback-scoped. Use Router::group() or nested Group::group()
+	 * so the router controls registration, ordering, and group finalization.
+	 */
 	private function __construct(
 		private string $patternPrefix,
 		private Closure $createClosure,
 		private string $namePrefix = '',
 	) {}
 
-	/** @internal */
-	public static function create(
+	/**
+	 * Advanced escape hatch for route providers that must build a detached group.
+	 * Prefer Router::group() for normal route definitions.
+	 *
+	 * Order matters: define routes inside the make() callback, then register the
+	 * group with a router or parent group. Calling route helpers after register()
+	 * throws because group finalization already happened.
+	 *
+	 * Example:
+	 *
+	 *     $group = Group::make('/api', static function (Group $api): void {
+	 *         $api->get('/health', static fn() => 'ok', 'health');
+	 *     }, 'api.');
+	 *     $group->register($router);
+	 *
+	 * @internal
+	 */
+	public static function make(
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
@@ -53,6 +74,7 @@ final class Group implements RouteAdder
 		}
 
 		if (!$this->finalizing) {
+			$this->assertCollecting('Cannot add routes outside the group callback.');
 			$this->entries[] = $route;
 
 			return $route;
@@ -67,13 +89,14 @@ final class Group implements RouteAdder
 		Closure $createClosure,
 		string $namePrefix = '',
 	): Group {
-		$group = self::create($patternPrefix, $createClosure, $namePrefix);
+		$group = self::make($patternPrefix, $createClosure, $namePrefix);
 
 		if ($this->routeAdder === null) {
 			throw new RuntimeException('RouteAdder not set');
 		}
 
 		if (!$this->finalizing) {
+			$this->assertCollecting('Cannot add groups outside the group callback.');
 			$this->entries[] = $group;
 
 			return $group;
@@ -93,7 +116,13 @@ final class Group implements RouteAdder
 
 		$this->registered = true;
 		$this->routeAdder = $adder;
-		($this->createClosure)($this);
+		$this->collecting = true;
+
+		try {
+			($this->createClosure)($this);
+		} finally {
+			$this->collecting = false;
+		}
 
 		$this->finalizing = true;
 
@@ -107,6 +136,13 @@ final class Group implements RouteAdder
 			}
 		} finally {
 			$this->finalizing = false;
+		}
+	}
+
+	private function assertCollecting(string $message): void
+	{
+		if (!$this->collecting) {
+			throw new RuntimeException($message);
 		}
 	}
 
