@@ -18,13 +18,13 @@ trait AddsMiddleware
 		return $this;
 	}
 
-	/** @psalm-return list<Middleware> */
+	/** @return list<Middleware> */
 	public function getMiddleware(): array
 	{
 		return $this->middleware;
 	}
 
-	/** @psalm-param list<Middleware> $middleware */
+	/** @param list<Middleware> $middleware */
 	public function replaceMiddleware(array $middleware): static
 	{
 		$this->middleware = $middleware;

@@ -27,7 +27,7 @@ trait AddsBeforeAfter
 	}
 
 	/**
-	 * @psalm-param list<Before> $beforeHandlers
+	 * @param list<Before> $beforeHandlers
 	 * @return list<Before>
 	 */
 	public function mergeBeforeHandlers(array $beforeHandlers): array
@@ -35,7 +35,7 @@ trait AddsBeforeAfter
 		return $this->doMergeBeforeHandlers($this->beforeHandlers, $beforeHandlers);
 	}
 
-	/** @psalm-param list<Before> $beforeHandlers */
+	/** @param list<Before> $beforeHandlers */
 	public function setBeforeHandlers(array $beforeHandlers): static
 	{
 		$this->beforeHandlers = $beforeHandlers;
@@ -66,7 +66,7 @@ trait AddsBeforeAfter
 		return $this->doMergeAfterHandlers($this->afterHandlers, $afterHandlers);
 	}
 
-	/** @psalm-param list<After> $afterHandlers */
+	/** @param list<After> $afterHandlers */
 	public function setAfterHandlers(array $afterHandlers): static
 	{
 		$this->afterHandlers = $afterHandlers;

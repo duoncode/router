@@ -31,7 +31,7 @@ class Router implements RouteAdder
 	protected string $cacheFile = '';
 	protected bool $shouldCache = false;
 
-	/** @psalm-var array<string, list<Route>> */
+	/** @var array<string, list<Route>> */
 	protected array $routes = [];
 
 	/** @var array<string, StaticRoute> */
@@ -40,7 +40,7 @@ class Router implements RouteAdder
 	/** @var array<string, Route> */
 	protected array $names = [];
 
-	/** @psalm-param Closure(Router $router):void $creator */
+	/** @param Closure(Router): void $creator */
 	public function routes(Closure $creator, string $cacheFile = '', bool $shouldCache = true): void
 	{
 		$this->cacheFile = $cacheFile;
@@ -237,7 +237,7 @@ class Router implements RouteAdder
 	{
 		$normalized = [];
 
-		/** @psalm-suppress MixedAssignment */
+		/** @psalm-suppress MixedAssignment -- query values are intentionally mixed and validated below */
 		foreach ($query as $name => $value) {
 			if ($value === null) {
 				continue;

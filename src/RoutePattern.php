@@ -47,7 +47,7 @@ final readonly class RoutePattern
 	{
 		$path = $path === '' ? '/' : $path;
 
-		/** @psalm-suppress ArgumentTypeCoercion */
+		/** @psalm-suppress ArgumentTypeCoercion -- route regexes are compiled as non-empty strings */
 		if (preg_match($this->regex, $path, $matches) !== 1) {
 			return null;
 		}
@@ -108,7 +108,7 @@ final readonly class RoutePattern
 			throw new InvalidArgumentException('Missing route parameter: ' . $name);
 		}
 
-		/** @psalm-suppress MixedAssignment */
+		/** @psalm-suppress MixedAssignment -- route params are intentionally mixed and validated below */
 		$value = $params[$name];
 
 		if (is_scalar($value) || $value instanceof Stringable) {

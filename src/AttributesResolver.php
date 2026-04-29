@@ -59,7 +59,7 @@ final class AttributesResolver
 				$callAttr = $callAttr->newInstance();
 				$methodToResolve = $callAttr->method;
 
-				/** @psalm-var callable */
+				/** @var callable $callable */
 				$callable = [$instance, $methodToResolve];
 				$args = $resolver->resolve($callable, $callAttr->args);
 				$callable(...$args);

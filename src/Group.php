@@ -15,7 +15,7 @@ class Group implements RouteAdder
 	use AddsMiddleware;
 	use AddsRoutes;
 
-	/** @psalm-var list<Group> */
+	/** @var list<Group> */
 	protected array $subgroups = [];
 
 	protected ?RouteAdder $routeAdder = null;

@@ -13,9 +13,7 @@ class Endpoint
 
 	protected string $name = '';
 
-	/**
-	 * @psalm-param class-string $controller
-	 */
+	/** @param class-string $controller */
 	public function __construct(
 		protected readonly RouteAdder $adder,
 		protected readonly array|string $path,

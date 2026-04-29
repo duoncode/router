@@ -13,12 +13,10 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 /** @internal */
 final class ViewHandler implements RequestHandler
 {
-	/** @param list<Middleware> $middleware */
+	/** @var list<Middleware> */
 	protected array $middleware;
 
-	/**
-	 * @param list<Middleware> $globalMiddleware
-	 */
+	/** @param list<Middleware> $globalMiddleware */
 	public function __construct(
 		protected readonly View $view,
 		array $globalMiddleware,

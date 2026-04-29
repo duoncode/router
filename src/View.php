@@ -56,13 +56,13 @@ final class View
 			$request = $handler->handle($request);
 		}
 
-		/** @var mixed $result */
+		/** @psalm-suppress MixedAssignment -- views may return arbitrary data for after handlers */
 		$result = $closure(...$this->getArgs(getReflectionFunction($closure), $request));
 
 		/** @var list<After> $afterAttributes */
 		$afterAttributes = $this->attributes(After::class);
 		foreach ($this->mergeAfterHandlers($afterAttributes) as $handler) {
-			/** @var mixed $result */
+			/** @psalm-suppress MixedAssignment -- after handlers may transform arbitrary data */
 			$result = $handler->handle($result);
 		}
 
@@ -79,7 +79,7 @@ final class View
 		);
 	}
 
-	/** @param ?class-string $filter*/
+	/** @param ?class-string $filter */
 	public function attributes(?string $filter = null): array
 	{
 		if (!isset($this->attributes)) {
@@ -105,7 +105,6 @@ final class View
 	private function prepareView(callable|string|array $view): Closure|array
 	{
 		if (is_callable($view)) {
-			/** @var callable $view -- Psalm complains even though we use is_callable() */
 			return Closure::fromCallable($view);
 		}
 
@@ -122,7 +121,6 @@ final class View
 		}
 
 		if (class_exists($controllerName)) {
-			/** @var class-string $controllerName */
 			return [$controllerName, $method];
 		}
 
@@ -168,7 +166,7 @@ final class View
 	 */
 	private function getArgs(ReflectionFunctionAbstract $rf, Request $request): array
 	{
-		/** @var array<string, mixed> */
+		/** @var array<string, mixed> $args */
 		$args = [];
 		$params = $rf->getParameters();
 		$errMsg = 'View parameters cannot be resolved. Details: ';
@@ -273,8 +271,10 @@ final class View
 		);
 	}
 
+	/** @return list<Middleware> */
 	public function middleware(): array
 	{
+		/** @var list<Middleware> $middlewareAttributes */
 		$middlewareAttributes = $this->attributes(Middleware::class);
 
 		return array_merge(

@@ -17,10 +17,10 @@ class Route
 	use AddsBeforeAfter;
 	use AddsMiddleware;
 
-	/** @psalm-var null|list<string> */
+	/** @var null|list<string> */
 	protected ?array $methods = null;
 
-	/** @psalm-var Closure|list{string, string}|string */
+	/** @var Closure|list{string, string}|string */
 	protected Closure|array|string $view;
 
 	protected ?RoutePattern $routePattern = null;
@@ -28,7 +28,7 @@ class Route
 	/**
 	 * @param string $pattern The URL pattern of the route
 	 *
-	 * @psalm-param View $view The callable view. Can be a closure, an invokable object or any other callable
+	 * @param callable|list{string, string}|non-empty-string $view The callable view. Can be a closure, an invokable object or any other callable
 	 *
 	 * @param string $name The name of the route. If not given the pattern will be hashed and used as name.
 	 */
@@ -44,37 +44,37 @@ class Route
 		}
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function any(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name);
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function get(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name)->method('GET');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function post(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name)->method('POST');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function put(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name)->method('PUT');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function patch(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name)->method('PATCH');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function delete(
 		string $pattern,
 		callable|array|string $view,
@@ -83,13 +83,13 @@ class Route
 		return new self($pattern, $view, $name)->method('DELETE');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function head(string $pattern, callable|array|string $view, string $name = ''): self
 	{
 		return new self($pattern, $view, $name)->method('HEAD');
 	}
 
-	/** @psalm-param View $view */
+	/** @param callable|list{string, string}|non-empty-string $view */
 	public static function options(
 		string $pattern,
 		callable|array|string $view,
@@ -108,7 +108,7 @@ class Route
 		return $this;
 	}
 
-	/** @psalm-return list<string> */
+	/** @return list<string> */
 	public function methods(): array
 	{
 		return $this->methods ?? [];
@@ -156,7 +156,7 @@ class Route
 		return $this->routePattern()->generate($params);
 	}
 
-	/** @psalm-return Closure|list{string, string}|string */
+	/** @return Closure|list{string, string}|string */
 	public function view(): Closure|array|string
 	{
 		return $this->view;
