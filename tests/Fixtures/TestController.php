@@ -16,6 +16,11 @@ class TestController
 		return 'text';
 	}
 
+	private function privateView(): string
+	{
+		return 'private';
+	}
+
 	public function stringableView(): TestClass
 	{
 		return new TestClass();
