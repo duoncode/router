@@ -176,17 +176,16 @@ class GroupTest extends TestCase
 						$music->group(
 							'/albums',
 							static function (Group $albums) use ($mw1, $mw3): void {
-								$albums
-									->group(
-										'/songs',
-										static function (Group $songs) use ($mw1): void {
-											$songs
-												->get('/times/{id}', [TestController::class, 'textView'], 'times')
-												->middleware($mw1);
-										},
-										'songs-',
-									)
-									->middleware($mw3);
+								$albums->group(
+									'/songs',
+									static function (Group $songs) use ($mw1, $mw3): void {
+										$songs->middleware($mw3);
+										$songs
+											->get('/times/{id}', [TestController::class, 'textView'], 'times')
+											->middleware($mw1);
+									},
+									'songs-',
+								);
 							},
 							'albums-',
 						);
@@ -282,7 +281,7 @@ class GroupTest extends TestCase
 	public function testRegisterIsIdempotent(): void
 	{
 		$router = new Router();
-		$group = $router->group(
+		$group = Group::make(
 			'/albums',
 			static function (Group $group): void {
 				$group->get('', [TestController::class, 'textView'], 'index');
@@ -290,6 +289,7 @@ class GroupTest extends TestCase
 			'albums.',
 		);
 
+		$group->register($router);
 		$group->register($router);
 
 		$this->assertSame('/albums', $router->url('albums.index'));

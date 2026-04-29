@@ -88,7 +88,7 @@ final class Group implements RouteAdder
 		string $patternPrefix,
 		Closure $createClosure,
 		string $namePrefix = '',
-	): Group {
+	): void {
 		$group = self::make($patternPrefix, $createClosure, $namePrefix);
 
 		if ($this->routeAdder === null) {
@@ -99,12 +99,10 @@ final class Group implements RouteAdder
 			$this->assertCollecting('Cannot add groups outside the group callback.');
 			$this->entries[] = $group;
 
-			return $group;
+			return;
 		}
 
 		$group->register($this);
-
-		return $group;
 	}
 
 	/** @internal */

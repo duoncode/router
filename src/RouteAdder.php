@@ -13,7 +13,7 @@ interface RouteAdder
 		string $patternPrefix,
 		\Closure $createClosure,
 		string $namePrefix = '',
-	): Group;
+	): void;
 
 	/** @param callable|list{string, string}|non-empty-string $view */
 	public function any(string $pattern, callable|array|string $view, string $name = ''): Route;
