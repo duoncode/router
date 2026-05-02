@@ -1,13 +1,10 @@
 # Changelog
 
-## [Unreleased](https://github.com/duoncode/router/compare/0.1.0...HEAD)
+## [Unreleased](https://github.com/duoncode/router/compare/0.2.0...HEAD)
 
-### Added
+No notable changes since the last release.
 
-- `RoutingHandler` provides a PSR-15 request handler that matches and dispatches a request in one call.
-- `Router::group()` registers callback groups without manually constructing `Group` objects.
-- Route adders now expose `any()` for methodless routes.
-- Route adders now expose `map()` for routes with an explicit method list.
+## [0.2.0](https://github.com/duoncode/router/releases/tag/0.2.0) (2026-05-02)
 
 ### Breaking
 
@@ -26,6 +23,13 @@
 - `Router::group()` and nested `$group->group()` now return `void`; define all group configuration inside the callback.
 - `Group` instances can only be modified while their own callback is running.
 - Manual `Group` construction was removed. Group lifecycle methods are internal.
+
+### Added
+
+- `RoutingHandler` provides a PSR-15 request handler that matches and dispatches a request in one call.
+- `Router::group()` registers callback groups without manually constructing `Group` objects.
+- Route adders now expose `any()` for methodless routes.
+- Route adders now expose `map()` for routes with an explicit method list.
 
 ### Changed
 
