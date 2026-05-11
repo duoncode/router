@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\RuntimeException;
-use Duon\Router\ResponseWrapper;
-use Duon\Router\Route;
-use Duon\Router\Tests\Fixtures\TestController;
-use Duon\Router\View;
-use Duon\Router\ViewHandler;
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Router\ResponseWrapper;
+use Celemas\Router\Route;
+use Celemas\Router\Tests\Fixtures\TestController;
+use Celemas\Router\View;
+use Celemas\Router\ViewHandler;
 use Laminas\Diactoros\ResponseFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 
@@ -19,7 +19,7 @@ class ViewHandlerTest extends TestCase
 	{
 		$route = new Route('/', function () {
 			$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/plain');
-			$response->getBody()->write('Duon PSR Response');
+			$response->getBody()->write('Celemas PSR Response');
 
 			return $response;
 		});
@@ -28,7 +28,7 @@ class ViewHandlerTest extends TestCase
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
-		$this->assertSame('Duon PSR Response', (string) $response->getBody());
+		$this->assertSame('Celemas PSR Response', (string) $response->getBody());
 		$this->assertSame('text/plain', $response->getHeaders()['Content-Type'][0]);
 	}
 
@@ -44,7 +44,7 @@ class ViewHandlerTest extends TestCase
 			{
 				$response = $this->factory->createResponse()
 					->withHeader('Content-Type', 'text/plain');
-				$response->getBody()->write('Duon PSR Response');
+				$response->getBody()->write('Celemas PSR Response');
 
 				return $response;
 			}
@@ -54,7 +54,7 @@ class ViewHandlerTest extends TestCase
 		$handler = new ViewHandler($view, [], []);
 		$response = $handler->handle($this->request());
 
-		$this->assertSame('Duon PSR Response', (string) $response->getBody());
+		$this->assertSame('Celemas PSR Response', (string) $response->getBody());
 		$this->assertSame('text/plain', $response->getHeaders()['Content-Type'][0]);
 	}
 

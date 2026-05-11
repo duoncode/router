@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests\Fixtures;
+namespace Celemas\Router\Tests\Fixtures;
 
-use Duon\Router\Before;
+use Celemas\Router\Before;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class TestBeforeThird implements Before

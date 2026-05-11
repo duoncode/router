@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests\Fixtures;
+namespace Celemas\Router\Tests\Fixtures;
 
 use Attribute;
-use Duon\Wire\Call;
+use Celemas\Wire\Call;
 
 #[Attribute]
 #[Call('init')]

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests\Fixtures;
+namespace Celemas\Router\Tests\Fixtures;
 
 class TestInvokableClass
 {

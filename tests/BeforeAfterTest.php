@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Dispatcher;
-use Duon\Router\Group;
-use Duon\Router\Route;
-use Duon\Router\Router;
-use Duon\Router\Tests\Fixtures\TestAfterAddHeader;
-use Duon\Router\Tests\Fixtures\TestAfterAddText;
-use Duon\Router\Tests\Fixtures\TestAfterRendererJson;
-use Duon\Router\Tests\Fixtures\TestAfterRendererText;
-use Duon\Router\Tests\Fixtures\TestBeforeFirst;
-use Duon\Router\Tests\Fixtures\TestBeforeReplace;
-use Duon\Router\Tests\Fixtures\TestBeforeSecond;
-use Duon\Router\Tests\Fixtures\TestBeforeThird;
-use Duon\Router\View;
+use Celemas\Router\Dispatcher;
+use Celemas\Router\Group;
+use Celemas\Router\Route;
+use Celemas\Router\Router;
+use Celemas\Router\Tests\Fixtures\TestAfterAddHeader;
+use Celemas\Router\Tests\Fixtures\TestAfterAddText;
+use Celemas\Router\Tests\Fixtures\TestAfterRendererJson;
+use Celemas\Router\Tests\Fixtures\TestAfterRendererText;
+use Celemas\Router\Tests\Fixtures\TestBeforeFirst;
+use Celemas\Router\Tests\Fixtures\TestBeforeReplace;
+use Celemas\Router\Tests\Fixtures\TestBeforeSecond;
+use Celemas\Router\Tests\Fixtures\TestBeforeThird;
+use Celemas\Router\View;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -130,7 +130,7 @@ class BeforeAfterTest extends TestCase
 
 	public function testViewBeforeHandler(): void
 	{
-		$route = Route::any('/', static fn() => 'duon')
+		$route = Route::any('/', static fn() => 'celemas')
 			->before(new TestBeforeReplace())
 			->before(new TestBeforeThird());
 		$view = new View(
@@ -148,7 +148,7 @@ class BeforeAfterTest extends TestCase
 	public function testViewAfterHandler(): void
 	{
 		$factory = $this->responseFactory();
-		$route = Route::any('/', static fn() => 'duon')
+		$route = Route::any('/', static fn() => 'celemas')
 			->after(new TestAfterRendererText($factory))
 			->after(new TestAfterAddText());
 		$view = new View(
@@ -197,7 +197,7 @@ class BeforeAfterTest extends TestCase
 		$factory = $this->responseFactory();
 		$route = new Route(
 			'/',
-			static fn() => 'Duon',
+			static fn() => 'Celemas',
 		);
 		$route->after(new TestAfterRendererText($factory))->after(new TestAfterAddHeader());
 		$dispatcher = new Dispatcher();
@@ -206,7 +206,7 @@ class BeforeAfterTest extends TestCase
 		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame('Duon-appended', (string) $response->getBody());
+		$this->assertSame('Celemas-appended', (string) $response->getBody());
 		$this->assertSame('header-value', (string) $response->getHeaderLine('added-header'));
 		$this->assertSame('text/plain', (string) $response->getHeaderLine('Content-Type'));
 	}

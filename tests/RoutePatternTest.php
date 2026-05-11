@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\ValueError;
-use Duon\Router\RoutePattern;
-use Duon\Router\RouteToken;
+use Celemas\Router\Exception\ValueError;
+use Celemas\Router\RoutePattern;
+use Celemas\Router\RouteToken;
 
 final class RoutePatternTest extends TestCase
 {
@@ -70,7 +70,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRequiresParams(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Missing route parameter: id',
 		);
 
@@ -80,7 +80,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRejectsUnknownParams(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Unknown route parameter: page',
 		);
 
@@ -90,7 +90,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRejectsInvalidParamTypes(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Route parameter must be scalar or Stringable: id',
 		);
 
@@ -100,7 +100,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRejectsConstraintMismatch(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Route parameter does not match constraint: id',
 		);
 
@@ -110,7 +110,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRejectsParentRelativeRemainder(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Remainder route parameter must stay relative: slug',
 		);
 
@@ -120,7 +120,7 @@ final class RoutePatternTest extends TestCase
 	public function testGenerateRejectsAbsoluteRemainder(): void
 	{
 		$this->throws(
-			\Duon\Router\Exception\InvalidArgumentException::class,
+			\Celemas\Router\Exception\InvalidArgumentException::class,
 			'Remainder route parameter must be a relative path: slug',
 		);
 

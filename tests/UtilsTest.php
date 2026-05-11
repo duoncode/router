@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
 use PHPUnit\Framework\Attributes\TestDox;
 use ReflectionFunction;
 use ReflectionMethod;
 
-use function Duon\Router\getReflectionFunction;
+use function Celemas\Router\getReflectionFunction;
 
 class UtilsTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
 use Psr\Http\Server\MiddlewareInterface as Middleware;
 

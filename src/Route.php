@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
+use Celemas\Router\Exception\ValueError;
 use Closure;
-use Duon\Router\Exception\ValueError;
 
 /**
  * @psalm-api

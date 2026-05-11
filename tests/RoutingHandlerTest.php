@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Dispatcher;
-use Duon\Router\Exception\MethodNotAllowedException;
-use Duon\Router\Exception\NotFoundException;
-use Duon\Router\Router;
-use Duon\Router\RoutingHandler;
-use Duon\Router\Tests\Fixtures\TestBeforeFirst;
-use Duon\Router\Tests\Fixtures\TestBeforeSecond;
-use Duon\Router\Tests\Fixtures\TestMiddleware1;
-use Duon\Router\Tests\Fixtures\TestMiddleware2;
-use Duon\Router\Tests\Fixtures\TestMiddleware3;
+use Celemas\Router\Dispatcher;
+use Celemas\Router\Exception\MethodNotAllowedException;
+use Celemas\Router\Exception\NotFoundException;
+use Celemas\Router\Router;
+use Celemas\Router\RoutingHandler;
+use Celemas\Router\Tests\Fixtures\TestBeforeFirst;
+use Celemas\Router\Tests\Fixtures\TestBeforeSecond;
+use Celemas\Router\Tests\Fixtures\TestMiddleware1;
+use Celemas\Router\Tests\Fixtures\TestMiddleware2;
+use Celemas\Router\Tests\Fixtures\TestMiddleware3;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -112,14 +112,14 @@ final class RoutingHandlerTest extends TestCase
 	public function testAfterHandlersRenderViewData(): void
 	{
 		$router = new Router();
-		$router->get('/', static fn(): string => 'duon');
+		$router->get('/', static fn(): string => 'celemas');
 		$dispatcher = new Dispatcher();
 		$dispatcher->after($this->renderer());
 		$handler = new RoutingHandler($router, $dispatcher);
 
 		$response = $handler->handle($this->request('GET', '/'));
 
-		$this->assertSame('duon', (string) $response->getBody());
+		$this->assertSame('celemas', (string) $response->getBody());
 	}
 
 	public function testNotFoundBubbles(): void

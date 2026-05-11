@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Wire\Creator;
+use Celemas\Wire\Exception\WireException;
 use Closure;
-use Duon\Router\Exception\RuntimeException;
-use Duon\Wire\Creator;
-use Duon\Wire\Exception\WireException;
 use Psr\Container\ContainerInterface as Container;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

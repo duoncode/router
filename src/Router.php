@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
+use Celemas\Router\Exception\InvalidArgumentException;
+use Celemas\Router\Exception\MethodNotAllowedException;
+use Celemas\Router\Exception\NotFoundException;
+use Celemas\Router\Exception\RuntimeException;
 use Closure;
-use Duon\Router\Exception\InvalidArgumentException;
-use Duon\Router\Exception\MethodNotAllowedException;
-use Duon\Router\Exception\NotFoundException;
-use Duon\Router\Exception\RuntimeException;
 use Override;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Stringable;

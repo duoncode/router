@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
-use Duon\Router\Exception\InvalidArgumentException;
-use Duon\Router\Exception\ValueError;
+use Celemas\Router\Exception\InvalidArgumentException;
+use Celemas\Router\Exception\ValueError;
 use Stringable;
 
 /** @internal */

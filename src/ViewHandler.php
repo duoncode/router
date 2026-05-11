@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
 use Override;
 use Psr\Http\Message\ResponseInterface as Response;

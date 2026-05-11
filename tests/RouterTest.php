@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\InvalidArgumentException;
-use Duon\Router\Exception\MethodNotAllowedException;
-use Duon\Router\Exception\NotFoundException;
-use Duon\Router\Exception\RuntimeException;
-use Duon\Router\Exception\ValueError;
-use Duon\Router\Group;
-use Duon\Router\Route;
-use Duon\Router\RouteMatch;
-use Duon\Router\Router;
-use Duon\Router\Tests\Fixtures\TestController;
+use Celemas\Router\Exception\InvalidArgumentException;
+use Celemas\Router\Exception\MethodNotAllowedException;
+use Celemas\Router\Exception\NotFoundException;
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Router\Exception\ValueError;
+use Celemas\Router\Group;
+use Celemas\Router\Route;
+use Celemas\Router\RouteMatch;
+use Celemas\Router\Router;
+use Celemas\Router\Tests\Fixtures\TestController;
 use PHPUnit\Framework\Attributes\TestDox;
 
 class RouterTest extends TestCase
@@ -186,12 +186,12 @@ class RouterTest extends TestCase
 		$router->get('/albums/{id:\d+}', static fn() => null, 'albums.show');
 
 		$this->assertSame(
-			'https://duon.sh/cms/albums/13?page=2&sort=death%20metal',
+			'https://celemas.dev/cms/albums/13?page=2&sort=death%20metal',
 			$router->url(
 				'albums.show',
 				['id' => 13],
 				query: ['page' => 2, 'sort' => 'death metal', 'empty' => null],
-				host: 'https://duon.sh/',
+				host: 'https://celemas.dev/',
 			),
 		);
 	}

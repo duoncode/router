@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests\Fixtures;
+namespace Celemas\Router\Tests\Fixtures;
 
-use Duon\Router\After;
+use Celemas\Router\After;
 use Psr\Http\Message\ResponseInterface as Response;
 use RuntimeException;
 

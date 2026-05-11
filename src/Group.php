@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
+use Celemas\Router\Exception\RuntimeException;
 use Closure;
-use Duon\Router\Exception\RuntimeException;
 use Override;
 use Psr\Http\Server\MiddlewareInterface as Middleware;
 

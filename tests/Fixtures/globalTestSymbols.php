@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Duon\Router\Tests\Fixtures\TestAttribute;
+use Celemas\Router\Tests\Fixtures\TestAttribute;
 
 if (!function_exists('testJsonRendererIterator')) {
 	function testJsonRendererIterator()

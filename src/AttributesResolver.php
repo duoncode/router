@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router;
+namespace Celemas\Router;
 
-use Duon\Wire\Call;
-use Duon\Wire\CallableResolver;
-use Duon\Wire\Creator;
+use Celemas\Wire\Call;
+use Celemas\Wire\CallableResolver;
+use Celemas\Wire\Creator;
 use Psr\Container\ContainerInterface as Container;
 use ReflectionAttribute;
 use ReflectionClass;

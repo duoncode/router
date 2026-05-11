@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\InvalidArgumentException;
-use Duon\Router\Exception\RuntimeException;
-use Duon\Router\Router;
+use Celemas\Router\Exception\InvalidArgumentException;
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Router\Router;
 
 class StaticRouteTest extends TestCase
 {
@@ -27,11 +27,11 @@ class StaticRouteTest extends TestCase
 			true,
 		));
 		$this->assertMatchesRegularExpression(
-			'/https:\/\/duon.local\/static\/test.json\?v=[a-f0-9]{8}$/',
+			'/https:\/\/celemas.local\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->asset(
 				'/static',
 				'test.json',
-				host: 'https://duon.local/',
+				host: 'https://celemas.local/',
 				bust: true,
 			),
 		);
@@ -54,11 +54,11 @@ class StaticRouteTest extends TestCase
 			true,
 		));
 		$this->assertMatchesRegularExpression(
-			'/https:\/\/duon.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
+			'/https:\/\/celemas.local\/prefix\/static\/test.json\?v=[a-f0-9]{8}$/',
 			$router->asset(
 				'/static',
 				'test.json',
-				host: 'https://duon.local/',
+				host: 'https://celemas.local/',
 				bust: true,
 			),
 		);
@@ -82,7 +82,10 @@ class StaticRouteTest extends TestCase
 
 	public function testUnknownStaticRoute(): void
 	{
-		$this->throws(\Duon\Router\Exception\NotFoundException::class, 'Static route not found: fantasy');
+		$this->throws(
+			\Celemas\Router\Exception\NotFoundException::class,
+			'Static route not found: fantasy',
+		);
 
 		new Router()->asset('fantasy', 'test.json');
 	}
@@ -100,17 +103,17 @@ class StaticRouteTest extends TestCase
 		$router->addStatic('/static', $this->root . '/public/static');
 
 		// Non existing files should not have a cachebuster attached
-		$this->assertMatchesRegularExpression('/https:\/\/duon.local\/static\/does-not-exist.json$/', $router->asset(
+		$this->assertMatchesRegularExpression('/https:\/\/celemas.local\/static\/does-not-exist.json$/', $router->asset(
 			'/static',
 			'does-not-exist.json',
-			host: 'https://duon.local/',
+			host: 'https://celemas.local/',
 			bust: true,
 		));
 	}
 
 	public function testMissingStaticRootDoesNotAddCachebuster(): void
 	{
-		$base = sys_get_temp_dir() . '/duon-router-static-' . str_replace('.', '', uniqid('', true));
+		$base = sys_get_temp_dir() . '/celemas-router-static-' . str_replace('.', '', uniqid('', true));
 		$static = $base . '/static';
 		mkdir($static, recursive: true);
 
@@ -164,7 +167,7 @@ class StaticRouteTest extends TestCase
 			$this->markTestSkipped('Symlinks are not available.');
 		}
 
-		$base = sys_get_temp_dir() . '/duon-router-static-' . str_replace('.', '', uniqid('', true));
+		$base = sys_get_temp_dir() . '/celemas-router-static-' . str_replace('.', '', uniqid('', true));
 		$static = $base . '/static';
 		$outside = $base . '/outside';
 		$staticLink = $static . '/secret.txt';

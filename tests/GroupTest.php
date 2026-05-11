@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
+use Celemas\Router\Exception\MethodNotAllowedException;
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Router\Exception\ValueError;
+use Celemas\Router\Group;
+use Celemas\Router\Route;
+use Celemas\Router\Router;
+use Celemas\Router\Tests\Fixtures\TestAfterAddText;
+use Celemas\Router\Tests\Fixtures\TestBeforeFirst;
+use Celemas\Router\Tests\Fixtures\TestController;
+use Celemas\Router\Tests\Fixtures\TestMiddleware1;
+use Celemas\Router\Tests\Fixtures\TestMiddleware2;
+use Celemas\Router\Tests\Fixtures\TestMiddleware3;
 use Closure;
-use Duon\Router\Exception\MethodNotAllowedException;
-use Duon\Router\Exception\RuntimeException;
-use Duon\Router\Exception\ValueError;
-use Duon\Router\Group;
-use Duon\Router\Route;
-use Duon\Router\Router;
-use Duon\Router\Tests\Fixtures\TestAfterAddText;
-use Duon\Router\Tests\Fixtures\TestBeforeFirst;
-use Duon\Router\Tests\Fixtures\TestController;
-use Duon\Router\Tests\Fixtures\TestMiddleware1;
-use Duon\Router\Tests\Fixtures\TestMiddleware2;
-use Duon\Router\Tests\Fixtures\TestMiddleware3;
 
 class GroupTest extends TestCase
 {

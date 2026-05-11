@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests\Fixtures;
+namespace Celemas\Router\Tests\Fixtures;
 
 /**
  * A class that cannot be autowired because it has required constructor params

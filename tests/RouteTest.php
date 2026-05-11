@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\InvalidArgumentException;
-use Duon\Router\Exception\ValueError;
-use Duon\Router\Route;
-use Duon\Router\Tests\Fixtures\TestMiddleware1;
-use Duon\Router\Tests\Fixtures\TestMiddleware2;
+use Celemas\Router\Exception\InvalidArgumentException;
+use Celemas\Router\Exception\ValueError;
+use Celemas\Router\Route;
+use Celemas\Router\Tests\Fixtures\TestMiddleware1;
+use Celemas\Router\Tests\Fixtures\TestMiddleware2;
 use stdClass;
 
 class RouteTest extends TestCase
@@ -205,9 +205,9 @@ class RouteTest extends TestCase
 
 	public function testGetViewArray(): void
 	{
-		$route = new Route('/', [\Duon\Router\Tests\Fixtures\TestController::class, 'textView']);
+		$route = new Route('/', [\Celemas\Router\Tests\Fixtures\TestController::class, 'textView']);
 
-		$this->assertSame(['Duon\Router\Tests\Fixtures\TestController', 'textView'], $route->view());
+		$this->assertSame(['Celemas\Router\Tests\Fixtures\TestController', 'textView'], $route->view());
 	}
 
 	public function testRouteMap(): void

@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Exception\RuntimeException;
-use Duon\Router\Route;
-use Duon\Router\Tests\Fixtures\TestAttribute;
-use Duon\Router\Tests\Fixtures\TestAttributeDiff;
-use Duon\Router\Tests\Fixtures\TestAttributeExt;
-use Duon\Router\Tests\Fixtures\TestCallableAttribute;
-use Duon\Router\Tests\Fixtures\TestController;
-use Duon\Router\Tests\Fixtures\TestControllerWithRequest;
-use Duon\Router\Tests\Fixtures\TestControllerWithRequestAndRoute;
-use Duon\Router\Tests\Fixtures\TestControllerWithRoute;
-use Duon\Router\Tests\Fixtures\TestThrowingClass;
-use Duon\Router\Tests\Fixtures\TestUnresolvableClass;
-use Duon\Router\View;
+use Celemas\Router\Exception\RuntimeException;
+use Celemas\Router\Route;
+use Celemas\Router\Tests\Fixtures\TestAttribute;
+use Celemas\Router\Tests\Fixtures\TestAttributeDiff;
+use Celemas\Router\Tests\Fixtures\TestAttributeExt;
+use Celemas\Router\Tests\Fixtures\TestCallableAttribute;
+use Celemas\Router\Tests\Fixtures\TestController;
+use Celemas\Router\Tests\Fixtures\TestControllerWithRequest;
+use Celemas\Router\Tests\Fixtures\TestControllerWithRequestAndRoute;
+use Celemas\Router\Tests\Fixtures\TestControllerWithRoute;
+use Celemas\Router\Tests\Fixtures\TestThrowingClass;
+use Celemas\Router\Tests\Fixtures\TestUnresolvableClass;
+use Celemas\Router\View;
 use Error;
 use GdImage;
 use LogicException;
@@ -25,7 +25,7 @@ class ViewTest extends TestCase
 {
 	public function testAttribute(): void
 	{
-		$route = Route::any('/', #[TestAttribute] static fn() => 'duon')->after($this->renderer());
+		$route = Route::any('/', #[TestAttribute] static fn() => 'celemas')->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
 
 		$this->assertInstanceOf(TestAttribute::class, $view->attributes()[0]);
@@ -33,7 +33,7 @@ class ViewTest extends TestCase
 
 	public function testAttributeWithCallAttribute(): void
 	{
-		$route = Route::any('/', #[TestCallableAttribute] static fn() => 'duon')->after(
+		$route = Route::any('/', #[TestCallableAttribute] static fn() => 'celemas')->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
@@ -45,10 +45,10 @@ class ViewTest extends TestCase
 
 	public function testClosure(): void
 	{
-		$route = Route::any('/', static fn() => 'duon')->after($this->renderer());
+		$route = Route::any('/', static fn() => 'celemas')->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
 
-		$this->assertSame('duon', (string) $view->execute($this->request())->getBody());
+		$this->assertSame('celemas', (string) $view->execute($this->request())->getBody());
 	}
 
 	public function testFunction(): void
@@ -91,7 +91,7 @@ class ViewTest extends TestCase
 
 	public function testInvokableClass(): void
 	{
-		$route = Route::any('/', 'Duon\Router\Tests\Fixtures\TestInvokableClass')->after(
+		$route = Route::any('/', 'Celemas\Router\Tests\Fixtures\TestInvokableClass')->after(
 			$this->renderer(),
 		);
 		$view = new View($this->routeMatch($route), null);
@@ -174,10 +174,10 @@ class ViewTest extends TestCase
 			'/{param}',
 			[TestControllerWithRequestAndRoute::class, 'requestAndRoute'],
 		)->after($this->renderer());
-		$view = new View($this->routeMatch($route, '/duon'), null);
+		$view = new View($this->routeMatch($route, '/celemas'), null);
 
 		$this->assertSame(
-			$request::class . $route::class . 'duon',
+			$request::class . $route::class . 'celemas',
 			(string) $view->execute($request)->getBody(),
 		);
 	}
@@ -283,7 +283,7 @@ class ViewTest extends TestCase
 	{
 		$route = Route::any(
 			'/',
-			#[TestAttribute, TestAttributeExt, TestAttributeDiff] static fn() => 'duon',
+			#[TestAttribute, TestAttributeExt, TestAttributeDiff] static fn() => 'celemas',
 		)->after($this->renderer());
 		$view = new View($this->routeMatch($route), null);
 

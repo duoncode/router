@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Dispatcher;
-use Duon\Router\Route;
-use Duon\Router\Router;
-use Duon\Router\Tests\Fixtures\TestAfterAddText;
-use Duon\Router\Tests\Fixtures\TestAfterRendererText;
-use Duon\Router\Tests\Fixtures\TestBeforeFirst;
-use Duon\Router\Tests\Fixtures\TestBeforeSecond;
-use Duon\Router\Tests\Fixtures\TestMiddleware1;
-use Duon\Router\Tests\Fixtures\TestMiddleware2;
-use Duon\Router\Tests\Fixtures\TestMiddleware3;
+use Celemas\Router\Dispatcher;
+use Celemas\Router\Route;
+use Celemas\Router\Router;
+use Celemas\Router\Tests\Fixtures\TestAfterAddText;
+use Celemas\Router\Tests\Fixtures\TestAfterRendererText;
+use Celemas\Router\Tests\Fixtures\TestBeforeFirst;
+use Celemas\Router\Tests\Fixtures\TestBeforeSecond;
+use Celemas\Router\Tests\Fixtures\TestMiddleware1;
+use Celemas\Router\Tests\Fixtures\TestMiddleware2;
+use Celemas\Router\Tests\Fixtures\TestMiddleware3;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -25,7 +25,7 @@ class DispatcherTest extends TestCase
 			'/',
 			function () {
 				$response = $this->responseFactory()->createResponse()->withHeader('Content-Type', 'text/html');
-				$response->getBody()->write('Duon');
+				$response->getBody()->write('Celemas');
 
 				return $response;
 			},
@@ -33,7 +33,7 @@ class DispatcherTest extends TestCase
 		$dispatcher = new Dispatcher();
 		$response = $dispatcher->dispatch($this->request('GET', '/'), $this->routeMatch($route));
 		$this->assertInstanceOf(Response::class, $response);
-		$this->assertSame('Duon', (string) $response->getBody());
+		$this->assertSame('Celemas', (string) $response->getBody());
 	}
 
 	public function testAddMiddleware(): void

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Duon\Router\Tests;
+namespace Celemas\Router\Tests;
 
-use Duon\Router\Route;
-use Duon\Router\RouteMatch;
+use Celemas\Router\Route;
+use Celemas\Router\RouteMatch;
 
 class RouteMatchTest extends TestCase
 {
