@@ -2,28 +2,28 @@
 title: Introduction
 ---
 
-# Duon Router
+# Celemas Router
 
-Duon Router is a PSR-7/PSR-15 router and view dispatcher. Define routes on `Router`, run requests through `RoutingHandler`, and use named routes for strict URL generation.
+Celemas Router is a PSR-7/PSR-15 router and view dispatcher. Define routes on `Router`, run requests through `RoutingHandler`, and use named routes for strict URL generation.
 
 ## Installation
 
 Install the package with Composer:
 
 ```bash
-composer require duon/router
+composer require celemas/router
 ```
 
-Duon Router targets PHP 8.5 and works with PSR-7 requests/responses, PSR-11 containers, PSR-15 middleware, and PSR-15 request handlers. You provide your preferred PSR-7/PSR-17 implementation.
+Celemas Router targets PHP 8.5 and works with PSR-7 requests/responses, PSR-11 containers, PSR-15 middleware, and PSR-15 request handlers. You provide your preferred PSR-7/PSR-17 implementation.
 
 ## Quickstart
 
 Using a PSR-7 request and PSR-17 response factory:
 
 ```php
-use Duon\Router\Dispatcher;
-use Duon\Router\Router;
-use Duon\Router\RoutingHandler;
+use Celemas\Router\Dispatcher;
+use Celemas\Router\Router;
+use Celemas\Router\RoutingHandler;
 
 $router = new Router();
 $router->get('/health', function () use ($responseFactory) {
@@ -64,7 +64,7 @@ Available helpers are:
 Use `addRoute()` when you need to construct a `Route` directly:
 
 ```php
-use Duon\Router\Route;
+use Celemas\Router\Route;
 
 $route = Route::get('/albums', [AlbumController::class, 'index'], 'albums.index');
 $router->addRoute($route);
@@ -122,7 +122,7 @@ Groups compose route prefixes, name prefixes, middleware, `Before` handlers, `Af
 Group settings are collected while the callback runs and then applied to all routes in that group, even when the settings are declared after route lines.
 
 ```php
-use Duon\Router\Group;
+use Celemas\Router\Group;
 
 $router->group('/albums', function (Group $albums) use ($auth): void {
     $albums->get('', 'index', 'albums.index');
@@ -202,7 +202,7 @@ $router->get('/reports', [ReportController::class, 'index'])
 Use `Before` handlers for final request changes before the view runs:
 
 ```php
-use Duon\Router\Before;
+use Celemas\Router\Before;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 final class AddRequestId implements Before
@@ -222,7 +222,7 @@ final class AddRequestId implements Before
 Use `After` handlers to render arbitrary view data or modify a response:
 
 ```php
-use Duon\Router\After;
+use Celemas\Router\After;
 use Psr\Http\Message\ResponseInterface as Response;
 
 final class JsonRenderer implements After
@@ -282,7 +282,7 @@ $router->get('/albums/{id:\d+}', function (int $id) use ($responseFactory) {
 Views can type-hint the PSR-7 request or the matched route:
 
 ```php
-use Duon\Router\Route;
+use Celemas\Router\Route;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 $router->get('/debug', function (Request $request, Route $route) use ($responseFactory) {
@@ -290,7 +290,7 @@ $router->get('/debug', function (Request $request, Route $route) use ($responseF
 });
 ```
 
-Other class or interface typed arguments are autowired through `duon/wire`. If a parameter has a default value, the default is used when that argument cannot be resolved.
+Other class or interface typed arguments are autowired through `celemas/wire`. If a parameter has a default value, the default is used when that argument cannot be resolved.
 
 A view must return a PSR-7 response or a `ResponseWrapper`. If a view returns arbitrary data, add an `After` handler that converts that data to a response.
 
@@ -308,8 +308,8 @@ $router->url('albums.show', ['id' => 13]);
 $router->url('albums.show', ['id' => 13], query: ['tab' => 'tracks']);
 // /cms/albums/13?tab=tracks
 
-$router->url('albums.show', ['id' => 13], host: 'https://duon.sh');
-// https://duon.sh/cms/albums/13
+$router->url('albums.show', ['id' => 13], host: 'https://celemas.dev');
+// https://celemas.dev/cms/albums/13
 ```
 
 Strict URL generation throws `InvalidArgumentException` when:
@@ -345,8 +345,8 @@ $router->asset('assets', 'app.css');
 $router->asset('assets', 'app.css', bust: true);
 // /assets/app.css?v=...
 
-$router->asset('assets', 'app.css', host: 'https://cdn.duon.sh');
-// https://cdn.duon.sh/assets/app.css
+$router->asset('assets', 'app.css', host: 'https://cdn.celemas.dev');
+// https://cdn.celemas.dev/assets/app.css
 ```
 
 `asset()` rejects null bytes and `..` path segments so generated asset paths stay inside the static root. Cache busting adds a `v` query parameter based on the file modification time when the target file exists inside the static directory.
