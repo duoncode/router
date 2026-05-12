@@ -1,10 +1,12 @@
 # Changelog
 
-## [Unreleased](https://github.com/duoncode/router/compare/0.2.0...HEAD)
+## [Unreleased](https://github.com/celemas/router/compare/0.2.0...HEAD)
 
-No notable changes since the last release.
+### Breaking Changes
 
-## [0.2.0](https://github.com/duoncode/router/releases/tag/0.2.0) (2026-05-02)
+- Rename package metadata, root namespace, repository URLs, homepage, and contact email to Celemas.
+
+## [0.2.0](https://github.com/celemas/router/releases/tag/0.2.0) (2026-05-02)
 
 ### Breaking
 
@@ -34,13 +36,13 @@ No notable changes since the last release.
 ### Changed
 
 - `MethodNotAllowedException` now exposes `allowedMethods()`.
-- Aligned view argument resolution with the latest `duon/wire` behavior.
-- `View` now bubbles exceptions thrown while constructing autowired dependencies instead of always wrapping them in `Duon\Router\Exception\RuntimeException`.
+- Aligned view argument resolution with the latest `celemas/wire` behavior.
+- `View` now bubbles exceptions thrown while constructing autowired dependencies instead of always wrapping them in `Celemas\Router\Exception\RuntimeException`.
 - Default parameter values are still used when argument resolution itself fails.
 - Group middleware, `Before` handlers, `After` handlers, and controller settings are collected while the group callback runs and then applied to all group routes.
 - Invalid route action errors now distinguish missing controllers, missing methods, unsupported bare method strings, and non-callable controller methods.
 
-## [0.1.0](https://github.com/duoncode/router/releases/tag/0.1.0) (2026-01-31)
+## [0.1.0](https://github.com/celemas/router/releases/tag/0.1.0) (2026-01-31)
 
 Initial release.
 
