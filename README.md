@@ -1,6 +1,6 @@
-# Duon Router
+# Celemas Router
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/715bb87b01ed458182a2d3af1cf6f4ba)](https://app.codacy.com/gh/duoncode/router/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/715bb87b01ed458182a2d3af1cf6f4ba)](https://app.codacy.com/gh/duoncode/router/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage) [![Psalm level](https://shepherd.dev/github/duoncode/router/level.svg?)](https://duon.sh/router) [![Psalm coverage](https://shepherd.dev/github/duoncode/router/coverage.svg?)](https://shepherd.dev/github/duoncode/router)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md) [![CI](https://github.com/celemas/router/actions/workflows/ci.yml/badge.svg)](https://github.com/celemas/router/actions) [![Psalm level](https://shepherd.dev/github/celemas/router/level.svg?)](https://celemas.dev/router) [![Psalm coverage](https://shepherd.dev/github/celemas/router/coverage.svg?)](https://shepherd.dev/github/celemas/router)
 
 A PSR-7/PSR-15 compatible router and view dispatcher.
 
@@ -9,9 +9,9 @@ Using your PSR-7 request and response factory:
 ```php
 <?php
 
-use Duon\Router\Dispatcher;
-use Duon\Router\Router;
-use Duon\Router\RoutingHandler;
+use Celemas\Router\Dispatcher;
+use Celemas\Router\Router;
+use Celemas\Router\RoutingHandler;
 
 $router = new Router();
 $router->get('/{name}', function (string $name) use ($responseFactory) {
@@ -30,7 +30,7 @@ $response = $handler->handle($request);
 Define routes directly or inside callback groups. Configure groups only inside the group callback. Groups apply their prefix, name prefix, middleware, `Before` handlers, `After` handlers, and controller to every route in the group, even when those settings are declared after the route lines in the callback.
 
 ```php
-use Duon\Router\Group;
+use Celemas\Router\Group;
 
 $router->get('/health', [HealthController::class, 'show'], 'health');
 $router->map(['GET', 'POST'], '/login', [AuthController::class, 'login'], 'login');
