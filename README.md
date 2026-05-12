@@ -1,6 +1,12 @@
 # Celemas Router
 
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md) [![CI](https://github.com/celemas/router/actions/workflows/ci.yml/badge.svg)](https://github.com/celemas/router/actions) [![Psalm level](https://shepherd.dev/github/celemas/router/level.svg?)](https://celemas.dev/router) [![Psalm coverage](https://shepherd.dev/github/celemas/router/coverage.svg?)](https://shepherd.dev/github/celemas/router)
+<!-- prettier-ignore-start -->
+[![ci](https://github.com/celemas/router/actions/workflows/ci.yml/badge.svg)](https://github.com/celemas/router/actions)
+[![codecov](https://codecov.io/github/celemas/router/graph/badge.svg?token=JMF9RYSF8O)](https://codecov.io/github/celemas/router)
+[![psalm coverage](https://shepherd.dev/github/celemas/router/coverage.svg?)](https://shepherd.dev/github/celemas/router)
+[![psalm level](https://shepherd.dev/github/celemas/router/level.svg?)](https://shepherd.dev/github/celemas/router)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.md)
+<!-- prettier-ignore-end -->
 
 A PSR-7/PSR-15 compatible router and view dispatcher.
 
