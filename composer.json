@@ -1,18 +1,18 @@
 {
-	"name": "duon/router",
+	"name": "celemas/router",
 	"description": "PSR-7/PSR-15 router and dispatcher",
 	"type": "library",
 	"license": "MIT",
 	"authors": [
 		{
 			"name": "Ernst",
-			"email": "ernst@duon.sh"
+			"email": "ernst@celemas.dev"
 		}
 	],
-	"homepage": "https://duon.sh/router",
+	"homepage": "https://celemas.dev/router",
 	"autoload": {
 		"psr-4": {
-			"Duon\\Router\\": "src/"
+			"Celemas\\Router\\": "src/"
 		},
 		"files": [
 			"src/Utils.php"
@@ -20,7 +20,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Duon\\Router\\Tests\\": "tests/"
+			"Celemas\\Router\\Tests\\": "tests/"
 		},
 		"files": [
 			"tests/Fixtures/globalTestSymbols.php"
@@ -28,7 +28,7 @@
 	},
 	"require": {
 		"php": "^8.5",
-		"duon/wire": "v0.5.0",
+		"celemas/wire": "v0.5.0",
 		"psr/container": "^2.0",
 		"psr/http-message": "^1.1 || ^2.0",
 		"psr/http-message-implementation": "^1.0",
@@ -36,7 +36,7 @@
 		"psr/http-server-middleware": "^1.0"
 	},
 	"require-dev": {
-		"duon/dev": "^3.0",
+		"celemas/dev": "^3.0",
 		"laminas/laminas-diactoros": "^3.3"
 	},
 	"scripts": {
