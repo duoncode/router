@@ -36,7 +36,7 @@
 		"psr/http-server-middleware": "^1.0"
 	},
 	"require-dev": {
-		"celemas/dev": "^4.1",
+		"celemas/dev": "^4.2",
 		"laminas/laminas-diactoros": "^3.3"
 	},
 	"scripts": {
